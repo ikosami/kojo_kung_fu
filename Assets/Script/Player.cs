@@ -1,25 +1,28 @@
+ï»¿using System;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Player : MonoBehaviour
+public class Player : MonoBehaviour, ICharacter
 {
-    [SerializeField] Transform stage;
-    [SerializeField] bool isBoss = false;
-    public const int SizeX = 160;
-    public const int SizeY = 120;
-
     [SerializeField] int floorHeight = 10;
     [SerializeField] float maxJumpHeight = 300f;
     [SerializeField] RectTransform rect;
+    public RectTransform Rect => rect;
 
     [SerializeField] Image image;
     [SerializeField] Sprite normalSprite1;
     [SerializeField] Sprite normalSprite2;
+    private float spriteChangeTimer = 0f;
+    [SerializeField] private float spriteChangeInterval = 0.5f;
+    private bool isNormalSprite = true;
+
 
     [SerializeField] Sprite attackSprite1;
     [SerializeField] Sprite attackSprite2;
     [SerializeField] Sprite attackSprite3;
     [SerializeField] Sprite jumpSprite;
+    [SerializeField] RectTransform attack1Range;
+    [SerializeField] RectTransform attack2Range;
 
     [SerializeField] float jumpSpeed = 3f;
     [SerializeField] float maxJumpVelocity = 6f;
@@ -31,28 +34,29 @@ public class Player : MonoBehaviour
     private bool isFalling = false;
     private float currentJumpVelocity = 0f;
 
-    private float spriteChangeTimer = 0f;
-    [SerializeField] private float spriteChangeInterval = 0.5f;
-    private bool isNormalSprite1 = true;
-
     private bool isAttacking = false;
-    [SerializeField] private float attackDuration = 0.2f;
     private int attackStep = 0;
-    [SerializeField] private float attackTimeout = 0.5f; // ˜A‘±UŒ‚‚Ì“ü—Íó•tŠÔ
     private float lastAttackTime = -1f;
+    [SerializeField] private float attackDuration = 0.2f;
+    [SerializeField] private float attackTimeout = 0.5f; // é€£ç¶šæ”»æ’ƒã®å…¥åŠ›å—ä»˜æ™‚é–“
+    [SerializeField] private float attackCooldown = 0.3f; // é€£æ‰“é˜²æ­¢ã®ã‚¯ãƒ¼ãƒ«ãƒ€ã‚¦ãƒ³
+    private bool nextAttackQueued = false; // æ¬¡ã®æ”»æ’ƒã‚’å—ã‘ä»˜ã‘ã‚‹ãƒ•ãƒ©ã‚°
 
-    [SerializeField] private float attackCooldown = 0.3f; // ˜A‘Å–h~‚ÌƒN[ƒ‹ƒ_ƒEƒ“
-    [SerializeField] private float attackEndDelay = 0.1f; // UŒ‚I—¹Œã‚É’Êíó‘Ô‚É–ß‚éŠÔ
 
+    private void Start()
+    {
+        SoundManager.Instance.Play("start");
+
+    }
     void Update()
     {
-        var pos = rect.anchoredPosition;
 
         Move();
+        var pos = rect.anchoredPosition;
         HandleJump(ref pos);
+        rect.anchoredPosition = pos;
         HandleAttack();
 
-        rect.anchoredPosition = pos;
     }
 
     private void Move()
@@ -63,19 +67,19 @@ public class Player : MonoBehaviour
         }
         if (Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.D))
         {
-            if (!isBoss)
-                stage.transform.position -= moveSpeed;
+            if (!Reference.Instance.isBoss)
+                Reference.Instance.stage.transform.position -= moveSpeed * Time.deltaTime;
             else
-                transform.position -= moveSpeed;
+                transform.position -= moveSpeed * Time.deltaTime;
 
             transform.localScale = new Vector3(1, 1, 1);
         }
         if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A))
         {
-            if (!isBoss)
-                stage.transform.position += moveSpeed;
+            if (!Reference.Instance.isBoss)
+                Reference.Instance.stage.transform.position += moveSpeed * Time.deltaTime;
             else
-                transform.position += moveSpeed;
+                transform.position += moveSpeed * Time.deltaTime;
             transform.localScale = new Vector3(-1, 1, 1);
         }
     }
@@ -87,7 +91,7 @@ public class Player : MonoBehaviour
             if (Input.GetKey(KeyCode.W) && !isFalling && pos.y < maxJumpHeight)
             {
                 currentJumpVelocity = Mathf.Min(currentJumpVelocity + 0.2f, maxJumpVelocity);
-                pos.y += currentJumpVelocity;
+                pos.y += currentJumpVelocity * Time.deltaTime;
             }
             else
             {
@@ -96,8 +100,8 @@ public class Player : MonoBehaviour
 
             if (isFalling)
             {
-                currentJumpVelocity -= gravity;
-                pos.y += currentJumpVelocity;
+                currentJumpVelocity -= gravity * Time.deltaTime;
+                pos.y += currentJumpVelocity * Time.deltaTime;
             }
 
             if (pos.y <= floorHeight)
@@ -121,6 +125,11 @@ public class Player : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.W))
             {
+                if (!isJumping)
+                {
+                    SoundManager.Instance.Play("jump");
+                }
+
                 isJumping = true;
                 isFalling = false;
                 currentJumpVelocity = jumpSpeed;
@@ -139,16 +148,16 @@ public class Player : MonoBehaviour
         if (spriteChangeTimer >= spriteChangeInterval)
         {
             spriteChangeTimer -= spriteChangeInterval;
-            isNormalSprite1 = !isNormalSprite1;
+            isNormalSprite = !isNormalSprite;
         }
-        image.sprite = isNormalSprite1 ? normalSprite1 : normalSprite2;
+        image.sprite = isNormalSprite ? normalSprite1 : normalSprite2;
     }
 
     private void HandleAttack()
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            // ˜A‘Å–h~i‘O‰ñ‚ÌUŒ‚‚©‚çˆê’èŠÔŒo‰ß‚µ‚È‚¢‚ÆŸ‚ÌUŒ‚‚ª‚Å‚«‚È‚¢j
+            // é€£æ‰“é˜²æ­¢ï¼ˆå‰å›ã®æ”»æ’ƒã‹ã‚‰ä¸€å®šæ™‚é–“çµŒéã—ãªã„ã¨æ¬¡ã®æ”»æ’ƒãŒã§ããªã„ï¼‰
             if (Time.time < lastAttackTime + attackCooldown)
             {
                 return;
@@ -156,45 +165,95 @@ public class Player : MonoBehaviour
 
             if (isJumping)
             {
-                isAttacking = true;
-                image.sprite = attackSprite3;
+                if (!isAttacking)
+                {
+                    //ã‚¸ãƒ£ãƒ³ãƒ—æ”»æ’ƒ
+                    isAttacking = true;
+                    image.sprite = attackSprite3;
+                    SoundManager.Instance.Play("attack2");
+                }
             }
             else
             {
-                if (Time.time - lastAttackTime <= attackTimeout && attackStep < 3)
+                if (isAttacking)
                 {
-                    attackStep++;
+                    // ã™ã§ã«æ”»æ’ƒä¸­ãªã‚‰ã€æ¬¡ã®æ”»æ’ƒã‚’äºˆç´„
+                    nextAttackQueued = true;
                 }
                 else
                 {
-                    attackStep = 1;
+                    attackStep = 0;
+                    //æ”»æ’ƒä¸­ã§ãªã‘ã‚Œã°ã€æ”»æ’ƒã‚’é–‹å§‹
+                    Attack();
+                    isAttacking = true;
                 }
-
-                lastAttackTime = Time.time;
-                isAttacking = true;
             }
         }
 
         if (isAttacking && !isJumping)
         {
-            spriteChangeTimer = 0;
 
-            if (attackStep == 1)
-                image.sprite = attackSprite1;
-            else if (attackStep == 2)
-                image.sprite = attackSprite1;
-            else if (attackStep == 3)
-                image.sprite = attackSprite2;
+            // æ”»æ’ƒãŒå®Œäº†ã—ã€æ¬¡ã®æ”»æ’ƒãŒäºˆç´„ã•ã‚Œã¦ã„ã‚Œã°ç¶šè¡Œ
+            if (Time.time >= lastAttackTime + attackTimeout)
+            {
+                if (nextAttackQueued && attackStep < 3)
+                {
+                    Attack();
+                }
+                else
+                {
+                    spriteChangeTimer = 0;
+                    isAttacking = false;
+                    attackStep = 0;
+                }
+                nextAttackQueued = false; // äºˆç´„ã‚’ãƒªã‚»ãƒƒãƒˆ
+            }
 
-            // UŒ‚‚ªŠ®—¹‚µAw’èŠÔŒo‰ßŒã‚É’Êíó‘Ô‚É–ß‚·
             if (Time.time >= lastAttackTime + attackDuration)
             {
+                spriteChangeTimer = 0;
                 HandleNormalSpriteAnimation();
             }
-            if (Time.time > lastAttackTime + attackCooldown)
+        }
+    }
+
+    private void Attack()
+    {
+        if (attackStep < 2)
+        {
+            SoundManager.Instance.Play("attack");
+            var enemyList = Util.GetEnemyList(attack1Range);
+            foreach (var enemy in enemyList)
             {
-                isAttacking = false;
+                enemy.TakeDamage(1);
             }
         }
+        else
+        {
+            SoundManager.Instance.Play("attack2");
+            var enemyList = Util.GetEnemyList(attack2Range);
+            foreach (var enemy in enemyList)
+            {
+                enemy.TakeDamage(2);
+            }
+        }
+        ChangeAttackSprite();
+        lastAttackTime = Time.time;
+
+    }
+
+    void ChangeAttackSprite()
+    {
+        attackStep++;
+        if (attackStep == 1)
+            image.sprite = attackSprite1;
+        else if (attackStep == 2)
+            image.sprite = attackSprite1;
+        else if (attackStep == 3)
+            image.sprite = attackSprite2;
+    }
+
+    public void TakeDamage(int damage)
+    {
     }
 }
