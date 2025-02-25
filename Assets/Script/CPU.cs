@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class CPU : MonoBehaviour, ICharacter
 {
+    public GameObject GameObject => gameObject;
     [SerializeField] RectTransform rect;
     public RectTransform Rect => rect;
     [SerializeField] Image image;
@@ -16,6 +17,9 @@ public class CPU : MonoBehaviour, ICharacter
     private bool isNormalSprite = true;
 
     [SerializeField] Sprite damageSprite;
+    public RectTransform BodyColRect => bodyRange;
+    [SerializeField] RectTransform attackRange;
+    [SerializeField] RectTransform bodyRange;
 
     [SerializeField] Vector3 moveSpeed = new Vector3(0.4f, 0, 0);
 
@@ -35,6 +39,8 @@ public class CPU : MonoBehaviour, ICharacter
 
     void Update()
     {
+        if (Reference.Instance.IsGameOver) { return; }
+
         if (isDead) { return; }
         if (damageWaitTime > 0)
         {
@@ -70,6 +76,10 @@ public class CPU : MonoBehaviour, ICharacter
         }
         else if (attackTime < 1f)
         {
+            if (Util.IsHitPlayer(attackRange))
+            {
+                Reference.Instance.player.TakeDamage(1);
+            }
             if (image.sprite != attackSprite1)
                 image.sprite = attackSprite1;
         }

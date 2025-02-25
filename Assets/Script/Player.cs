@@ -1,13 +1,17 @@
 ﻿using System;
+using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class Player : MonoBehaviour, ICharacter
 {
+    public GameObject GameObject => gameObject;
     [SerializeField] int floorHeight = 10;
     [SerializeField] float maxJumpHeight = 300f;
     [SerializeField] RectTransform rect;
     public RectTransform Rect => rect;
+
 
     [SerializeField] Image image;
     [SerializeField] Sprite normalSprite1;
@@ -21,8 +25,15 @@ public class Player : MonoBehaviour, ICharacter
     [SerializeField] Sprite attackSprite2;
     [SerializeField] Sprite attackSprite3;
     [SerializeField] Sprite jumpSprite;
+    [SerializeField] Sprite deadSprite;
+
+    public RectTransform BodyColRect => bodyRange;
+
+
+    [SerializeField] RectTransform bodyRange;
     [SerializeField] RectTransform attack1Range;
     [SerializeField] RectTransform attack2Range;
+    [SerializeField] RectTransform attackJumpRange;
 
     [SerializeField] float jumpSpeed = 3f;
     [SerializeField] float maxJumpVelocity = 6f;
@@ -42,14 +53,55 @@ public class Player : MonoBehaviour, ICharacter
     [SerializeField] private float attackCooldown = 0.3f; // 連打防止のクールダウン
     private bool nextAttackQueued = false; // 次の攻撃を受け付けるフラグ
 
+    public float blinkInterval = 0.25f; // 点滅間隔（秒）
+    public int blinkCount = 6; // 点滅回数
+    private float totalBlinkTime;
+    [SerializeField] float initTimer = 2;
+    [SerializeField] float startTimer = 1;
+    [SerializeField] AudioSource bgm;
 
     private void Start()
     {
-        SoundManager.Instance.Play("start");
+        totalBlinkTime = blinkInterval * blinkCount;
+        startTimer = totalBlinkTime;
+        image.enabled = false;
 
     }
     void Update()
     {
+
+        if (initTimer > 0)
+        {
+            initTimer -= Time.deltaTime;
+            if (initTimer <= 0)
+            {
+                SoundManager.Instance.Play("start");
+            }
+            else
+            {
+                return;
+            }
+        }
+        if (startTimer > 0)
+        {
+            startTimer -= Time.deltaTime;
+            if (startTimer <= 0)
+            {
+                bgm.gameObject.SetActive(true);
+                image.enabled = true;
+            }
+            else
+            {
+                float elapsedTime = totalBlinkTime - startTimer;
+                float normalizedTime = elapsedTime / totalBlinkTime;
+                int blinkIndex = Mathf.FloorToInt(normalizedTime * blinkCount);
+                image.enabled = blinkIndex % 2 == 0;
+                return;
+            }
+
+        }
+
+        if (Reference.Instance.IsGameOver) { return; }
 
         Move();
         var pos = rect.anchoredPosition;
@@ -65,8 +117,21 @@ public class Player : MonoBehaviour, ICharacter
         {
             return;
         }
+
         if (Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.D))
         {
+            var enemyList = Util.GetEnemyList(bodyRange);
+            bool isEnemyRight = false;
+            foreach (var enemy in enemyList)
+            {
+                if (enemy.GameObject.transform.position.x > gameObject.transform.position.x)
+                {
+                    isEnemyRight = true;
+                    break;
+                }
+            }
+            if (isEnemyRight) return;
+
             if (!Reference.Instance.isBoss)
                 Reference.Instance.stage.transform.position -= moveSpeed * Time.deltaTime;
             else
@@ -76,6 +141,18 @@ public class Player : MonoBehaviour, ICharacter
         }
         if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A))
         {
+            var enemyList = Util.GetEnemyList(bodyRange);
+            bool isEnemyLeft = false;
+            foreach (var enemy in enemyList)
+            {
+                if (enemy.GameObject.transform.position.x < gameObject.transform.position.x)
+                {
+                    isEnemyLeft = true;
+                    break;
+                }
+            }
+            if (isEnemyLeft) return;
+
             if (!Reference.Instance.isBoss)
                 Reference.Instance.stage.transform.position += moveSpeed * Time.deltaTime;
             else
@@ -171,6 +248,11 @@ public class Player : MonoBehaviour, ICharacter
                     isAttacking = true;
                     image.sprite = attackSprite3;
                     SoundManager.Instance.Play("attack2");
+                    var enemyList = Util.GetEnemyList(attackJumpRange);
+                    foreach (var enemy in enemyList)
+                    {
+                        enemy.TakeDamage(2);
+                    }
                 }
             }
             else
@@ -239,7 +321,6 @@ public class Player : MonoBehaviour, ICharacter
         }
         ChangeAttackSprite();
         lastAttackTime = Time.time;
-
     }
 
     void ChangeAttackSprite()
@@ -255,5 +336,44 @@ public class Player : MonoBehaviour, ICharacter
 
     public void TakeDamage(int damage)
     {
+        Reference.Instance.IsGameOver = true;
+        SoundManager.Instance.Play("damage");
+        bgm.gameObject.SetActive(false);
+        image.sprite = deadSprite;
+        StartCoroutine(Dead());
     }
+
+    private IEnumerator Dead()
+    {
+        yield return new WaitForSeconds(0.5f); // 少し待機
+        SoundManager.Instance.Play("dead");
+        Vector3 startPos = transform.position;
+        float duration = 1.0f; // 飛び上がりから落下までの時間
+        float gravity = -2000f; // 重力加速度
+        float elapsed = 0f;
+
+        // 初速度を計算（自由落下を考慮）
+        float velocityY = 700;
+
+        Vector3 velocity = new Vector3(0, velocityY, 0f); // X方向 & Y方向の初速度
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+
+            // X方向は一定速度で移動、Y方向は重力で加速度的に変化
+            velocity.y += gravity * Time.deltaTime; // 重力の影響を加える
+
+            // 現在の位置を更新
+            transform.position += velocity * Time.deltaTime;
+
+            yield return null;
+        }
+
+        yield return new WaitForSeconds(1.5f); // 少し待機
+
+
+        SceneManager.LoadScene("LoadScene");
+    }
+
 }

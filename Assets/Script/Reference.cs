@@ -24,6 +24,7 @@ public class Reference : MonoBehaviour
     public List<ICharacter> enemyList = new List<ICharacter>();
     public TextMeshProUGUI scoreText;
     int score = 0;
+    public bool IsGameOver = false;
 
     public void AddScore(int value)
     {
