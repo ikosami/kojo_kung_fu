@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class CPU : MonoBehaviour, ICharacter
+public class Enemy : MonoBehaviour, ICharacter
 {
     public GameObject GameObject => gameObject;
     [SerializeField] RectTransform rect;
@@ -19,6 +18,7 @@ public class CPU : MonoBehaviour, ICharacter
     [SerializeField] Sprite damageSprite;
     public RectTransform BodyColRect => bodyRange;
     [SerializeField] RectTransform attackRange;
+    [SerializeField] RectTransform attackRange2;
     [SerializeField] RectTransform bodyRange;
 
     [SerializeField] Vector3 moveSpeed = new Vector3(0.4f, 0, 0);
@@ -27,9 +27,17 @@ public class CPU : MonoBehaviour, ICharacter
     bool isAttack = false;
     [SerializeField] float attackTime = 0;
 
-    int hp = 3;
+    [SerializeField] int hp = 3;
     bool isDead { get { return hp <= 0; } }
     float damageWaitTime = 0;
+
+    [SerializeField] bool isJumpEnemy = false;
+    private float currentJumpVelocity = 0f;
+    [SerializeField] float maxJumpVelocity = 6f;
+    [SerializeField] float gravity = 0.2f;
+    [SerializeField] int floorHeight = 10;
+    [SerializeField] float jumpWaitTime = 2;
+    [SerializeField] float jumpTimer = 0;
 
     void Start()
     {
@@ -39,6 +47,7 @@ public class CPU : MonoBehaviour, ICharacter
 
     void Update()
     {
+        if (Reference.Instance.isPause) return;
         if (Reference.Instance.IsGameOver) { return; }
 
         if (isDead) { return; }
@@ -97,6 +106,35 @@ public class CPU : MonoBehaviour, ICharacter
 
     private void Move()
     {
+        if (isJumpEnemy)
+        {
+            var pos = rect.anchoredPosition;
+            currentJumpVelocity -= gravity * Time.deltaTime;
+            pos.y += currentJumpVelocity * Time.deltaTime;
+            rect.anchoredPosition = pos;
+
+            if (Util.IsHitPlayer(attackRange2))
+            {
+                Reference.Instance.player.TakeDamage(1);
+            }
+
+            if (pos.y <= floorHeight)
+            {
+                pos.y = floorHeight;
+                rect.anchoredPosition = pos;
+                currentJumpVelocity = 0;
+
+                jumpTimer -= Time.deltaTime;
+                if (jumpTimer <= 0)
+                {
+                    jumpTimer = jumpWaitTime;
+                    currentJumpVelocity = maxJumpVelocity;
+                }
+                return;
+            }
+
+        }
+
         if (isAttack) { return; }
 
         var player = Reference.Instance.player;
@@ -111,11 +149,14 @@ public class CPU : MonoBehaviour, ICharacter
             transform.localScale = new Vector3(-1, 1, 1);
         }
 
-        //攻撃範囲に入ったら攻撃
-        if (Mathf.Abs(player.transform.position.x - transform.position.x) < 50)
+        if (!isJumpEnemy)
         {
-            isAttack = true;
-            attackTime = 0;
+            //攻撃範囲に入ったら攻撃
+            if (Mathf.Abs(player.transform.position.x - transform.position.x) < 50)
+            {
+                isAttack = true;
+                attackTime = 0;
+            }
         }
     }
 
@@ -134,6 +175,17 @@ public class CPU : MonoBehaviour, ICharacter
     public void TakeDamage(int damage)
     {
         if (isDead) { return; }
+
+
+        var player = Reference.Instance.player;
+        if (player.transform.position.x > transform.position.x)
+        {
+            transform.localScale = new Vector3(1, 1, 1);
+        }
+        else
+        {
+            transform.localScale = new Vector3(-1, 1, 1);
+        }
 
         image.sprite = damageSprite;
         damageWaitTime = 0.5f;
@@ -160,6 +212,10 @@ public class CPU : MonoBehaviour, ICharacter
 
         while (elapsed < duration)
         {
+            while (Reference.Instance.isPause || Reference.Instance.IsGameOver)
+            {
+                yield return null;
+            }
             elapsed += Time.deltaTime;
 
             // X方向は一定速度で移動、Y方向は重力で加速度的に変化

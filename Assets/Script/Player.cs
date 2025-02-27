@@ -59,6 +59,14 @@ public class Player : MonoBehaviour, ICharacter
     [SerializeField] float initTimer = 2;
     [SerializeField] float startTimer = 1;
     [SerializeField] AudioSource bgm;
+    int centerPos = 78;
+    private bool isBackMove
+    {
+        get
+        {
+            return !Reference.Instance.isBoss && (Reference.Instance.stage.anchoredPosition.x <= 0 && Rect.anchoredPosition.x >= centerPos);
+        }
+    }
 
     private void Start()
     {
@@ -69,6 +77,21 @@ public class Player : MonoBehaviour, ICharacter
     }
     void Update()
     {
+        if (Reference.Instance.IsGameOver) return;
+
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            Reference.Instance.isPause = !Reference.Instance.isPause;
+        }
+        if (Reference.Instance.isPause)
+        {
+            if (Input.GetKeyDown(KeyCode.B))
+            {
+                SceneManager.LoadScene("LoadScene");
+            }
+        }
+
+        if (Reference.Instance.isPause) return;
 
         if (initTimer > 0)
         {
@@ -132,10 +155,23 @@ public class Player : MonoBehaviour, ICharacter
             }
             if (isEnemyRight) return;
 
-            if (!Reference.Instance.isBoss)
+            if (isBackMove)
+            {
                 Reference.Instance.stage.transform.position -= moveSpeed * Time.deltaTime;
+
+                var pos = Rect.anchoredPosition;
+                pos.x = centerPos;
+                Rect.anchoredPosition = pos;
+            }
             else
-                transform.position -= moveSpeed * Time.deltaTime;
+            {
+                transform.position += moveSpeed * Time.deltaTime;
+
+
+                var stagePos = Reference.Instance.stage.anchoredPosition;
+                stagePos.x = 0;
+                Reference.Instance.stage.anchoredPosition = stagePos;
+            }
 
             transform.localScale = new Vector3(1, 1, 1);
         }
@@ -153,10 +189,29 @@ public class Player : MonoBehaviour, ICharacter
             }
             if (isEnemyLeft) return;
 
-            if (!Reference.Instance.isBoss)
+            if (isBackMove)
+            {
                 Reference.Instance.stage.transform.position += moveSpeed * Time.deltaTime;
+
+                var pos = Rect.anchoredPosition;
+                pos.x = centerPos;
+                Rect.anchoredPosition = pos;
+            }
             else
-                transform.position += moveSpeed * Time.deltaTime;
+            {
+                transform.position -= moveSpeed * Time.deltaTime;
+
+                var pos = Rect.anchoredPosition;
+                if (pos.x < 11)
+                {
+                    pos.x = 11;
+                }
+                Rect.anchoredPosition = pos;
+
+                var stagePos = Reference.Instance.stage.anchoredPosition;
+                stagePos.x = 0;
+                Reference.Instance.stage.anchoredPosition = stagePos;
+            }
             transform.localScale = new Vector3(-1, 1, 1);
         }
     }
@@ -165,7 +220,7 @@ public class Player : MonoBehaviour, ICharacter
     {
         if (isJumping)
         {
-            if (Input.GetKey(KeyCode.W) && !isFalling && pos.y < maxJumpHeight)
+            if ((Input.GetKey(KeyCode.Z) || Input.GetKey(KeyCode.J)) && !isFalling && pos.y < maxJumpHeight)
             {
                 currentJumpVelocity = Mathf.Min(currentJumpVelocity + 0.2f, maxJumpVelocity);
                 pos.y += currentJumpVelocity * Time.deltaTime;
@@ -200,7 +255,7 @@ public class Player : MonoBehaviour, ICharacter
         }
         else
         {
-            if (Input.GetKeyDown(KeyCode.W))
+            if ((Input.GetKeyDown(KeyCode.X) || Input.GetKeyDown(KeyCode.K)))
             {
                 if (!isJumping)
                 {
@@ -232,7 +287,7 @@ public class Player : MonoBehaviour, ICharacter
 
     private void HandleAttack()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Z) || Input.GetKeyDown(KeyCode.J))
         {
             // 連打防止（前回の攻撃から一定時間経過しないと次の攻撃ができない）
             if (Time.time < lastAttackTime + attackCooldown)

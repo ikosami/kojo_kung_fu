@@ -16,7 +16,8 @@ public class Reference : MonoBehaviour
     {
         instance = this;
     }
-    public Transform stage;
+    public RectTransform stage;
+    public bool isPause = false;
     public bool isBoss = false;
     public Player player;
     public const int SizeX = 160;

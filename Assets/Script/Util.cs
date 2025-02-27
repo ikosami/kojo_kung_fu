@@ -53,4 +53,33 @@ public class Util : MonoBehaviour
         return new Rect(xMin, yMin, width, height);
     }
 
+    /// <summary>
+    /// 座標を保ったままAnchorを変更する
+    /// </summary>
+    /// <param name="rectTransform">自身の参照</param>
+    /// <param name="targetMinAnchor">変更先のAnchorMin座標</param>
+    /// <param name="targetMaxAnchor">変更先のAnchorMax座標</param>
+    public static void SetAnchorWithKeepingPosition(RectTransform rectTransform, Vector2 targetMinAnchor, Vector2 targetMaxAnchor)
+    {
+        var parent = rectTransform.parent as RectTransform;
+        if (parent == null) { Debug.LogError("Parent cannot find."); }
+
+        var diffMin = targetMinAnchor - rectTransform.anchorMin;
+        var diffMax = targetMaxAnchor - rectTransform.anchorMax;
+        // anchorの更新
+        rectTransform.anchorMin = targetMinAnchor;
+        rectTransform.anchorMax = targetMaxAnchor;
+        // 上下左右の距離の差分を計算
+        var diffLeft = parent.rect.width * diffMin.x;
+        var diffRight = parent.rect.width * diffMax.x;
+        var diffBottom = parent.rect.height * diffMin.y;
+        var diffTop = parent.rect.height * diffMax.y;
+        // サイズと座標の修正
+        rectTransform.sizeDelta += new Vector2(diffLeft - diffRight, diffBottom - diffTop);
+        var pivot = rectTransform.pivot;
+        rectTransform.anchoredPosition -= new Vector2(
+             (diffLeft * (1 - pivot.x)) + (diffRight * pivot.x),
+             (diffBottom * (1 - pivot.y)) + (diffTop * pivot.y)
+        );
+    }
 }
