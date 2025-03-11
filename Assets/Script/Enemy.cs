@@ -27,6 +27,7 @@ public class Enemy : MonoBehaviour, ICharacter
     bool isAttack = false;
     [SerializeField] float attackTime = 0;
 
+    [SerializeField] int hpMax = 3;
     [SerializeField] int hp = 3;
     bool isDead { get { return hp <= 0; } }
     float damageWaitTime = 0;
@@ -38,15 +39,17 @@ public class Enemy : MonoBehaviour, ICharacter
     [SerializeField] int floorHeight = 10;
     [SerializeField] float jumpWaitTime = 2;
     [SerializeField] float jumpTimer = 0;
+    Vector3 dir;
 
     void Start()
     {
-        hp = 3;
+        hp = hpMax;
         Reference.Instance.enemyList.Add(this);
     }
 
     void Update()
     {
+        if (Reference.Instance.IsClear) return;
         if (Reference.Instance.isPause) return;
         if (Reference.Instance.IsGameOver) { return; }
 
@@ -73,9 +76,12 @@ public class Enemy : MonoBehaviour, ICharacter
 
     }
 
+    bool isAttackDamage = false;
     private void HandleAttack()
     {
         if (!isAttack) { return; }
+
+
         attackTime += Time.deltaTime;
 
         if (attackTime < 0.5f)
@@ -85,9 +91,14 @@ public class Enemy : MonoBehaviour, ICharacter
         }
         else if (attackTime < 1f)
         {
-            if (Util.IsHitPlayer(attackRange))
+            if (isAttackDamage)
             {
-                Reference.Instance.player.TakeDamage(1);
+                SoundManager.Instance.Play("enemy_attack");
+                if (Util.IsHitPlayer(attackRange))
+                {
+                    Reference.Instance.player.TakeDamage(1);
+                }
+                isAttackDamage = false;
             }
             if (image.sprite != attackSprite1)
                 image.sprite = attackSprite1;
@@ -106,9 +117,28 @@ public class Enemy : MonoBehaviour, ICharacter
 
     private void Move()
     {
+        var pos = rect.anchoredPosition;
+
+        var player = Reference.Instance.player;
+
+        if (pos.y <= floorHeight)
+        {
+            if (player.transform.position.x > transform.position.x)
+            {
+                dir = moveSpeed;
+                transform.localScale = new Vector3(1, 1, 1);
+            }
+            else
+            {
+                dir = -moveSpeed;
+                transform.localScale = new Vector3(-1, 1, 1);
+            }
+        }
+
+
+
         if (isJumpEnemy)
         {
-            var pos = rect.anchoredPosition;
             currentJumpVelocity -= gravity * Time.deltaTime;
             pos.y += currentJumpVelocity * Time.deltaTime;
             rect.anchoredPosition = pos;
@@ -132,22 +162,12 @@ public class Enemy : MonoBehaviour, ICharacter
                 }
                 return;
             }
-
         }
+
 
         if (isAttack) { return; }
 
-        var player = Reference.Instance.player;
-        if (player.transform.position.x > transform.position.x)
-        {
-            transform.position += moveSpeed * Time.deltaTime;
-            transform.localScale = new Vector3(1, 1, 1);
-        }
-        else
-        {
-            transform.position -= moveSpeed * Time.deltaTime;
-            transform.localScale = new Vector3(-1, 1, 1);
-        }
+        transform.position += dir * Time.deltaTime;
 
         if (!isJumpEnemy)
         {
@@ -155,6 +175,7 @@ public class Enemy : MonoBehaviour, ICharacter
             if (Mathf.Abs(player.transform.position.x - transform.position.x) < 50)
             {
                 isAttack = true;
+                isAttackDamage = true;
                 attackTime = 0;
             }
         }
@@ -193,6 +214,7 @@ public class Enemy : MonoBehaviour, ICharacter
         hp -= damage;
         if (hp <= 0)
         {
+            SoundManager.Instance.Play("attack2");
             Reference.Instance.AddScore(800);
             StartCoroutine(Dead());
         }

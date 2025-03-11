@@ -82,4 +82,17 @@ public class Util : MonoBehaviour
              (diffBottom * (1 - pivot.y)) + (diffTop * pivot.y)
         );
     }
+
+
+}
+
+public static class GameObjectExtensions
+{
+    public static void SetActiveIfChanged(this GameObject gameObject, bool isActive)
+    {
+        if (gameObject.activeSelf != isActive)
+        {
+            gameObject.SetActive(isActive);
+        }
+    }
 }

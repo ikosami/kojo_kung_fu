@@ -20,6 +20,7 @@ public class TitleManager : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
+            PlayerPrefs.DeleteAll();
             UnityEngine.SceneManagement.SceneManager.LoadScene("GameScene");
         }
     }

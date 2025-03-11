@@ -2,10 +2,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
-public class CPUManager : MonoBehaviour
+public class StageManager : MonoBehaviour
 {
+
     [SerializeField] RectTransform stage;
     [SerializeField] List<StageData> stageDataList;
     [SerializeField] List<EnemyData> enemyDataList;
@@ -32,6 +32,10 @@ public class CPUManager : MonoBehaviour
         if (stageDataList == null || stageDataList.Count == 0) return;
 
         var stageData = stageDataList[index];
+        if (stageData.IsStageEnd)
+        {
+            Reference.Instance.player.MoveEnd();
+        }
 
         foreach (var popEnemy in stageData.popEnemy)
         {
@@ -45,8 +49,6 @@ public class CPUManager : MonoBehaviour
                     // 元のアンカーを保存
                     Vector2 originalAnchorMin = enemyRect.anchorMin;
                     Vector2 originalAnchorMax = enemyRect.anchorMax;
-
-
 
                     float currentX = stage.anchoredPosition.x;
 
@@ -82,6 +84,8 @@ public class CPUManager : MonoBehaviour
 class StageData
 {
     public List<PopData> popEnemy;
+
+    public bool IsStageEnd = false;
 }
 
 [Serializable]

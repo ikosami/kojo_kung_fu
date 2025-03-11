@@ -58,8 +58,10 @@ public class Player : MonoBehaviour, ICharacter
     private float totalBlinkTime;
     [SerializeField] float initTimer = 2;
     [SerializeField] float startTimer = 1;
-    [SerializeField] AudioSource bgm;
     int centerPos = 78;
+
+    [SerializeField] bool isInitEffect = true;
+
     private bool isBackMove
     {
         get
@@ -70,14 +72,29 @@ public class Player : MonoBehaviour, ICharacter
 
     private void Start()
     {
-        totalBlinkTime = blinkInterval * blinkCount;
-        startTimer = totalBlinkTime;
-        image.enabled = false;
-
+        if (isInitEffect)
+        {
+            totalBlinkTime = blinkInterval * blinkCount;
+            startTimer = totalBlinkTime;
+            image.enabled = false;
+        }
+        else
+        {
+            totalBlinkTime = 0;
+            startTimer = 0.5f;
+            initTimer = 0;
+            image.enabled = true;
+        }
     }
     void Update()
     {
+        if (Reference.Instance.IsClear) return;
         if (Reference.Instance.IsGameOver) return;
+
+        if (Input.GetKeyDown(KeyCode.B) && Input.GetKey(KeyCode.LeftShift))
+        {
+            MoveEnd();
+        }
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
@@ -110,7 +127,7 @@ public class Player : MonoBehaviour, ICharacter
             startTimer -= Time.deltaTime;
             if (startTimer <= 0)
             {
-                bgm.gameObject.SetActive(true);
+                Reference.Instance.bgm.gameObject.SetActive(true);
                 image.enabled = true;
             }
             else
@@ -167,6 +184,12 @@ public class Player : MonoBehaviour, ICharacter
             {
                 transform.position += moveSpeed * Time.deltaTime;
 
+                var pos = Rect.anchoredPosition;
+                if (pos.x > 149)
+                {
+                    pos.x = 149;
+                }
+                Rect.anchoredPosition = pos;
 
                 var stagePos = Reference.Instance.stage.anchoredPosition;
                 stagePos.x = 0;
@@ -302,7 +325,7 @@ public class Player : MonoBehaviour, ICharacter
                     //ジャンプ攻撃
                     isAttacking = true;
                     image.sprite = attackSprite3;
-                    SoundManager.Instance.Play("attack2");
+                    SoundManager.Instance.Play("attack");
                     var enemyList = Util.GetEnemyList(attackJumpRange);
                     foreach (var enemy in enemyList)
                     {
@@ -367,7 +390,7 @@ public class Player : MonoBehaviour, ICharacter
         }
         else
         {
-            SoundManager.Instance.Play("attack2");
+            SoundManager.Instance.Play("attack");
             var enemyList = Util.GetEnemyList(attack2Range);
             foreach (var enemy in enemyList)
             {
@@ -393,7 +416,7 @@ public class Player : MonoBehaviour, ICharacter
     {
         Reference.Instance.IsGameOver = true;
         SoundManager.Instance.Play("damage");
-        bgm.gameObject.SetActive(false);
+        Reference.Instance.bgm.gameObject.SetActive(false);
         image.sprite = deadSprite;
         StartCoroutine(Dead());
     }
@@ -428,7 +451,45 @@ public class Player : MonoBehaviour, ICharacter
         yield return new WaitForSeconds(1.5f); // 少し待機
 
 
-        SceneManager.LoadScene("LoadScene");
+        Reference.Instance.isGameOverEnd = true;
     }
 
+    public void MoveEnd()
+    {
+        Reference.Instance.IsClear = true;
+
+        StartCoroutine(MoveEndIE());
+    }
+
+    private IEnumerator MoveEndIE()
+    {
+
+        var pos = rect.anchoredPosition;
+        if (isJumping)
+        {
+            while (pos.y > floorHeight)
+            {
+                currentJumpVelocity -= gravity * Time.deltaTime;
+                pos.y += currentJumpVelocity * Time.deltaTime;
+                rect.anchoredPosition = pos;
+                yield return null;
+            }
+            pos.y = floorHeight;
+            rect.anchoredPosition = pos;
+            currentJumpVelocity = 0;
+            isAttacking = false;
+            spriteChangeTimer = 0;
+            HandleNormalSpriteAnimation();
+        }
+
+        while (pos.x < 175)
+        {
+            transform.position += moveSpeed * Time.deltaTime;
+            HandleNormalSpriteAnimation();
+            pos = rect.anchoredPosition;
+            yield return null;
+        }
+
+        SceneManager.LoadScene("BossScene");
+    }
 }
