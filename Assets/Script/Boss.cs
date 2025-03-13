@@ -41,6 +41,7 @@ public class Boss : MonoBehaviour, ICharacter
     [SerializeField] int floorHeight = 10;
 
     int attakKind = 0;
+    int attackState = 1;
     float attack2Speed = 0;
     bool isAttack2Stop = false;
     Vector3 dir;
@@ -123,7 +124,17 @@ public class Boss : MonoBehaviour, ICharacter
         }
         else
         {
-            RandomAttackKind();
+            if (attackState == 1)
+            {
+                attackState = 2;
+                RandomAttackKind();
+            }
+            else if (attackState == 2)
+            {
+                attackState = 3;
+                //2連続で腕攻撃だったら次は突進
+                attakKind = 1;
+            }
             isAttack = false;
             spriteChangeTimer = 0;
         }
@@ -193,7 +204,9 @@ public class Boss : MonoBehaviour, ICharacter
         }
         else
         {
-            RandomAttackKind();
+            attackState = 1;
+            attakKind = 0;
+
             isAttack = false;
             spriteChangeTimer = 0;
         }
@@ -277,7 +290,7 @@ public class Boss : MonoBehaviour, ICharacter
         if (hp <= 0)
         {
             Reference.Instance.bgm.gameObject.SetActive(false);
-            Reference.Instance.AddScore(800);
+            Reference.Instance.AddScore(3500);
             StartCoroutine(Dead());
         }
     }
@@ -311,11 +324,11 @@ public class Boss : MonoBehaviour, ICharacter
             yield return null;
         }
 
-        yield return new WaitForSeconds(0.5f); // 少し待機
-        gameObject.SetActive(false); // オブジェクトを非表示にする
-
+        yield return new WaitForSeconds(2f); // 少し待機
         Reference.Instance.completePanel.SetActive(true);
-        yield return new WaitForSeconds(10f); // 少し待機
+        SoundManager.Instance.Play("stage_clear");
+
+        yield return new WaitForSeconds(4f); // 少し待機
 
         SceneManager.LoadScene("LoadScene");
     }
