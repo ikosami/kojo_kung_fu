@@ -10,7 +10,7 @@ public class StageManager : MonoBehaviour
     [SerializeField] List<StageData> stageDataList;
     [SerializeField] List<EnemyData> enemyDataList;
 
-    int timing = -193;
+    int timing = -144;
     int index = 0; // 生成するタイミングのインデックス
 
     void Update()
@@ -95,11 +95,3 @@ class PopData
     public int SpawnTime;
 }
 
-
-[Serializable]
-class EnemyData
-{
-    public string name;
-    public Enemy prefab;
-    public int offset;
-}

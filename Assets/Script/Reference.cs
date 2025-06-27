@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.InputSystem.XR;
 
 public class Reference : MonoBehaviour
 {
@@ -18,6 +19,7 @@ public class Reference : MonoBehaviour
         instance = this;
 
         score = PlayerPrefs.GetInt("score", 0);
+        hp = PlayerPrefs.GetInt("hp", 0);
         AddScore(score);
     }
     public RectTransform stage;
@@ -29,16 +31,20 @@ public class Reference : MonoBehaviour
     public const int SizeX = 160;
     public const int SizeY = 120;
     public List<ICharacter> enemyList = new List<ICharacter>();
-    public TextMeshProUGUI scoreText;
     public GameObject completePanel;
     public AudioSource bgm;
+
+
     public int score = 0;
+    public int hp = 5;
     public bool IsClear = false;
+    [SerializeField] UIController uiController;
 
     public void AddScore(int value)
     {
         score += value;
-        scoreText.text = $"1Player--{score:000000}";
+        uiController.scoreText.text = $"1Player--{score:000000}";
+
         PlayerPrefs.SetInt("score", score);
     }
     public int GetScore()
