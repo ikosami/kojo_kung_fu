@@ -54,6 +54,7 @@ public class Enemy : MonoBehaviour, ICharacter
 
     [Header("攻撃発生の距離")]
     [SerializeField] float attackStartDistance = 50f;
+    [SerializeField] float backDistance = -1f;
     Vector3 dir; // 移動方向
 
     /// <summary>
@@ -206,16 +207,30 @@ public class Enemy : MonoBehaviour, ICharacter
             }
         }
 
+
+
         // 攻撃中は移動しない
         if (isAttack) { return; }
 
-        // 通常移動
-        transform.position += dir * Time.deltaTime;
+        // 後退処理
+        float distanceToPlayer = Mathf.Abs(player.transform.position.x - transform.position.x);
 
-        // 攻撃範囲に入ったら攻撃開始
-        if (!isJumpEnemy)
+        bool isBacking = (backDistance > 0 && distanceToPlayer <= backDistance);
+        if (isBacking)
         {
-            if (Mathf.Abs(player.transform.position.x - transform.position.x) < attackStartDistance)
+            // 向きは変えずに後退
+            transform.position -= dir * Time.deltaTime;
+        }
+        else
+        {
+            // 通常移動
+            transform.position += dir * Time.deltaTime;
+        }
+
+        // 後退中でなければ攻撃判定
+        if (!isJumpEnemy && !isBacking)
+        {
+            if (distanceToPlayer < attackStartDistance)
             {
                 isAttack = true;
                 isAttackDamage = true;

@@ -15,7 +15,7 @@ public class UIController : MonoBehaviour
 
     void SetStage(int stage)
     {
-        stageText.text = $"STAGE-{stage}-1";
+        stageText.text = $"STAGE-{stage}";
     }
 
     public void SetHp(int hp)

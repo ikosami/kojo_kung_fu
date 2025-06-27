@@ -382,3 +382,4 @@ MonoBehaviour:
   jumpWaitTime: 2
   jumpTimer: 0
   attackStartDistance: 150
+  backDistance: 125
