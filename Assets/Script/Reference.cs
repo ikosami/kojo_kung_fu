@@ -34,11 +34,13 @@ public class Reference : MonoBehaviour
     public GameObject completePanel;
     public AudioSource bgm;
 
+    public EnemyDataList enemyDataList;
+    public StageDataList stageDataList;
 
     public int score = 0;
     public int hp = 5;
     public bool IsClear = false;
-    [SerializeField] UIController uiController;
+    public UIController uiController;
 
     public void AddScore(int value)
     {

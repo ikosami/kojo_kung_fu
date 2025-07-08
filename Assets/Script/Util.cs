@@ -11,6 +11,7 @@ public class Util : MonoBehaviour
     {
         return GetEnemyList(target, Vector2.zero);
     }
+    // 敵に当たっているかどうか 
     public static List<ICharacter> GetEnemyList(RectTransform target, Vector2 offset)
     {
         List<ICharacter> overlappingImages = new List<ICharacter>();
@@ -31,6 +32,7 @@ public class Util : MonoBehaviour
         return overlappingImages;
     }
 
+    /// プレイヤーと当たっているかどうかを判定する
     internal static bool IsHitPlayer(RectTransform target)
     {
         List<ICharacter> overlappingImages = new List<ICharacter>();

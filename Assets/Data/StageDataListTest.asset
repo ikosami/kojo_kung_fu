@@ -1,0 +1,59 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 85ccda6be2a41a8459580058a37f9a7a, type: 3}
+  m_Name: StageDataListTest
+  m_EditorClassIdentifier: 
+  stageDataList:
+  - popEnemy:
+    - EnemyIndex: 6
+      SpawnTime: 0
+    IsStageEnd: 0
+  - popEnemy:
+    - EnemyIndex: 0
+      SpawnTime: 0
+    IsStageEnd: 0
+  - popEnemy:
+    - EnemyIndex: 1
+      SpawnTime: 0
+    IsStageEnd: 0
+  - popEnemy:
+    - EnemyIndex: 2
+      SpawnTime: 0
+    IsStageEnd: 0
+  - popEnemy:
+    - EnemyIndex: 0
+      SpawnTime: 0
+    - EnemyIndex: 0
+      SpawnTime: 1
+    IsStageEnd: 0
+  - popEnemy:
+    - EnemyIndex: 0
+      SpawnTime: 0
+    - EnemyIndex: 5
+      SpawnTime: 1
+    - EnemyIndex: 2
+      SpawnTime: 2
+    IsStageEnd: 0
+  - popEnemy:
+    - EnemyIndex: 0
+      SpawnTime: 0
+    - EnemyIndex: 1
+      SpawnTime: 0
+    - EnemyIndex: 3
+      SpawnTime: 1
+    - EnemyIndex: 4
+      SpawnTime: 2
+    - EnemyIndex: 4
+      SpawnTime: 2
+    IsStageEnd: 0
+  - popEnemy: []
+    IsStageEnd: 1

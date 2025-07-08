@@ -7,11 +7,27 @@ public class StageManager : MonoBehaviour
 {
 
     [SerializeField] RectTransform stage;
-    [SerializeField] List<StageData> stageDataList;
-    [SerializeField] List<EnemyData> enemyDataList;
+    public int stageNum;
+    List<StageEntityData> stageDataList;
 
     int timing = -144;
     int index = 0; // 生成するタイミングのインデックス
+
+    private void Start()
+    {
+        SetStage(stageNum);
+    }
+
+    public void SetStage(int num)
+    {
+        stageNum = num;
+        var stageData = Reference.Instance.stageDataList.List.Find(x => x.StageNum == num);
+        stageDataList = stageData.stageDataList;
+
+        Reference.Instance.uiController.SetStage(num);
+        Reference.Instance.uiController.StageBackFrontImage.sprite = stageData.stageFrontSprite;
+        Reference.Instance.uiController.StageBackImage.sprite = stageData.stageBackSprite;
+    }
 
     void Update()
     {
@@ -37,6 +53,7 @@ public class StageManager : MonoBehaviour
             Reference.Instance.player.MoveEnd();
         }
 
+        var enemyDataList = Reference.Instance.enemyDataList.enemyDataList;
         foreach (var popEnemy in stageData.popEnemy)
         {
             var enemyPopData = enemyDataList[popEnemy.EnemyIndex];
@@ -79,19 +96,4 @@ public class StageManager : MonoBehaviour
     }
 }
 
-
-[Serializable]
-class StageData
-{
-    public List<PopData> popEnemy;
-
-    public bool IsStageEnd = false;
-}
-
-[Serializable]
-class PopData
-{
-    public int EnemyIndex;
-    public int SpawnTime;
-}
 

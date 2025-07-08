@@ -1,6 +1,8 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
+using static UnityEditor.PlayerSettings;
 
 /// <summary>
 /// 敵キャラクターの挙動を制御するクラス。
@@ -11,15 +13,17 @@ public class Enemy : MonoBehaviour, ICharacter
     // ICharacterインターフェース実装：自身のGameObjectを返す
     public GameObject GameObject => gameObject;
 
-    [SerializeField] RectTransform rect; // 敵のUI座標
+    [SerializeField] protected RectTransform rect; // 敵のUI座標
     // ICharacterインターフェース実装：自身のRectTransformを返す
     public RectTransform Rect => rect;
 
-    [SerializeField] Image image; // 敵の画像コンポーネント
-    [SerializeField] Sprite normalSprite1; // 通常時スプライト1
-    [SerializeField] Sprite normalSprite2; // 通常時スプライト2
-    [SerializeField] Sprite attackSprite1; // 攻撃時スプライト
-    private float spriteChangeTimer = 0f; // スプライト切り替え用タイマー
+    [SerializeField] protected Image image; // 敵の画像コンポーネント
+    [Space]
+    [SerializeField] protected Sprite normalSprite1; // 通常時スプライト1
+    [SerializeField] protected Sprite normalSprite2; // 通常時スプライト2
+
+    [SerializeField] protected Sprite attackSprite1; // 攻撃時スプライト
+    protected float spriteChangeTimer = 0f; // スプライト切り替え用タイマー
     [SerializeField] private float spriteChangeInterval = 0.5f; // スプライト切り替え間隔
     private bool isNormalSprite = true; // 現在のスプライトがnormalSprite1かどうか
 
@@ -28,34 +32,34 @@ public class Enemy : MonoBehaviour, ICharacter
     // ICharacterインターフェース実装：当たり判定用のRectTransform
     public RectTransform BodyColRect => bodyRange;
 
-    [SerializeField] RectTransform attackRange;   // 攻撃判定範囲
-    [SerializeField] RectTransform attackRange2;  // ジャンプ攻撃用範囲
-    [SerializeField] RectTransform bodyRange;     // 本体当たり判定範囲
+    [SerializeField] protected RectTransform attackRange;   // 攻撃判定範囲
+    [SerializeField] protected RectTransform attackRange2;  // ジャンプ攻撃用範囲
+    [SerializeField] protected RectTransform bodyRange;     // 本体当たり判定範囲
 
-    [SerializeField] Vector3 moveSpeed = new Vector3(0.4f, 0, 0); // 移動速度
+    [SerializeField] protected Vector3 moveSpeed = new Vector3(0.4f, 0, 0); // 移動速度
 
     // 攻撃状態フラグ
-    bool isAttack = false;
-    [SerializeField] float attackTime = 0; // 攻撃経過時間
+    protected bool isAttack = false;
+    [SerializeField] protected float attackTime = 0; // 攻撃経過時間
 
     [SerializeField] int hpMax = 3; // 最大HP
     [SerializeField] int hp = 3;    // 現在HP
-    // 死亡判定
-    bool isDead { get { return hp <= 0; } }
-    float damageWaitTime = 0; // ダメージ演出中の待機時間
+                                    // 死亡判定
+    protected bool isDead { get { return hp <= 0; } }
+    protected float damageWaitTime = 0; // ダメージ演出中の待機時間
 
-    [SerializeField] bool isJumpEnemy = false; // ジャンプする敵かどうか
-    private float currentJumpVelocity = 0f;    // 現在のジャンプ速度
-    [SerializeField] float maxJumpVelocity = 6f; // ジャンプ初速度
-    [SerializeField] float gravity = 0.2f;       // 重力加速度
-    [SerializeField] int floorHeight = 10;       // 床の高さ
-    [SerializeField] float jumpWaitTime = 2;     // ジャンプ間隔
-    [SerializeField] float jumpTimer = 0;        // ジャンプ用タイマー
+    [SerializeField] protected bool isJumpEnemy = false; // ジャンプする敵かどうか
+    protected float currentJumpVelocity = 0f;    // 現在のジャンプ速度
+    [SerializeField] protected float maxJumpVelocity = 6f; // ジャンプ初速度
+    [SerializeField] protected float gravity = 0.2f;       // 重力加速度
+    [SerializeField] protected int floorHeight = 10;       // 床の高さ
+    [SerializeField] protected float jumpWaitTime = 2;     // ジャンプ間隔
+    [SerializeField] protected float jumpTimer = 0;        // ジャンプ用タイマー
 
     [Header("攻撃発生の距離")]
-    [SerializeField] float attackStartDistance = 50f;
-    [SerializeField] float backDistance = -1f;
-    Vector3 dir; // 移動方向
+    [SerializeField] protected float attackStartDistance = 50f;
+    [SerializeField] protected float backDistance = -1f;
+    protected Vector3 dir; // 移動方向
 
     /// <summary>
     /// 初期化処理。HPを最大値にし、敵リストに自身を追加。
@@ -96,10 +100,6 @@ public class Enemy : MonoBehaviour, ICharacter
 
         // 移動処理
         Move();
-        var pos = rect.anchoredPosition;
-        // ジャンプ処理（未使用）
-        //HandleJump(ref pos);
-        rect.anchoredPosition = pos;
 
         // 攻撃処理
         HandleAttack();
@@ -108,13 +108,14 @@ public class Enemy : MonoBehaviour, ICharacter
         HandleNormalSpriteAnimation();
     }
 
-    bool isAttackDamage = false; // 攻撃ダメージ判定用フラグ
+    protected bool isAttackDamage = false; // 攻撃ダメージ判定用フラグ
 
     /// <summary>
     /// 攻撃アニメーションと攻撃判定の処理。
     /// </summary>
-    private void HandleAttack()
+    protected virtual void HandleAttack()
     {
+        //
         if (!isAttack) { return; }
 
         attackTime += Time.deltaTime;
@@ -154,56 +155,46 @@ public class Enemy : MonoBehaviour, ICharacter
         }
     }
 
+    public bool IsGround
+    {
+        get
+        {
+            var pos = rect.anchoredPosition;
+            return pos.y <= floorHeight;
+        }
+    }
+
     /// <summary>
     /// 移動・ジャンプ・攻撃開始判定の処理。
     /// </summary>
-    private void Move()
+    protected virtual void Move()
     {
-        var pos = rect.anchoredPosition;
-        var player = Reference.Instance.player;
-
-        // プレイヤーの位置に応じて移動方向・向きを決定
-        if (pos.y <= floorHeight)
+        // ジャンプ中は方向転換しない
+        if (!IsGround)
         {
-            if (player.transform.position.x > transform.position.x)
-            {
-                dir = moveSpeed;
-                transform.localScale = new Vector3(1, 1, 1);
-            }
-            else
-            {
-                dir = -moveSpeed;
-                transform.localScale = new Vector3(-1, 1, 1);
-            }
+            // プレイヤーの位置に応じて移動方向・向きを決定
+            LookPlayer();
         }
 
         // ジャンプ敵の場合のジャンプ処理
         if (isJumpEnemy)
         {
-            currentJumpVelocity -= gravity * Time.deltaTime;
-            pos.y += currentJumpVelocity * Time.deltaTime;
-            rect.anchoredPosition = pos;
+            JumpMove();
 
-            // ジャンプ攻撃判定
-            if (Util.IsHitPlayer(attackRange2))
-            {
-                Reference.Instance.player.TakeDamage(1);
-            }
 
             // 着地判定
-            if (pos.y <= floorHeight)
+            if (IsGround)
             {
-                pos.y = floorHeight;
-                rect.anchoredPosition = pos;
-                currentJumpVelocity = 0;
-
-                jumpTimer -= Time.deltaTime;
-                if (jumpTimer <= 0)
-                {
-                    jumpTimer = jumpWaitTime;
-                    currentJumpVelocity = maxJumpVelocity;
-                }
+                JumpEnd();
                 return;
+            }
+            else
+            {
+                // ジャンプ攻撃判定
+                if (Util.IsHitPlayer(attackRange2))
+                {
+                    Reference.Instance.player.TakeDamage(1);
+                }
             }
         }
 
@@ -213,9 +204,9 @@ public class Enemy : MonoBehaviour, ICharacter
         if (isAttack) { return; }
 
         // 後退処理
-        float distanceToPlayer = Mathf.Abs(player.transform.position.x - transform.position.x);
+        var isBacking = CheckBackMove();
 
-        bool isBacking = (backDistance > 0 && distanceToPlayer <= backDistance);
+
         if (isBacking)
         {
             // 向きは変えずに後退
@@ -227,15 +218,80 @@ public class Enemy : MonoBehaviour, ICharacter
             transform.position += dir * Time.deltaTime;
         }
 
-        // 後退中でなければ攻撃判定
+        // 後退中(攻撃判定より後ろ)でなければ攻撃判定
         if (!isJumpEnemy && !isBacking)
         {
+            //一定以上近い
+            float distanceToPlayer = GetPlayerDistance();
             if (distanceToPlayer < attackStartDistance)
             {
-                isAttack = true;
-                isAttackDamage = true;
-                attackTime = 0;
+                StartAttackFlg();
             }
+        }
+    }
+
+    protected void StartAttackFlg()
+    {
+        isAttack = true;
+        isAttackDamage = true;
+        attackTime = 0;
+    }
+
+    protected void JumpEnd()
+    {
+        var pos = rect.anchoredPosition;
+        pos.y = floorHeight;
+        rect.anchoredPosition = pos;
+        currentJumpVelocity = 0;
+
+        jumpTimer -= Time.deltaTime;
+        if (jumpTimer <= 0)
+        {
+            jumpTimer = jumpWaitTime;
+            currentJumpVelocity = maxJumpVelocity;
+        }
+    }
+
+    protected virtual void JumpMove()
+    {
+        currentJumpVelocity -= gravity * Time.deltaTime;
+
+        var pos = rect.anchoredPosition;
+        pos.y += currentJumpVelocity * Time.deltaTime;
+        rect.anchoredPosition = pos;
+    }
+
+    public float GetPlayerDistance()
+    {
+        var player = Reference.Instance.player;
+        float distanceToPlayer = Mathf.Abs(player.transform.position.x - transform.position.x);
+        return distanceToPlayer;
+    }
+
+
+    public bool CheckBackMove()
+    {
+        var player = Reference.Instance.player;
+        float distanceToPlayer = Mathf.Abs(player.transform.position.x - transform.position.x);
+
+        bool isBacking = (backDistance > 0 && distanceToPlayer <= backDistance);
+        return isBacking;
+    }
+
+    protected void LookPlayer()
+    {
+        var pos = rect.anchoredPosition;
+        var player = Reference.Instance.player;
+
+        if (player.transform.position.x > transform.position.x)
+        {
+            dir = moveSpeed;
+            transform.localScale = new Vector3(1, 1, 1);
+        }
+        else
+        {
+            dir = -moveSpeed;
+            transform.localScale = new Vector3(-1, 1, 1);
         }
     }
 

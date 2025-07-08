@@ -31,3 +31,12 @@ MonoBehaviour:
   - name: "\u30E2\u30EB\u30D5\u30A9\u30F3\u5DE6\u30FB\u9AD8\u901F"
     prefab: {fileID: 7515143485359139985, guid: fb21dce00e77b6f4da0f885b62bb8ca8, type: 3}
     offset: -75
+  - name: "\u30E2\u30EB\u30D5\u30A9\u30F3\u53F3\u3000\u69CD"
+    prefab: {fileID: 1336981434795988195, guid: d3b1358bac72c7044a3381d2ca954692, type: 3}
+    offset: 75
+  - name: "\u30C7\u30EB\u30D3\u30EB\u53F3"
+    prefab: {fileID: 1969707850671677924, guid: 88fee585d8961404fafe9e79d6271dee, type: 3}
+    offset: 75
+  - name: "\u30C7\u30EB\u30D3\u30EB\u53F3 \u30B8\u30E3\u30F3\u30D7"
+    prefab: {fileID: 6193553680967066747, guid: 6ab275355b7e55f4ca0ae5a0272e73db, type: 3}
+    offset: 75

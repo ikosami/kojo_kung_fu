@@ -4,16 +4,14 @@ using UnityEngine.UI;
 
 public class UIController : MonoBehaviour
 {
+    public Image StageBackFrontImage;
+    public Image StageBackImage;
+
     public TextMeshProUGUI stageText;
     public TextMeshProUGUI scoreText;
     public Image[] hpBars;
 
-    private void Start()
-    {
-        SetStage(2);
-    }
-
-    void SetStage(int stage)
+    public void SetStage(int stage)
     {
         stageText.text = $"STAGE-{stage}";
     }

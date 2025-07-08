@@ -27,8 +27,15 @@ public class Player : MonoBehaviour, ICharacter
     [SerializeField] Sprite jumpSprite;
     [SerializeField] Sprite deadSprite;
 
-    public RectTransform BodyColRect => bodyRange;
+    [SerializeField] Sprite slidingSprite;
+    bool isSliding = false;
+    float slidingTimer = 0f;
+    float slidingWaitTimer = 0;
 
+    public RectTransform BodyColRect => isSliding ? bodySlidingRange : bodyRange;
+
+    [SerializeField] RectTransform bodySlidingRange;
+    [SerializeField] RectTransform attackSlidingRange;
 
     [SerializeField] RectTransform bodyRange;
     [SerializeField] RectTransform attack1Range;
@@ -110,6 +117,7 @@ public class Player : MonoBehaviour, ICharacter
 
         if (Reference.Instance.isPause) return;
 
+        //出現待ち
         if (initTimer > 0)
         {
             initTimer -= Time.deltaTime;
@@ -122,6 +130,7 @@ public class Player : MonoBehaviour, ICharacter
                 return;
             }
         }
+        //出現中の点滅
         if (startTimer > 0)
         {
             startTimer -= Time.deltaTime;
@@ -153,11 +162,35 @@ public class Player : MonoBehaviour, ICharacter
 
     private void Move()
     {
+        if (isSliding)
+        {
+            var enemyList = Util.GetEnemyList(attackSlidingRange);
+            foreach (var enemy in enemyList)
+            {
+                enemy.TakeDamage(1);
+            }
+            MovePos(moveSpeed * transform.localScale.x * 1.5f);
+            slidingTimer -= Time.deltaTime;
+            if (slidingTimer <= 0f)
+            {
+                isSliding = false;
+                // スライディング終了後のスプライトに戻す
+                HandleNormalSpriteAnimation();
+                slidingWaitTimer = 0.5f;
+            }
+            return;
+        }
+        else
+        {
+            slidingWaitTimer -= Time.deltaTime;
+        }
+
         if (isAttacking && !isJumping)
         {
             return;
         }
 
+        //右移動
         if (Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.D))
         {
             var enemyList = Util.GetEnemyList(bodyRange);
@@ -172,34 +205,15 @@ public class Player : MonoBehaviour, ICharacter
             }
             if (isEnemyRight) return;
 
-            if (isBackMove)
-            {
-                Reference.Instance.stage.transform.position -= moveSpeed * Time.deltaTime;
-
-                var pos = Rect.anchoredPosition;
-                pos.x = centerPos;
-                Rect.anchoredPosition = pos;
-            }
-            else
-            {
-                transform.position += moveSpeed * Time.deltaTime;
-
-                var pos = Rect.anchoredPosition;
-                if (pos.x > 149)
-                {
-                    pos.x = 149;
-                }
-                Rect.anchoredPosition = pos;
-
-                var stagePos = Reference.Instance.stage.anchoredPosition;
-                stagePos.x = 0;
-                Reference.Instance.stage.anchoredPosition = stagePos;
-            }
-
             transform.localScale = new Vector3(1, 1, 1);
+            MovePos(moveSpeed * transform.localScale.x);
+
         }
+
+        //左移動
         if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A))
         {
+            //敵が左側にいるかどうか
             var enemyList = Util.GetEnemyList(bodyRange);
             bool isEnemyLeft = false;
             foreach (var enemy in enemyList)
@@ -212,30 +226,40 @@ public class Player : MonoBehaviour, ICharacter
             }
             if (isEnemyLeft) return;
 
-            if (isBackMove)
-            {
-                Reference.Instance.stage.transform.position += moveSpeed * Time.deltaTime;
-
-                var pos = Rect.anchoredPosition;
-                pos.x = centerPos;
-                Rect.anchoredPosition = pos;
-            }
-            else
-            {
-                transform.position -= moveSpeed * Time.deltaTime;
-
-                var pos = Rect.anchoredPosition;
-                if (pos.x < 11)
-                {
-                    pos.x = 11;
-                }
-                Rect.anchoredPosition = pos;
-
-                var stagePos = Reference.Instance.stage.anchoredPosition;
-                stagePos.x = 0;
-                Reference.Instance.stage.anchoredPosition = stagePos;
-            }
             transform.localScale = new Vector3(-1, 1, 1);
+            MovePos(moveSpeed * transform.localScale.x);
+        }
+    }
+
+    private void MovePos(Vector3 move)
+    {
+        if (isBackMove)
+        {
+            Reference.Instance.stage.transform.position -= move * Time.deltaTime;
+
+            var pos = Rect.anchoredPosition;
+            pos.x = centerPos;
+            Rect.anchoredPosition = pos;
+        }
+        else
+        {
+
+            transform.position += move * Time.deltaTime;
+
+            var pos = Rect.anchoredPosition;
+            if (pos.x < 11)
+            {
+                pos.x = 11;
+            }
+            if (pos.x > 149)
+            {
+                pos.x = 149;
+            }
+            Rect.anchoredPosition = pos;
+
+            var stagePos = Reference.Instance.stage.anchoredPosition;
+            stagePos.x = 0;
+            Reference.Instance.stage.anchoredPosition = stagePos;
         }
     }
 
@@ -276,6 +300,10 @@ public class Player : MonoBehaviour, ICharacter
                 return;
             }
         }
+        else if (isSliding)
+        {
+            //スライティング中はジャンプできない
+        }
         else
         {
             if ((Input.GetKeyDown(KeyCode.X) || Input.GetKeyDown(KeyCode.K)))
@@ -308,9 +336,17 @@ public class Player : MonoBehaviour, ICharacter
         image.sprite = isNormalSprite ? normalSprite1 : normalSprite2;
     }
 
+    bool IsAttackInput => Input.GetKeyDown(KeyCode.Z) || Input.GetKeyDown(KeyCode.J);
+
     private void HandleAttack()
     {
-        if (Input.GetKeyDown(KeyCode.Z) || Input.GetKeyDown(KeyCode.J))
+        //スライティング中は追加で攻撃できない
+        if (isSliding)
+        {
+            return;
+        }
+
+        if (IsAttackInput)
         {
             // 連打防止（前回の攻撃から一定時間経過しないと次の攻撃ができない）
             if (Time.time < lastAttackTime + attackCooldown)
@@ -318,7 +354,21 @@ public class Player : MonoBehaviour, ICharacter
                 return;
             }
 
-            if (isJumping)
+            if (Input.GetKey(KeyCode.DownArrow))
+            {
+                if (slidingWaitTimer > 0)
+                {
+                    return;
+                }
+
+
+                isSliding = true;
+                image.sprite = slidingSprite;
+                slidingTimer = 0.5f;
+                SoundManager.Instance.Play("attack");
+
+            }
+            else if (isJumping)
             {
                 if (!isAttacking)
                 {
