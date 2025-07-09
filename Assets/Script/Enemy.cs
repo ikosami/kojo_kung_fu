@@ -170,7 +170,7 @@ public class Enemy : MonoBehaviour, ICharacter
     protected virtual void Move()
     {
         // ジャンプ中は方向転換しない
-        if (!IsGround)
+        if (IsGround)
         {
             // プレイヤーの位置に応じて移動方向・向きを決定
             LookPlayer();
@@ -186,6 +186,7 @@ public class Enemy : MonoBehaviour, ICharacter
             if (IsGround)
             {
                 JumpEnd();
+                TryJump();
                 return;
             }
             else
@@ -243,7 +244,10 @@ public class Enemy : MonoBehaviour, ICharacter
         pos.y = floorHeight;
         rect.anchoredPosition = pos;
         currentJumpVelocity = 0;
+    }
 
+    protected void TryJump()
+    {
         jumpTimer -= Time.deltaTime;
         if (jumpTimer <= 0)
         {

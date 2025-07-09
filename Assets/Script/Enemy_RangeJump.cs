@@ -16,14 +16,25 @@ public class Enemy_RangeJump : Enemy_Range, ICharacter
             // プレイヤーの位置に応じて移動方向・向きを決定
             LookPlayer();
             JumpEnd();
-            if (currentJumpVelocity == maxJumpVelocity)
+            float distanceToPlayer = GetPlayerDistance();
+            if (distanceToPlayer > attackStartDistance)
             {
-                StartAttackFlg();
+                transform.position += dir * Time.deltaTime;
             }
-            return;
+            else
+            {
+                TryJump();
+                if (currentJumpVelocity == maxJumpVelocity)
+                {
+                    StartAttackFlg();
+                }
+            }
+        }
+        else
+        {
+            transform.position += dir * Time.deltaTime;
         }
 
-        transform.position += dir * Time.deltaTime;
     }
 
 

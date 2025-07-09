@@ -17,11 +17,11 @@ MonoBehaviour:
   StageNum: 2
   stageDataList:
   - popEnemy:
-    - EnemyIndex: 8
+    - EnemyIndex: 6
       SpawnTime: 0
     IsStageEnd: 0
   - popEnemy:
-    - EnemyIndex: 0
+    - EnemyIndex: 8
       SpawnTime: 0
     IsStageEnd: 0
   - popEnemy:

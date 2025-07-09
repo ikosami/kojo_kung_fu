@@ -364,7 +364,7 @@ public class Player : MonoBehaviour, ICharacter
 
                 isSliding = true;
                 image.sprite = slidingSprite;
-                slidingTimer = 0.5f;
+                slidingTimer = 1f;
                 SoundManager.Instance.Play("attack");
 
             }
