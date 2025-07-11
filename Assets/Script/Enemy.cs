@@ -24,8 +24,8 @@ public class Enemy : MonoBehaviour, ICharacter
 
     [SerializeField] protected Sprite attackSprite1; // 攻撃時スプライト
     protected float spriteChangeTimer = 0f; // スプライト切り替え用タイマー
-    [SerializeField] private float spriteChangeInterval = 0.5f; // スプライト切り替え間隔
-    private bool isNormalSprite = true; // 現在のスプライトがnormalSprite1かどうか
+    [SerializeField] protected float spriteChangeInterval = 0.5f; // スプライト切り替え間隔
+    protected bool isNormalSprite = true; // 現在のスプライトがnormalSprite1かどうか
 
     [SerializeField] Sprite damageSprite; // ダメージ時スプライト
 
@@ -79,7 +79,7 @@ public class Enemy : MonoBehaviour, ICharacter
     /// 毎フレーム呼ばれる更新処理。
     /// ゲームの状態やダメージ演出、移動・攻撃・アニメーションを制御。
     /// </summary>
-    void Update()
+    protected virtual void Update()
     {
         // ゲームクリア・ポーズ・ゲームオーバー時は処理しない
         if (Reference.Instance.IsClear) return;

@@ -21,7 +21,7 @@ MonoBehaviour:
       SpawnTime: 0
     IsStageEnd: 0
   - popEnemy:
-    - EnemyIndex: 8
+    - EnemyIndex: 6
       SpawnTime: 0
     IsStageEnd: 0
   - popEnemy:

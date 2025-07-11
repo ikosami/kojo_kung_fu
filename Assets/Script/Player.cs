@@ -30,6 +30,7 @@ public class Player : MonoBehaviour, ICharacter
     [SerializeField] Sprite slidingSprite;
     bool isSliding = false;
     float slidingTimer = 0f;
+    float slidingStopTime = 0;
     float slidingWaitTimer = 0;
 
     public RectTransform BodyColRect => isSliding ? bodySlidingRange : bodyRange;
@@ -160,18 +161,27 @@ public class Player : MonoBehaviour, ICharacter
 
     }
 
+
+
     private void Move()
     {
         if (isSliding)
         {
-            var enemyList = Util.GetEnemyList(attackSlidingRange);
-            foreach (var enemy in enemyList)
+            if (slidingStopTime <= 0)
             {
-                enemy.TakeDamage(1);
+                var enemyList = Util.GetEnemyList(attackSlidingRange);
+                foreach (var enemy in enemyList)
+                {
+                    enemy.TakeDamage(1);
+                    slidingStopTime = Mathf.Min(0.2f, slidingTimer);
+                    slidingTimer = 0;
+                    break;
+                }
+                MovePos(moveSpeed * transform.localScale.x * 1.5f);
             }
-            MovePos(moveSpeed * transform.localScale.x * 1.5f);
             slidingTimer -= Time.deltaTime;
-            if (slidingTimer <= 0f)
+            slidingStopTime -= Time.deltaTime;
+            if (slidingTimer <= 0f && slidingStopTime <= 0f)
             {
                 isSliding = false;
                 // スライディング終了後のスプライトに戻す
@@ -267,7 +277,7 @@ public class Player : MonoBehaviour, ICharacter
     {
         if (isJumping)
         {
-            if ((Input.GetKey(KeyCode.Z) || Input.GetKey(KeyCode.J)) && !isFalling && pos.y < maxJumpHeight)
+            if (IsAttackInput && !isFalling && pos.y < maxJumpHeight)
             {
                 currentJumpVelocity = Mathf.Min(currentJumpVelocity + 0.2f, maxJumpVelocity);
                 pos.y += currentJumpVelocity * Time.deltaTime;
@@ -335,6 +345,14 @@ public class Player : MonoBehaviour, ICharacter
         }
         image.sprite = isNormalSprite ? normalSprite1 : normalSprite2;
     }
+    public virtual bool IsGround
+    {
+        get
+        {
+            var pos = rect.anchoredPosition;
+            return pos.y <= floorHeight;
+        }
+    }
 
     bool IsAttackInput => Input.GetKeyDown(KeyCode.Z) || Input.GetKeyDown(KeyCode.J);
 
@@ -354,7 +372,7 @@ public class Player : MonoBehaviour, ICharacter
                 return;
             }
 
-            if (Input.GetKey(KeyCode.DownArrow) && Reference.Instance.StageNum >= 2)
+            if (Input.GetKey(KeyCode.DownArrow) && Reference.Instance.StageNum >= 2 && IsGround)
             {
                 if (slidingWaitTimer > 0)
                 {
@@ -365,6 +383,7 @@ public class Player : MonoBehaviour, ICharacter
                 isSliding = true;
                 image.sprite = slidingSprite;
                 slidingTimer = 1f;
+                slidingStopTime = 0;
                 SoundManager.Instance.Play("attack");
 
             }

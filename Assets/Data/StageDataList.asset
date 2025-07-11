@@ -15,4 +15,5 @@ MonoBehaviour:
   List:
   - {fileID: 11400000, guid: 6da026d1648fb0d4b976f5cfbd36bd36, type: 2}
   - {fileID: 11400000, guid: c5534592352670d4fa74e9d489f91c1f, type: 2}
+  enemyDataList: {fileID: 0}
   memo: 
