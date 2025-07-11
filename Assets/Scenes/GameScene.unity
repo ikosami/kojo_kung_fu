@@ -512,9 +512,9 @@ Camera:
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0
-    y: 0.010204081
+    y: 0.1
     width: 1
-    height: 0.9795918
+    height: 0.8
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 34
@@ -986,20 +986,12 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 628329494}
     m_Modifications:
-    - target: {fileID: 1117319328552386580, guid: 1e8965e71ff5f4f40804f2858ba3278a, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 2652565706124959358, guid: 1e8965e71ff5f4f40804f2858ba3278a, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2652565706124959358, guid: 1e8965e71ff5f4f40804f2858ba3278a, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2652565706124959358, guid: 1e8965e71ff5f4f40804f2858ba3278a, type: 3}
-      propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2652565706124959358, guid: 1e8965e71ff5f4f40804f2858ba3278a, type: 3}
@@ -1023,10 +1015,6 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8022498237825041159, guid: 1e8965e71ff5f4f40804f2858ba3278a, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8022498237825041159, guid: 1e8965e71ff5f4f40804f2858ba3278a, type: 3}
       propertyPath: m_AnchoredPosition.x
       value: 0
       objectReference: {fileID: 0}
@@ -1040,10 +1028,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8180726418650029680, guid: 1e8965e71ff5f4f40804f2858ba3278a, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8180726418650029680, guid: 1e8965e71ff5f4f40804f2858ba3278a, type: 3}
-      propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8180726418650029680, guid: 1e8965e71ff5f4f40804f2858ba3278a, type: 3}
@@ -1080,11 +1064,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9163816253430862885, guid: 1e8965e71ff5f4f40804f2858ba3278a, type: 3}
       propertyPath: m_SizeDelta.x
-      value: -43.755096
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9163816253430862885, guid: 1e8965e71ff5f4f40804f2858ba3278a, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 0.0000076293945
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9163816253430862885, guid: 1e8965e71ff5f4f40804f2858ba3278a, type: 3}
       propertyPath: m_LocalPosition.x

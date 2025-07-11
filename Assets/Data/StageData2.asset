@@ -17,46 +17,50 @@ MonoBehaviour:
   StageNum: 2
   stageDataList:
   - popEnemy:
-    - EnemyIndex: 9
+    - EnemyIndex: 8
       SpawnTime: 0
+    IsStageEnd: 0
+  - popEnemy:
+    - EnemyIndex: 0
+      SpawnTime: 0
+    - EnemyIndex: 9
+      SpawnTime: 1
     IsStageEnd: 0
   - popEnemy:
     - EnemyIndex: 6
       SpawnTime: 0
+    - EnemyIndex: 7
+      SpawnTime: 1
+    - EnemyIndex: 4
+      SpawnTime: 4
     IsStageEnd: 0
   - popEnemy:
-    - EnemyIndex: 1
+    - EnemyIndex: 8
       SpawnTime: 0
-    IsStageEnd: 0
-  - popEnemy:
-    - EnemyIndex: 2
-      SpawnTime: 0
-    IsStageEnd: 0
-  - popEnemy:
-    - EnemyIndex: 0
-      SpawnTime: 0
-    - EnemyIndex: 0
+    - EnemyIndex: 11
       SpawnTime: 1
     IsStageEnd: 0
   - popEnemy:
-    - EnemyIndex: 0
+    - EnemyIndex: 6
       SpawnTime: 0
-    - EnemyIndex: 5
+    - EnemyIndex: 4
       SpawnTime: 1
-    - EnemyIndex: 2
+    - EnemyIndex: 9
       SpawnTime: 2
     IsStageEnd: 0
   - popEnemy:
     - EnemyIndex: 0
       SpawnTime: 0
     - EnemyIndex: 1
-      SpawnTime: 0
-    - EnemyIndex: 3
       SpawnTime: 1
-    - EnemyIndex: 4
-      SpawnTime: 2
-    - EnemyIndex: 4
-      SpawnTime: 2
+    - EnemyIndex: 12
+      SpawnTime: 3
     IsStageEnd: 0
-  - popEnemy: []
-    IsStageEnd: 1
+  - popEnemy:
+    - EnemyIndex: 8
+      SpawnTime: 1
+    - EnemyIndex: 11
+      SpawnTime: 2
+    - EnemyIndex: 12
+      SpawnTime: 4
+    IsStageEnd: 0

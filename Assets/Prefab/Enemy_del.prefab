@@ -364,7 +364,7 @@ MonoBehaviour:
   bodyRange: {fileID: 6192401677413289611}
   moveSpeed: {x: 132, y: 0, z: 0}
   attackTime: 0
-  hpMax: 0
+  hpMax: 5
   hp: 5
   isJumpEnemy: 0
   maxJumpVelocity: 50
@@ -374,6 +374,7 @@ MonoBehaviour:
   jumpTimer: 0
   attackStartDistance: 200
   backDistance: -1
+  BaseHeight: -73
   bulletPrefab: {fileID: 929839833784847807, guid: 036b0fec1d0b57240a155fd70a9a5375, type: 3}
   bulletPoint: {fileID: 9084953141422319832}
   attackWaitSprite: {fileID: 21300000, guid: 38ad3b427ec29d14ab3d20a247e0e86a, type: 3}

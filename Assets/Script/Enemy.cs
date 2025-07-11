@@ -2,7 +2,6 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
-using static UnityEditor.PlayerSettings;
 
 /// <summary>
 /// 敵キャラクターの挙動を制御するクラス。
@@ -102,7 +101,6 @@ public class Enemy : MonoBehaviour, ICharacter
                 return;
             }
         }
-
         // 移動処理
         Move();
 

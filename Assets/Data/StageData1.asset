@@ -47,16 +47,10 @@ MonoBehaviour:
       SpawnTime: 2
     IsStageEnd: 0
   - popEnemy:
-    - EnemyIndex: 0
-      SpawnTime: 0
-    - EnemyIndex: 1
-      SpawnTime: 0
-    - EnemyIndex: 3
-      SpawnTime: 1
     - EnemyIndex: 4
-      SpawnTime: 2
-    - EnemyIndex: 4
+      SpawnTime: 0
+    - EnemyIndex: 5
+      SpawnTime: 0
+    - EnemyIndex: 6
       SpawnTime: 2
     IsStageEnd: 0
-  - popEnemy: []
-    IsStageEnd: 1
