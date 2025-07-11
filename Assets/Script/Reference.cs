@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using TMPro;
+﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem.XR;
 
 public class Reference : MonoBehaviour
 {
@@ -22,7 +19,7 @@ public class Reference : MonoBehaviour
         hp = PlayerPrefs.GetInt("hp", 0);
         AddScore(score);
     }
-    public RectTransform stage;
+    public RectTransform stageRect => uiController.StageRect;
     public bool isPause = false;
     public bool IsGameOver = false;
     public bool isGameOverEnd = false;
@@ -39,8 +36,18 @@ public class Reference : MonoBehaviour
 
     public int score = 0;
     public int hp = 5;
+    public int StageNum = 1; // 現在のステージ番号
     public bool IsClear = false;
     public UIController uiController;
+
+    public void SetStage(int stageNum)
+    {
+        StageNum = stageNum;
+        uiController.SetStage(stageNum);
+        //PlayerPrefs.SetInt("stage", stageNum);
+    }
+
+
 
     public void AddScore(int value)
     {

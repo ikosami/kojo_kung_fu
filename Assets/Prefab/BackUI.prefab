@@ -106,8 +106,8 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8536798315151764068}
-  - {fileID: 5855849643635327017}
   - {fileID: 6243959008227669294}
+  - {fileID: 5855849643635327017}
   m_Father: {fileID: 9163816253430862885}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -125,7 +125,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6243959008227669294}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: EnemyParent
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -145,10 +145,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 8158627252952896808}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 100, y: 100}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1312006592394173895
 GameObject:
@@ -1305,6 +1305,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e83c547f4fd61142a2500707306b0c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  StageRect: {fileID: 8158627252952896808}
+  EnemyParent: {fileID: 6243959008227669294}
   StageBackFrontImage: {fileID: 276106563731459887}
   StageBackImage: {fileID: 4116658142374315662}
   stageText: {fileID: 8356390773459321962}

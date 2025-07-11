@@ -73,7 +73,7 @@ public class Player : MonoBehaviour, ICharacter
     {
         get
         {
-            return !Reference.Instance.isBoss && (Reference.Instance.stage.anchoredPosition.x <= 0 && Rect.anchoredPosition.x >= centerPos);
+            return !Reference.Instance.isBoss && (Reference.Instance.stageRect.anchoredPosition.x <= 0 && Rect.anchoredPosition.x >= centerPos);
         }
     }
 
@@ -235,7 +235,7 @@ public class Player : MonoBehaviour, ICharacter
     {
         if (isBackMove)
         {
-            Reference.Instance.stage.transform.position -= move * Time.deltaTime;
+            Reference.Instance.stageRect.transform.position -= move * Time.deltaTime;
 
             var pos = Rect.anchoredPosition;
             pos.x = centerPos;
@@ -257,9 +257,9 @@ public class Player : MonoBehaviour, ICharacter
             }
             Rect.anchoredPosition = pos;
 
-            var stagePos = Reference.Instance.stage.anchoredPosition;
+            var stagePos = Reference.Instance.stageRect.anchoredPosition;
             stagePos.x = 0;
-            Reference.Instance.stage.anchoredPosition = stagePos;
+            Reference.Instance.stageRect.anchoredPosition = stagePos;
         }
     }
 
@@ -354,7 +354,7 @@ public class Player : MonoBehaviour, ICharacter
                 return;
             }
 
-            if (Input.GetKey(KeyCode.DownArrow))
+            if (Input.GetKey(KeyCode.DownArrow) && Reference.Instance.StageNum >= 2)
             {
                 if (slidingWaitTimer > 0)
                 {

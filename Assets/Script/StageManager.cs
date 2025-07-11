@@ -24,9 +24,7 @@ public class StageManager : MonoBehaviour
         var stageData = Reference.Instance.stageDataList.List.Find(x => x.StageNum == num);
         stageDataList = stageData.stageDataList;
 
-        Reference.Instance.uiController.SetStage(num);
-        Reference.Instance.uiController.StageBackFrontImage.sprite = stageData.stageFrontSprite;
-        Reference.Instance.uiController.StageBackImage.sprite = stageData.stageBackSprite;
+        Reference.Instance.SetStage(num);
     }
 
     void Update()
@@ -59,7 +57,7 @@ public class StageManager : MonoBehaviour
             var enemyPopData = enemyDataList[popEnemy.EnemyIndex];
             StartCoroutine(WaitAction(() =>
             {
-                Enemy newEnemy = Instantiate(enemyPopData.prefab, stage);
+                Enemy newEnemy = Instantiate(enemyPopData.prefab, Reference.Instance.uiController.EnemyParent);
                 RectTransform enemyRect = newEnemy.Rect;
                 if (enemyRect != null)
                 {

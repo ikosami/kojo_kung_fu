@@ -61,6 +61,8 @@ public class Enemy : MonoBehaviour, ICharacter
     [SerializeField] protected float backDistance = -1f;
     protected Vector3 dir; // 移動方向
 
+    public float BaseHeight = -73;
+
     /// <summary>
     /// 初期化処理。HPを最大値にし、敵リストに自身を追加。
     /// </summary>
@@ -68,6 +70,9 @@ public class Enemy : MonoBehaviour, ICharacter
     {
         hp = hpMax;
         Reference.Instance.enemyList.Add(this);
+        var pos = rect.anchoredPosition;
+        pos.y = BaseHeight;
+        rect.anchoredPosition = pos;
     }
 
     /// <summary>
@@ -155,7 +160,14 @@ public class Enemy : MonoBehaviour, ICharacter
         }
     }
 
-    public bool IsGround
+    public virtual bool CanLook
+    {
+        get
+        {
+            return IsGround;
+        }
+    }
+    public virtual bool IsGround
     {
         get
         {
@@ -170,7 +182,7 @@ public class Enemy : MonoBehaviour, ICharacter
     protected virtual void Move()
     {
         // ジャンプ中は方向転換しない
-        if (IsGround)
+        if (CanLook)
         {
             // プレイヤーの位置に応じて移動方向・向きを決定
             LookPlayer();
@@ -206,7 +218,6 @@ public class Enemy : MonoBehaviour, ICharacter
 
         // 後退処理
         var isBacking = CheckBackMove();
-
 
         if (isBacking)
         {

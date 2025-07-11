@@ -4,6 +4,8 @@ using UnityEngine.UI;
 
 public class UIController : MonoBehaviour
 {
+    public RectTransform StageRect;
+    public Transform EnemyParent;
     public Image StageBackFrontImage;
     public Image StageBackImage;
 
@@ -14,6 +16,11 @@ public class UIController : MonoBehaviour
     public void SetStage(int stage)
     {
         stageText.text = $"STAGE-{stage}";
+
+
+        var stageData = Reference.Instance.stageDataList.List.Find(x => x.StageNum == stage);
+        StageBackFrontImage.sprite = stageData.stageFrontSprite;
+        StageBackImage.sprite = stageData.stageBackSprite;
     }
 
     public void SetHp(int hp)

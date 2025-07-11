@@ -6,12 +6,17 @@ using UnityEngine.UI;
 /// 敵キャラクターの挙動を制御するクラス。
 /// 移動、攻撃、ダメージ処理、アニメーション、死亡処理などを担当する。
 /// </summary>
-public class Enemy_Range : Enemy, ICharacter
+public class Enemy_Fall : Enemy, ICharacter
 {
-    [SerializeField] Bullet bulletPrefab;
-    [SerializeField] Transform bulletPoint;
 
-    [SerializeField] protected Sprite attackWaitSprite;
+    public override bool CanLook
+    {
+        get
+        {
+            return !isAttack;
+        }
+    }
+
     protected override void HandleAttack()
     {
         //
@@ -22,18 +27,31 @@ public class Enemy_Range : Enemy, ICharacter
         if (attackTime < 0.5f)
         {
             // 攻撃前の溜め
-            if (image.sprite != attackWaitSprite)
-                image.sprite = attackWaitSprite;
+            if (image.sprite != normalSprite1)
+                image.sprite = normalSprite1;
         }
         else if (attackTime < 1f)
         {
+            //斜め下に移動d
+            transform.position += (dir + new Vector3(0, -100, 0)) * Time.deltaTime;
+            if (IsGround)
+            {
+                attackTime = 1f; // 攻撃時間をリセット
+            }
+            else
+            {
+
+                attackTime = 0.5f; // 攻撃時間をリセット       
+            }
+
             // 攻撃発動
             if (isAttackDamage)
             {
                 SoundManager.Instance.Play("enemy_attack");
-
-                var shuri = Instantiate(bulletPrefab, bulletPoint.transform.position, Quaternion.identity, Reference.Instance.stageRect);
-                shuri.move.x *= transform.localScale.x;
+                if (Util.IsHitPlayer(attackRange))
+                {
+                    Reference.Instance.player.TakeDamage(1);
+                }
                 isAttackDamage = false;
             }
             if (image.sprite != attackSprite1)

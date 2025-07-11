@@ -328,10 +328,13 @@ MonoBehaviour:
   bodyRange: {fileID: 6192401677413289611}
   moveSpeed: {x: 132, y: 0, z: 0}
   attackTime: 0
-  hp: 3
+  hpMax: 5
+  hp: 5
   isJumpEnemy: 0
   maxJumpVelocity: 50
   gravity: 100
   floorHeight: -73
   jumpWaitTime: 2
   jumpTimer: 0
+  attackStartDistance: 50
+  backDistance: -1

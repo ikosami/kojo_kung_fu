@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1001 &5645145949192786855
+--- !u!1001 &6132719320895973757
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -8,30 +8,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 1336981434795988195, guid: 5fb8191b2b3c52a45a9580bcbf70087c, type: 3}
-      propertyPath: hp
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 1336981434795988195, guid: 5fb8191b2b3c52a45a9580bcbf70087c, type: 3}
-      propertyPath: hpMax
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 1336981434795988195, guid: 5fb8191b2b3c52a45a9580bcbf70087c, type: 3}
-      propertyPath: gravity
-      value: 150
-      objectReference: {fileID: 0}
-    - target: {fileID: 1336981434795988195, guid: 5fb8191b2b3c52a45a9580bcbf70087c, type: 3}
-      propertyPath: isJumpEnemy
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1336981434795988195, guid: 5fb8191b2b3c52a45a9580bcbf70087c, type: 3}
-      propertyPath: moveSpeed.x
-      value: 120
-      objectReference: {fileID: 0}
-    - target: {fileID: 1336981434795988195, guid: 5fb8191b2b3c52a45a9580bcbf70087c, type: 3}
-      propertyPath: maxJumpVelocity
-      value: 85
-      objectReference: {fileID: 0}
     - target: {fileID: 2558180912156655907, guid: 5fb8191b2b3c52a45a9580bcbf70087c, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -82,15 +58,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2558180912156655907, guid: 5fb8191b2b3c52a45a9580bcbf70087c, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2558180912156655907, guid: 5fb8191b2b3c52a45a9580bcbf70087c, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2558180912156655907, guid: 5fb8191b2b3c52a45a9580bcbf70087c, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2558180912156655907, guid: 5fb8191b2b3c52a45a9580bcbf70087c, type: 3}
       propertyPath: m_AnchoredPosition.x
@@ -112,12 +88,91 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4611383683358782082, guid: 5fb8191b2b3c52a45a9580bcbf70087c, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 8d1040f671063ce41a2d2be9093f9899, type: 3}
     - target: {fileID: 8641831955114352187, guid: 5fb8191b2b3c52a45a9580bcbf70087c, type: 3}
       propertyPath: m_Name
-      value: EnemyJump
+      value: Enemy gura
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 1336981434795988195, guid: 5fb8191b2b3c52a45a9580bcbf70087c, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8641831955114352187, guid: 5fb8191b2b3c52a45a9580bcbf70087c, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4843856819144847332}
   m_SourcePrefab: {fileID: 100100000, guid: 5fb8191b2b3c52a45a9580bcbf70087c, type: 3}
+--- !u!224 &68714247712761846 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 6192401677413289611, guid: 5fb8191b2b3c52a45a9580bcbf70087c, type: 3}
+  m_PrefabInstance: {fileID: 6132719320895973757}
+  m_PrefabAsset: {fileID: 0}
+--- !u!224 &1259595907832756381 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 4927272755579441632, guid: 5fb8191b2b3c52a45a9580bcbf70087c, type: 3}
+  m_PrefabInstance: {fileID: 6132719320895973757}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &2519271249781733190 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8641831955114352187, guid: 5fb8191b2b3c52a45a9580bcbf70087c, type: 3}
+  m_PrefabInstance: {fileID: 6132719320895973757}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &4843856819144847332
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2519271249781733190}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1aa18ed96753ada42af94ede78a58f75, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rect: {fileID: 8546618534864988254}
+  image: {fileID: 7702605334980598783}
+  normalSprite1: {fileID: 21300000, guid: 8d1040f671063ce41a2d2be9093f9899, type: 3}
+  normalSprite2: {fileID: 21300000, guid: 32571809bff77de4998950c4325b17b1, type: 3}
+  attackSprite1: {fileID: 21300000, guid: 380bbd79f986c72409edd261f16a8667, type: 3}
+  spriteChangeInterval: 0.25
+  damageSprite: {fileID: 21300000, guid: 380bbd79f986c72409edd261f16a8667, type: 3}
+  attackRange: {fileID: 1259595907832756381}
+  attackRange2: {fileID: 8195352235759357586}
+  bodyRange: {fileID: 68714247712761846}
+  moveSpeed: {x: 132, y: 0, z: 0}
+  attackTime: 0
+  hpMax: 3
+  hp: 3
+  isJumpEnemy: 0
+  maxJumpVelocity: 50
+  gravity: 100
+  floorHeight: -73
+  jumpWaitTime: 2
+  jumpTimer: 0
+  attackStartDistance: 150
+  backDistance: -1
+  BaseHeight: -29
+--- !u!114 &7702605334980598783 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4611383683358782082, guid: 5fb8191b2b3c52a45a9580bcbf70087c, type: 3}
+  m_PrefabInstance: {fileID: 6132719320895973757}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2519271249781733190}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!224 &8195352235759357586 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 2639239995093559279, guid: 5fb8191b2b3c52a45a9580bcbf70087c, type: 3}
+  m_PrefabInstance: {fileID: 6132719320895973757}
+  m_PrefabAsset: {fileID: 0}
+--- !u!224 &8546618534864988254 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 2558180912156655907, guid: 5fb8191b2b3c52a45a9580bcbf70087c, type: 3}
+  m_PrefabInstance: {fileID: 6132719320895973757}
+  m_PrefabAsset: {fileID: 0}

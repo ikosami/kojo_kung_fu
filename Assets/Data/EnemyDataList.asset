@@ -40,3 +40,6 @@ MonoBehaviour:
   - name: "\u30C7\u30EB\u30D3\u30EB\u53F3 \u30B8\u30E3\u30F3\u30D7"
     prefab: {fileID: 6193553680967066747, guid: 6ab275355b7e55f4ca0ae5a0272e73db, type: 3}
     offset: 75
+  - name: "\u30B0\u30E9\u30A4\u30AC\u30FC\u53F3"
+    prefab: {fileID: 4843856819144847332, guid: 14ad17451edfa854aa6757c206f83b74, type: 3}
+    offset: 75
