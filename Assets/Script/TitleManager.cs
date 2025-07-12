@@ -42,6 +42,7 @@ public class TitleManager : MonoBehaviour
                 {
                     pushSpacePanel.gameObject.SetActive(false);
                     stageSelectPanel.gameObject.SetActive(true);
+                    state++;
                 }
                 break;
             case 1:

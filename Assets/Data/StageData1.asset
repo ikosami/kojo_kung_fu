@@ -17,7 +17,7 @@ MonoBehaviour:
   StageNum: 1
   stageDataList:
   - popEnemy:
-    - EnemyIndex: 6
+    - EnemyIndex: 0
       SpawnTime: 0
     IsStageEnd: 0
   - popEnemy:

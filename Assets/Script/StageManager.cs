@@ -7,7 +7,6 @@ public class StageManager : MonoBehaviour
 {
 
     [SerializeField] RectTransform stage;
-    public int stageNum;
     List<StageEntityData> stageDataList;
 
     int timing = -144;
@@ -15,12 +14,11 @@ public class StageManager : MonoBehaviour
 
     private void Start()
     {
-        SetStage(stageNum);
+        SetStage(SaveDataManager.NowStage);
     }
 
     public void SetStage(int num)
     {
-        stageNum = num;
         var stageData = Reference.Instance.stageDataList.List.Find(x => x.StageNum == num);
         stageDataList = stageData.stageDataList;
 

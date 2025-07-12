@@ -44,7 +44,6 @@ public class Reference : MonoBehaviour
     {
         StageNum = stageNum;
         uiController.SetStage(stageNum);
-        //PlayerPrefs.SetInt("stage", stageNum);
     }
 
 
