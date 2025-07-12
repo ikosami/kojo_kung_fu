@@ -15,8 +15,6 @@ public class StageData : ScriptableObject
 public class StageEntityData
 {
     public List<PopData> popEnemy;
-
-    public bool IsStageEnd = false;
 }
 [Serializable]
 public class PopData

@@ -43,12 +43,13 @@ public class StageManager : MonoBehaviour
     {
         if (stageDataList == null || stageDataList.Count == 0) return;
 
-        var stageData = stageDataList[index];
-        if (stageData.IsStageEnd)
+        if (index >= stageDataList.Count)
         {
             Reference.Instance.player.MoveEnd();
+            return;
         }
 
+        var stageData = stageDataList[index];
         var enemyDataList = Reference.Instance.enemyDataList.enemyDataList;
         foreach (var popEnemy in stageData.popEnemy)
         {

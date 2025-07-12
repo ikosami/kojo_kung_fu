@@ -99,15 +99,19 @@ public class Player : MonoBehaviour, ICharacter
         if (Reference.Instance.IsClear) return;
         if (Reference.Instance.IsGameOver) return;
 
+        //デバッグクリア
         if (Input.GetKeyDown(KeyCode.B) && Input.GetKey(KeyCode.LeftShift))
         {
             MoveEnd();
         }
 
+        //ポーズ
         if (Input.GetKeyDown(KeyCode.Space))
         {
             Reference.Instance.isPause = !Reference.Instance.isPause;
         }
+
+        //タイトルに戻る
         if (Reference.Instance.isPause)
         {
             if (Input.GetKeyDown(KeyCode.B))
