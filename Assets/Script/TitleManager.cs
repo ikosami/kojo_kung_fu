@@ -7,21 +7,65 @@ public class TitleManager : MonoBehaviour
     [SerializeField] private float spriteChangeInterval = 0.5f;
     [SerializeField] TextMeshProUGUI text;
 
+    [SerializeField] GameObject pushSpacePanel;
+    [SerializeField] GameObject stageSelectPanel;
+
+    [SerializeField] TextMeshProUGUI stageText;
+
+
+    int state = 0;
+    int stage = 1;
+    int maxStage;
+
+    private void Start()
+    {
+        maxStage = SaveDataManager.MaxStage;
+        stage = maxStage;
+        stageText.text = stage.ToString();
+    }
 
     // Update is called once per frame
     void Update()
     {
-        spriteChangeTimer += Time.deltaTime;
-        if (spriteChangeTimer > spriteChangeInterval)
+        switch (state)
         {
-            spriteChangeTimer = 0f;
-            text.enabled = !text.enabled;
-        }
+            case 0:
 
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            PlayerPrefs.DeleteAll();
-            UnityEngine.SceneManagement.SceneManager.LoadScene("GameScene");
+                spriteChangeTimer += Time.deltaTime;
+                if (spriteChangeTimer > spriteChangeInterval)
+                {
+                    spriteChangeTimer = 0f;
+                    text.enabled = !text.enabled;
+                }
+
+                if (Input.GetKeyDown(KeyCode.Space))
+                {
+                    pushSpacePanel.gameObject.SetActive(false);
+                    stageSelectPanel.gameObject.SetActive(true);
+                }
+                break;
+            case 1:
+
+                if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.A))
+                {
+                    stage--;
+                    stage = Mathf.Clamp(stage, 1, maxStage);
+                    stageText.text = stage.ToString();
+                }
+                if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.D))
+                {
+                    stage++;
+                    stage = Mathf.Clamp(stage, 1, maxStage);
+                    stageText.text = stage.ToString();
+                }
+                if (Input.GetKeyDown(KeyCode.Space))
+                {
+                    SaveDataManager.NowStage = stage;
+                    UnityEngine.SceneManagement.SceneManager.LoadScene("GameScene");
+
+                }
+                break;
+
         }
     }
 }
