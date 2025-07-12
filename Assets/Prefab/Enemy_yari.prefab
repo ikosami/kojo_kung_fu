@@ -338,9 +338,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 43, y: -23}
+  m_AnchoredPosition: {x: 43, y: -13}
   m_SizeDelta: {x: 24, y: 20}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_Pivot: {x: 0.5, y: 1}
 --- !u!222 &4944653590506580624
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -383,3 +383,4 @@ MonoBehaviour:
   jumpTimer: 0
   attackStartDistance: 150
   backDistance: 125
+  BaseHeight: -73

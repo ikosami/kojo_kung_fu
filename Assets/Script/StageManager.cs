@@ -14,6 +14,9 @@ public class StageManager : MonoBehaviour
 
     private void Start()
     {
+        if (SaveDataManager.Dojo != 0 && Reference.Instance.isBoss)
+            return;
+
         SetStage(SaveDataManager.NowStage);
     }
 

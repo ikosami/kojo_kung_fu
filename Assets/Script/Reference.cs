@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Reference : MonoBehaviour
@@ -21,6 +22,8 @@ public class Reference : MonoBehaviour
     }
     public RectTransform stageRect => uiController.StageRect;
     public bool isPause = false;
+
+
     public bool IsGameOver = false;
     public bool isGameOverEnd = false;
     public bool isBoss = false;
@@ -44,6 +47,10 @@ public class Reference : MonoBehaviour
     {
         StageNum = stageNum;
         uiController.SetStage(stageNum);
+    }
+    internal void SetDojo(int dojo)
+    {
+        uiController.SetDojo(dojo);
     }
 
 

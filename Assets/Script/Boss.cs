@@ -330,7 +330,8 @@ public class Boss : MonoBehaviour, ICharacter
 
         yield return new WaitForSeconds(4f); // 少し待機
 
-        SceneManager.LoadScene("LoadScene");
+
+        Reference.Instance.player.MoveEnd();
     }
 
 

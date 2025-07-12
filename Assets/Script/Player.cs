@@ -563,6 +563,10 @@ public class Player : MonoBehaviour, ICharacter
             yield return null;
         }
 
-        SceneManager.LoadScene("BossScene");
+        if (!Reference.Instance.isBoss)
+        {
+            SceneManager.LoadScene("BossScene");
+        }
+
     }
 }

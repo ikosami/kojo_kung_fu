@@ -62,6 +62,7 @@ public class TitleManager : MonoBehaviour
                 if (Input.GetKeyDown(KeyCode.Space))
                 {
                     SaveDataManager.NowStage = stage;
+                    SaveDataManager.Dojo = 0;
                     UnityEngine.SceneManagement.SceneManager.LoadScene("GameScene");
 
                 }

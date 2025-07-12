@@ -1,4 +1,5 @@
-﻿using TMPro;
+﻿using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -37,5 +38,15 @@ public class UIController : MonoBehaviour
             }
         }
 
+    }
+
+    internal void SetDojo(int dojo)
+    {
+        stageText.text = $"STAGE-{dojo}";
+
+
+
+        StageBackFrontImage.sprite = stageData.stageFrontSprite;
+        StageBackImage.sprite = stageData.stageBackSprite;
     }
 }

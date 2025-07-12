@@ -26,4 +26,16 @@ public class SaveDataManager : MonoBehaviour
             PlayerPrefs.SetInt(keyMaxStage, value);
         }
     }
+    const string keyDojo = "dojo";
+    public static int Dojo
+    {
+        get
+        {
+            return PlayerPrefs.GetInt(keyDojo, 0);
+        }
+        set
+        {
+            PlayerPrefs.SetInt(keyDojo, value);
+        }
+    }
 }
