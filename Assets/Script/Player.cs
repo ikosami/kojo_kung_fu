@@ -172,7 +172,7 @@ public class Player : MonoBehaviour, ICharacter
                 var enemyList = Util.GetEnemyList(attackSlidingRange);
                 foreach (var enemy in enemyList)
                 {
-                    enemy.TakeDamage(1);
+                    enemy.TakeDamage(3);
                     slidingStopTime = Mathf.Min(0.2f, slidingTimer);
                     slidingTimer = 0;
                     break;
@@ -398,7 +398,7 @@ public class Player : MonoBehaviour, ICharacter
                     var enemyList = Util.GetEnemyList(attackJumpRange);
                     foreach (var enemy in enemyList)
                     {
-                        enemy.TakeDamage(2);
+                        enemy.TakeDamage(3);
                     }
                 }
             }
@@ -454,7 +454,7 @@ public class Player : MonoBehaviour, ICharacter
             var enemyList = Util.GetEnemyList(attack1Range);
             foreach (var enemy in enemyList)
             {
-                enemy.TakeDamage(1);
+                enemy.TakeDamage(2);
             }
         }
         else
@@ -463,7 +463,7 @@ public class Player : MonoBehaviour, ICharacter
             var enemyList = Util.GetEnemyList(attack2Range);
             foreach (var enemy in enemyList)
             {
-                enemy.TakeDamage(2);
+                enemy.TakeDamage(3);
             }
         }
         ChangeAttackSprite();
