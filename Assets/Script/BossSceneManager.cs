@@ -11,11 +11,12 @@ public class BossSceneManager : MonoBehaviour
         var dojo = SaveDataManager.Dojo;
         if (dojo != 0)
         {
-            bossList[SaveDataManager.NowStage].gameObject.SetActive(true);
+            Debug.LogError("DOjo " + dojo);
+            Reference.Instance.SetDojo(dojo);
         }
         else
         {
-            Reference.Instance.SetDojo(dojo);
+            bossList[SaveDataManager.NowStage].gameObject.SetActive(true);
         }
     }
 }

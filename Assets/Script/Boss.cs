@@ -325,14 +325,18 @@ public class Boss : MonoBehaviour, ICharacter
         }
 
         yield return new WaitForSeconds(2f); // 少し待機
-        Reference.Instance.completePanel.SetActive(true);
-        SoundManager.Instance.Play("stage_clear");
-
-        yield return new WaitForSeconds(4f); // 少し待機
+        //Reference.Instance.completePanel.SetActive(true);
+        //SoundManager.Instance.Play("stage_clear");
 
 
+        //yield return new WaitForSeconds(4f); // 少し待機
+
+        SaveDataManager.Dojo = BossNum;
+        SaveDataManager.NextStage();
         Reference.Instance.player.MoveEnd();
     }
+
+    [SerializeField] int BossNum = 1;
 
 
 

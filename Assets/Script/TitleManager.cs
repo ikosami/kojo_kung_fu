@@ -11,6 +11,7 @@ public class TitleManager : MonoBehaviour
     [SerializeField] GameObject stageSelectPanel;
 
     [SerializeField] TextMeshProUGUI stageText;
+    [SerializeField] GameObject starObj;
 
 
     int state = 0;
@@ -63,6 +64,9 @@ public class TitleManager : MonoBehaviour
                 {
                     SaveDataManager.NowStage = stage;
                     SaveDataManager.Dojo = 0;
+                    SaveDataManager.Hp = 3;
+                    SaveDataManager.NoDamage = true;
+                    SaveDataManager.Score = 0;
                     UnityEngine.SceneManagement.SceneManager.LoadScene("GameScene");
 
                 }

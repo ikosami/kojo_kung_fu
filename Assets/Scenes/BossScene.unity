@@ -384,6 +384,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1046885123}
     m_Modifications:
+    - target: {fileID: 132449964491071208, guid: 1e8965e71ff5f4f40804f2858ba3278a, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 386791296706783774, guid: 1e8965e71ff5f4f40804f2858ba3278a, type: 3}
       propertyPath: m_AnchoredPosition.x
       value: 24.5
@@ -1295,6 +1299,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56e9a64e1f3878e47bef443a39f2f951, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  bossList:
+  - {fileID: 0}
+  - {fileID: 1661626849}
+  - {fileID: 0}
 --- !u!1001 &935708607
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1773,12 +1781,12 @@ GameObject:
   - component: {fileID: 1661626853}
   - component: {fileID: 1661626851}
   m_Layer: 0
-  m_Name: Boss
+  m_Name: Boss1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1661626850
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1875,6 +1883,7 @@ MonoBehaviour:
   maxJumpVelocity: 6
   gravity: 100
   floorHeight: -67
+  BossNum: 1
 --- !u!1 &1795731933
 GameObject:
   m_ObjectHideFlags: 0
@@ -1908,6 +1917,7 @@ MonoBehaviour:
   IsGameOver: 0
   isGameOverEnd: 0
   isBoss: 1
+  isDojo: 0
   player: {fileID: 82593994}
   completePanel: {fileID: 862038381}
   bgm: {fileID: 156719905}

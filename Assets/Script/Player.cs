@@ -47,6 +47,12 @@ public class Player : MonoBehaviour, ICharacter
     [SerializeField] float maxJumpVelocity = 6f;
     [SerializeField] float gravity = 0.2f;
 
+    [SerializeField] float damageStopTime = 0.2f;
+    [SerializeField] float invincibleTime = 0.5f;
+    float damageTimer = 9999;
+    public bool isInvincible => damageTimer < invincibleTime;
+
+
     [SerializeField] Vector3 moveSpeed = new Vector3(0.1f, 0, 0);
 
     private bool isJumping = false;
@@ -157,6 +163,9 @@ public class Player : MonoBehaviour, ICharacter
 
         if (Reference.Instance.IsGameOver) { return; }
 
+        damageTimer += Time.deltaTime;
+        if (damageTimer < damageStopTime) return;
+
         Move();
         var pos = rect.anchoredPosition;
         HandleJump(ref pos);
@@ -222,6 +231,14 @@ public class Player : MonoBehaviour, ICharacter
             transform.localScale = new Vector3(1, 1, 1);
             MovePos(moveSpeed * transform.localScale.x);
 
+            if (Reference.Instance.isDojo)
+            {
+                var pos = rect.anchoredPosition;
+                if (pos.x > 140)
+                {
+                    MoveEnd();
+                }
+            }
         }
 
         //左移動
@@ -376,7 +393,7 @@ public class Player : MonoBehaviour, ICharacter
                 return;
             }
 
-            if (Input.GetKey(KeyCode.DownArrow) && Reference.Instance.StageNum >= 2 && IsGround)
+            if ((Input.GetKey(KeyCode.DownArrow) || Input.GetKey(KeyCode.S)) && Reference.Instance.StageNum >= 2 && IsGround)
             {
                 if (slidingWaitTimer > 0)
                 {
@@ -487,11 +504,29 @@ public class Player : MonoBehaviour, ICharacter
 
     public void TakeDamage(int damage)
     {
-        Reference.Instance.IsGameOver = true;
-        SoundManager.Instance.Play("damage");
-        Reference.Instance.bgm.gameObject.SetActive(false);
-        image.sprite = deadSprite;
-        StartCoroutine(Dead());
+        if (damageTimer < invincibleTime)
+        {
+            return;
+        }
+
+        SaveDataManager.Hp--;
+        Reference.Instance.UpdateViewHp();
+        SaveDataManager.NoDamage = false;
+
+        if (SaveDataManager.Hp == 0)
+        {
+            Reference.Instance.IsGameOver = true;
+            SoundManager.Instance.Play("damage");
+            Reference.Instance.bgm.gameObject.SetActive(false);
+            image.sprite = deadSprite;
+            StartCoroutine(Dead());
+        }
+        else
+        {
+            isSliding = false;
+            damageTimer = 0;
+            image.sprite = deadSprite;
+        }
     }
 
     private IEnumerator Dead()
@@ -537,6 +572,7 @@ public class Player : MonoBehaviour, ICharacter
     private IEnumerator MoveEndIE()
     {
 
+        transform.localScale = new Vector3(1, 1, 1);
         var pos = rect.anchoredPosition;
         if (isJumping)
         {
@@ -563,9 +599,14 @@ public class Player : MonoBehaviour, ICharacter
             yield return null;
         }
 
-        if (!Reference.Instance.isBoss)
+        if (!Reference.Instance.isDojo)
         {
             SceneManager.LoadScene("BossScene");
+        }
+        else
+        {
+            SaveDataManager.Dojo = 0;
+            SceneManager.LoadScene("GameScene");
         }
 
     }

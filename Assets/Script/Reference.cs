@@ -27,6 +27,7 @@ public class Reference : MonoBehaviour
     public bool IsGameOver = false;
     public bool isGameOverEnd = false;
     public bool isBoss = false;
+    public bool isDojo = false;
     public Player player;
     public const int SizeX = 160;
     public const int SizeY = 120;
@@ -43,6 +44,11 @@ public class Reference : MonoBehaviour
     public bool IsClear = false;
     public UIController uiController;
 
+    private void Start()
+    {
+        UpdateViewHp();
+    }
+
     public void SetStage(int stageNum)
     {
         StageNum = stageNum;
@@ -50,7 +56,11 @@ public class Reference : MonoBehaviour
     }
     internal void SetDojo(int dojo)
     {
+        isDojo = true;
         uiController.SetDojo(dojo);
+        StageNum = SaveDataManager.NowStage;
+        SaveDataManager.Hp = 3;
+        SaveDataManager.NoDamage = true;
     }
 
 
@@ -60,10 +70,15 @@ public class Reference : MonoBehaviour
         score += value;
         uiController.scoreText.text = $"1Player--{score:000000}";
 
-        PlayerPrefs.SetInt("score", score);
+        SaveDataManager.Score = score;
     }
     public int GetScore()
     {
-        return PlayerPrefs.GetInt("score", 0);
+        return SaveDataManager.Score;
+    }
+
+    internal void UpdateViewHp()
+    {
+        uiController.SetHp(SaveDataManager.Hp);
     }
 }

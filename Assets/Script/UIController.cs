@@ -40,13 +40,19 @@ public class UIController : MonoBehaviour
 
     }
 
+
+    [SerializeField] GameObject dojoObj;
+    [SerializeField] GameObject[] manuals;
+
     internal void SetDojo(int dojo)
     {
-        stageText.text = $"STAGE-{dojo}";
+        stageText.text = $"Dojo" + dojo;
 
-
-
-        StageBackFrontImage.sprite = stageData.stageFrontSprite;
-        StageBackImage.sprite = stageData.stageBackSprite;
+        dojoObj.gameObject.SetActive(true);
+        for (int i = 0; i < manuals.Length; i++)
+        {
+            manuals[i].SetActive(i == dojo); ;
+        }
     }
+
 }
