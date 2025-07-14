@@ -26,7 +26,7 @@ public class Enemy : MonoBehaviour, ICharacter
     [SerializeField] protected float spriteChangeInterval = 0.5f; // スプライト切り替え間隔
     protected bool isNormalSprite = true; // 現在のスプライトがnormalSprite1かどうか
 
-    [SerializeField] Sprite damageSprite; // ダメージ時スプライト
+    [SerializeField] protected Sprite damageSprite; // ダメージ時スプライト
 
     // ICharacterインターフェース実装：当たり判定用のRectTransform
     public RectTransform BodyColRect => bodyRange;
@@ -41,9 +41,9 @@ public class Enemy : MonoBehaviour, ICharacter
     protected bool isAttack = false;
     [SerializeField] protected float attackTime = 0; // 攻撃経過時間
 
-    [SerializeField] int hpMax = 3; // 最大HP
-    [SerializeField] int hp = 3;    // 現在HP
-                                    // 死亡判定
+    [SerializeField] protected int hpMax = 3; // 最大HP
+    [SerializeField] protected int hp = 3;    // 現在HP
+                                              // 死亡判定
     protected bool isDead { get { return hp <= 0; } }
     protected float damageWaitTime = 0; // ダメージ演出中の待機時間
 
@@ -65,7 +65,7 @@ public class Enemy : MonoBehaviour, ICharacter
     /// <summary>
     /// 初期化処理。HPを最大値にし、敵リストに自身を追加。
     /// </summary>
-    void Start()
+    protected virtual void Start()
     {
         hp = hpMax;
         Reference.Instance.enemyList.Add(this);

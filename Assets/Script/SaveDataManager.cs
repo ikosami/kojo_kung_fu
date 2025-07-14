@@ -19,6 +19,13 @@ public class SaveDataManager : MonoBehaviour
 
     public static void NextStage()
     {
+        if (NoDamage)
+        {
+            SetStageNoDamage(NowStage, true);
+            Life++;
+        }
+
+
         if (NowStage + 1 <= stageCnt)
         {
             NowStage++;
@@ -78,6 +85,20 @@ public class SaveDataManager : MonoBehaviour
         }
     }
 
+
+    const string keyLife = "life";
+    public static int Life
+    {
+        get
+        {
+            return PlayerPrefs.GetInt(keyLife, 0);
+        }
+        set
+        {
+            PlayerPrefs.SetInt(keyLife, value);
+        }
+    }
+
     const string keyNoDamage = "no_damage";
     public static bool NoDamage
     {
@@ -89,5 +110,14 @@ public class SaveDataManager : MonoBehaviour
         {
             PlayerPrefs.SetInt(keyNoDamage, value ? 1 : 0);
         }
+    }
+    const string keyStageNoDamage = "stage_no_damage_";
+    public static bool GetStageNoDamage(int stage)
+    {
+        return PlayerPrefs.GetInt(keyStageNoDamage + stage.ToString(), 0) == 1;
+    }
+    public static void SetStageNoDamage(int stage, bool value)
+    {
+        PlayerPrefs.SetInt(keyStageNoDamage + stage.ToString(), value ? 1 : 0);
     }
 }

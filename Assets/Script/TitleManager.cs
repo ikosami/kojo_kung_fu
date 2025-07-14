@@ -43,6 +43,7 @@ public class TitleManager : MonoBehaviour
                 {
                     pushSpacePanel.gameObject.SetActive(false);
                     stageSelectPanel.gameObject.SetActive(true);
+                    starObj.SetActive(SaveDataManager.GetStageNoDamage(stage));
                     state++;
                 }
                 break;
@@ -53,12 +54,14 @@ public class TitleManager : MonoBehaviour
                     stage--;
                     stage = Mathf.Clamp(stage, 1, maxStage);
                     stageText.text = stage.ToString();
+                    starObj.SetActive(SaveDataManager.GetStageNoDamage(stage));
                 }
                 if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.D))
                 {
                     stage++;
                     stage = Mathf.Clamp(stage, 1, maxStage);
                     stageText.text = stage.ToString();
+                    starObj.SetActive(SaveDataManager.GetStageNoDamage(stage));
                 }
                 if (Input.GetKeyDown(KeyCode.Space))
                 {
@@ -67,6 +70,7 @@ public class TitleManager : MonoBehaviour
                     SaveDataManager.Hp = 3;
                     SaveDataManager.NoDamage = true;
                     SaveDataManager.Score = 0;
+                    SaveDataManager.Life = 2;
                     UnityEngine.SceneManagement.SceneManager.LoadScene("GameScene");
 
                 }

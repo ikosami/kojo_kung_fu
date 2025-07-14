@@ -3,50 +3,20 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class Boss : MonoBehaviour, ICharacter
+public class Boss2 : Enemy, ICharacter
 {
-    public GameObject GameObject => gameObject;
-    [SerializeField] RectTransform rect;
-    public RectTransform Rect => rect;
-    [SerializeField] Image image;
-    [SerializeField] Sprite normalSprite1;
-    [SerializeField] Sprite normalSprite2;
-    [SerializeField] Sprite attackSprite1_1;
-    [SerializeField] Sprite attackSprite1_2;
     [SerializeField] Sprite attackSprite2_1;
     [SerializeField] Sprite attackSprite2_2;
-    private float spriteChangeTimer = 0f;
-    [SerializeField] private float spriteChangeInterval = 0.5f;
-    private bool isNormalSprite = true;
+    [SerializeField] Sprite attackSprite3_1;
+    [SerializeField] Sprite attackSprite3_2;
 
-    [SerializeField] Sprite damageSprite;
-    public RectTransform BodyColRect => bodyRange;
-    [SerializeField] RectTransform[] attackRange1;
-    [SerializeField] RectTransform[] attackRange2;
-    [SerializeField] RectTransform bodyRange;
-
-    [SerializeField] Vector3 moveSpeed = new Vector3(0.4f, 0, 0);
-
-    //攻撃しようとして止まっている
-    bool isAttack = false;
-    [SerializeField] float attackTime = 0;
-
-    [SerializeField] int hpMax = 3;
-    [SerializeField] int hp = 3;
-    bool isDead { get { return hp <= 0; } }
-
-    private float currentJumpVelocity = 0f;
-    [SerializeField] float maxJumpVelocity = 6f;
-    [SerializeField] float gravity = 0.2f;
-    [SerializeField] int floorHeight = 10;
 
     int attakKind = 0;
     int attackState = 1;
     float attack2Speed = 0;
     bool isAttack2Stop = false;
-    Vector3 dir;
 
-    void Start()
+    protected override void Start()
     {
         hp = hpMax;
         Reference.Instance.enemyList.Add(this);
@@ -58,7 +28,7 @@ public class Boss : MonoBehaviour, ICharacter
         attakKind = Random.Range(0, 2);
     }
 
-    void Update()
+    protected override void Update()
     {
         if (Reference.Instance.IsClear) return;
         if (Reference.Instance.isPause) return;
@@ -72,8 +42,7 @@ public class Boss : MonoBehaviour, ICharacter
 
     }
 
-    bool isAttackDamage = false;
-    private void HandleAttack()
+    protected override void HandleAttack()
     {
         if (!isAttack) { return; }
 
@@ -87,7 +56,6 @@ public class Boss : MonoBehaviour, ICharacter
                 Attack2();
                 break;
         }
-
     }
 
     private void Attack1()
@@ -96,26 +64,23 @@ public class Boss : MonoBehaviour, ICharacter
 
         if (attackTime < 1f)
         {
-            if (image.sprite != attackSprite1_1)
-                image.sprite = attackSprite1_1;
+            if (image.sprite != normalSprite1)
+                image.sprite = normalSprite1;
         }
         else if (attackTime < 2f)
         {
             if (isAttackDamage)
             {
-                foreach (var range in attackRange1)
+                if (Util.IsHitPlayer(attackRange))
                 {
-                    if (Util.IsHitPlayer(range))
-                    {
-                        Reference.Instance.player.TakeDamage(1);
-                        break;
-                    }
+                    Reference.Instance.player.TakeDamage(1);
                 }
+
                 SoundManager.Instance.Play("boss_attack_1");
                 isAttackDamage = false;
             }
-            if (image.sprite != attackSprite1_2)
-                image.sprite = attackSprite1_2;
+            if (image.sprite != attackSprite1)
+                image.sprite = attackSprite1;
         }
         else if (attackTime < 3f)
         {
@@ -164,14 +129,11 @@ public class Boss : MonoBehaviour, ICharacter
 
             if (!isAttack2Stop)
             {
-                foreach (var range in attackRange2)
+
+                if (Util.IsHitPlayer(attackRange2))
                 {
-                    if (Util.IsHitPlayer(range))
-                    {
-                        Reference.Instance.player.TakeDamage(1);
-                        SoundManager.Instance.Play("boss_attack_2_2");
-                        break;
-                    }
+                    Reference.Instance.player.TakeDamage(1);
+                    SoundManager.Instance.Play("boss_attack_2_2");
                 }
 
                 attack2Speed += Time.deltaTime * 3;
@@ -216,7 +178,7 @@ public class Boss : MonoBehaviour, ICharacter
     /// <summary>
     /// ボスの移動を制御する関数
     /// </summary>
-    private void Move()
+    protected override void Move()
     {
         var pos = rect.anchoredPosition;
 
@@ -325,8 +287,8 @@ public class Boss : MonoBehaviour, ICharacter
         }
 
         yield return new WaitForSeconds(2f); // 少し待機
-        //Reference.Instance.completePanel.SetActive(true);
-        //SoundManager.Instance.Play("stage_clear");
+                                             //Reference.Instance.completePanel.SetActive(true);
+                                             //SoundManager.Instance.Play("stage_clear");
 
 
         //yield return new WaitForSeconds(4f); // 少し待機

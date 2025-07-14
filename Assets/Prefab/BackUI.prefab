@@ -1629,6 +1629,7 @@ MonoBehaviour:
   StageBackImage: {fileID: 4116658142374315662}
   stageText: {fileID: 8356390773459321962}
   scoreText: {fileID: 4964317114905277771}
+  lifeText: {fileID: 8845357660585284123}
   hpBars:
   - {fileID: 6684411368445455537}
   - {fileID: 4482518523098036528}

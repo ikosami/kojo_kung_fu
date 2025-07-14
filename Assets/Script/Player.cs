@@ -510,7 +510,7 @@ public class Player : MonoBehaviour, ICharacter
         }
 
         SaveDataManager.Hp--;
-        Reference.Instance.UpdateViewHp();
+        Reference.Instance.UpdateStateView();
         SaveDataManager.NoDamage = false;
 
         if (SaveDataManager.Hp == 0)
@@ -558,8 +558,16 @@ public class Player : MonoBehaviour, ICharacter
 
         yield return new WaitForSeconds(1.5f); // 少し待機
 
-
-        Reference.Instance.isGameOverEnd = true;
+        SaveDataManager.Life--;
+        if (SaveDataManager.Life == -1)
+        {
+            Reference.Instance.isGameOverEnd = true;
+        }
+        else
+        {
+            Reference.Instance.uiController.SetLife();
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        }
     }
 
     public void MoveEnd()

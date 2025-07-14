@@ -12,6 +12,8 @@ public class UIController : MonoBehaviour
 
     public TextMeshProUGUI stageText;
     public TextMeshProUGUI scoreText;
+
+    public TextMeshProUGUI lifeText;
     public Image[] hpBars;
 
     public void SetStage(int stage)
@@ -38,6 +40,12 @@ public class UIController : MonoBehaviour
             }
         }
 
+    }
+
+    public void SetLife()
+    {
+        int life = SaveDataManager.Life;
+        lifeText.text = $"-{life}";
     }
 
 

@@ -46,7 +46,7 @@ public class Reference : MonoBehaviour
 
     private void Start()
     {
-        UpdateViewHp();
+        UpdateStateView();
     }
 
     public void SetStage(int stageNum)
@@ -77,8 +77,9 @@ public class Reference : MonoBehaviour
         return SaveDataManager.Score;
     }
 
-    internal void UpdateViewHp()
+    internal void UpdateStateView()
     {
         uiController.SetHp(SaveDataManager.Hp);
+        uiController.SetLife();
     }
 }
