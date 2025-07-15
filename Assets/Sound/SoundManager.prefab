@@ -71,6 +71,8 @@ MonoBehaviour:
     clip: {fileID: 8300000, guid: f01665839390b0a4c895b57e8715eaae, type: 3}
   - key: stage_clear
     clip: {fileID: 8300000, guid: 294ec0acb4a876844b6066b0fa9cfd38, type: 3}
+  - key: throwing
+    clip: {fileID: 8300000, guid: 78dfdbc1b75766e4f9f0269987284a27, type: 3}
 --- !u!82 &210168011316505491
 AudioSource:
   m_ObjectHideFlags: 0

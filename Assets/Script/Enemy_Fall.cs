@@ -38,7 +38,7 @@ public class Enemy_Fall : Enemy, ICharacter
         else if (attackTime < 1f)
         {
             //斜め下に移動d
-            transform.position += (dir + new Vector3(0, -moveSpeed.x, 0)) * Time.deltaTime;
+            transform.position += (dir + new Vector3(0, -moveSpeed.x, 0)) * Time.deltaTime * 2;
             // 攻撃発動
             if (isAttackDamage)
             {

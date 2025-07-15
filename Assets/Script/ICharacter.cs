@@ -5,5 +5,5 @@ public interface ICharacter
     public GameObject GameObject { get; }
     public RectTransform Rect { get; }
     public RectTransform BodyColRect { get; }
-    public void TakeDamage(int damage);
+    public void TakeDamage(int damage, string soundName = "");
 }

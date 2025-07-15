@@ -502,18 +502,21 @@ public class Player : MonoBehaviour, ICharacter
             image.sprite = attackSprite2;
     }
 
-    public void TakeDamage(int damage)
+    public void TakeDamage(int damage, string soundName = "")
     {
         if (damageTimer < invincibleTime)
         {
             return;
         }
 
+        if (soundName != string.Empty)
+            SoundManager.Instance.Play(soundName);
+
         SaveDataManager.Hp--;
         Reference.Instance.UpdateStateView();
         SaveDataManager.NoDamage = false;
 
-        if (SaveDataManager.Hp == 0)
+        if (SaveDataManager.Hp <= 0)
         {
             Reference.Instance.IsGameOver = true;
             SoundManager.Instance.Play("damage");
@@ -527,6 +530,7 @@ public class Player : MonoBehaviour, ICharacter
             damageTimer = 0;
             image.sprite = deadSprite;
         }
+        return;
     }
 
     private IEnumerator Dead()
@@ -559,13 +563,17 @@ public class Player : MonoBehaviour, ICharacter
         yield return new WaitForSeconds(1.5f); // 少し待機
 
         SaveDataManager.Life--;
-        if (SaveDataManager.Life == -1)
+        if (SaveDataManager.Life <= -1)
         {
             Reference.Instance.isGameOverEnd = true;
         }
         else
         {
             Reference.Instance.uiController.SetLife();
+
+
+            SaveDataManager.Hp = SaveDataManager.HpMax;
+            Reference.Instance.uiController.SetHp(SaveDataManager.HpMax);
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
     }

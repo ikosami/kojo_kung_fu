@@ -7,6 +7,9 @@ public class StageManager : MonoBehaviour
 {
 
     [SerializeField] RectTransform stage;
+    [SerializeField] AudioSource bgm;
+
+    [SerializeField] AudioClip[] bgmClips;
     List<StageEntityData> stageDataList;
 
     int timing = -144;
@@ -22,6 +25,9 @@ public class StageManager : MonoBehaviour
 
     public void SetStage(int num)
     {
+        bgm.clip = bgmClips[num - 1];
+        bgm.Play();
+
         var stageData = Reference.Instance.stageDataList.List.Find(x => x.StageNum == num);
         stageDataList = stageData.stageDataList;
 

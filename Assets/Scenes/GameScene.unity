@@ -512,9 +512,9 @@ Camera:
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0
-    y: 0.1
+    y: 0
     width: 1
-    height: 0.8
+    height: 1
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 34
@@ -779,7 +779,7 @@ GameObject:
   - component: {fileID: 1668929545}
   - component: {fileID: 1668929544}
   m_Layer: 0
-  m_Name: CPUManager
+  m_Name: StageManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -798,7 +798,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   stage: {fileID: 26916728}
-  stageNum: 2
+  bgm: {fileID: 156719905}
+  bgmClips:
+  - {fileID: 8300000, guid: 028acf4eafedced40b3818338f6357bc, type: 3}
+  - {fileID: 8300000, guid: 1f91842ff9f68d648a5622e4c0d48aec, type: 3}
 --- !u!4 &1668929545
 Transform:
   m_ObjectHideFlags: 0
@@ -847,6 +850,7 @@ MonoBehaviour:
   IsGameOver: 0
   isGameOverEnd: 0
   isBoss: 0
+  isDojo: 0
   player: {fileID: 1376671658}
   completePanel: {fileID: 0}
   bgm: {fileID: 156719905}

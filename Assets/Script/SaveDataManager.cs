@@ -111,6 +111,9 @@ public class SaveDataManager : MonoBehaviour
             PlayerPrefs.SetInt(keyNoDamage, value ? 1 : 0);
         }
     }
+
+    public static int HpMax = 3;
+
     const string keyStageNoDamage = "stage_no_damage_";
     public static bool GetStageNoDamage(int stage)
     {

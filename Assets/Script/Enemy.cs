@@ -327,7 +327,7 @@ public class Enemy : MonoBehaviour, ICharacter
     /// ダメージを受けた際の処理。HP減少・死亡判定・ダメージ演出。
     /// </summary>
     /// <param name="damage">受けるダメージ量</param>
-    public void TakeDamage(int damage)
+    public virtual void TakeDamage(int damage, string soundName = "")
     {
         if (isDead) { return; }
 

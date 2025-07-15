@@ -139,6 +139,8 @@ public class Boss : MonoBehaviour, ICharacter
             spriteChangeTimer = 0;
         }
     }
+
+    bool isDamageHit = false;
     private void Attack2()
     {
         attackTime += Time.deltaTime;
@@ -151,6 +153,7 @@ public class Boss : MonoBehaviour, ICharacter
                 image.sprite = attackSprite2_1;
             attack2Speed = 0;
             isAttack2Stop = false;
+            isDamageHit = false;
         }
         else if (attackTime < moveTime)
         {
@@ -164,13 +167,16 @@ public class Boss : MonoBehaviour, ICharacter
 
             if (!isAttack2Stop)
             {
-                foreach (var range in attackRange2)
+                if (!isDamageHit)
                 {
-                    if (Util.IsHitPlayer(range))
+                    foreach (var range in attackRange2)
                     {
-                        Reference.Instance.player.TakeDamage(1);
-                        SoundManager.Instance.Play("boss_attack_2_2");
-                        break;
+                        if (Util.IsHitPlayer(range))
+                        {
+                            Reference.Instance.player.TakeDamage(1, "boss_attack_2_2");
+                            isDamageHit = true;
+                            break;
+                        }
                     }
                 }
 
@@ -261,7 +267,7 @@ public class Boss : MonoBehaviour, ICharacter
         transform.position += dir * Time.deltaTime;
 
         // プレイヤーが攻撃範囲に入った場合、攻撃を開始する
-        if (Mathf.Abs(player.transform.position.x - transform.position.x) < 100)
+        if (Mathf.Abs(player.transform.position.x - transform.position.x) < 80)
         {
             isAttack = true;
             isAttackDamage = true;
@@ -281,10 +287,9 @@ public class Boss : MonoBehaviour, ICharacter
         image.sprite = isNormalSprite ? normalSprite1 : normalSprite2;
     }
 
-    public void TakeDamage(int damage)
+    public void TakeDamage(int damage, string soundName = "")
     {
         if (isDead) { return; }
-
 
         hp -= damage;
         if (hp <= 0)

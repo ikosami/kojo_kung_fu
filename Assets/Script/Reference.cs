@@ -18,7 +18,7 @@ public class Reference : MonoBehaviour
 
         score = PlayerPrefs.GetInt("score", 0);
         hp = PlayerPrefs.GetInt("hp", 0);
-        AddScore(score);
+        SetScore(score);
     }
     public RectTransform stageRect => uiController.StageRect;
     public bool isPause = false;
@@ -65,6 +65,13 @@ public class Reference : MonoBehaviour
 
 
 
+    public void SetScore(int value)
+    {
+        score = value;
+        uiController.scoreText.text = $"1Player--{score:000000}";
+
+        SaveDataManager.Score = score;
+    }
     public void AddScore(int value)
     {
         score += value;

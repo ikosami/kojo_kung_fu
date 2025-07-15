@@ -10,11 +10,11 @@ public class Boss2 : Enemy, ICharacter
     [SerializeField] Sprite attackSprite3_1;
     [SerializeField] Sprite attackSprite3_2;
 
+    [SerializeField] Bullet bulletPrefab;
+    [SerializeField] Transform bulletPoint;
 
     int attakKind = 0;
     int attackState = 1;
-    float attack2Speed = 0;
-    bool isAttack2Stop = false;
 
     protected override void Start()
     {
@@ -108,67 +108,39 @@ public class Boss2 : Enemy, ICharacter
     {
         attackTime += Time.deltaTime;
 
-        float moveTime = 5;
-
-        if (attackTime < 1)
+        if (attackTime < 0.5f)
         {
+            // 攻撃前の溜め
             if (image.sprite != attackSprite2_1)
                 image.sprite = attackSprite2_1;
-            attack2Speed = 0;
-            isAttack2Stop = false;
         }
-        else if (attackTime < moveTime)
+        else if (attackTime < 1f)
         {
+            // 攻撃発動
             if (isAttackDamage)
             {
-                SoundManager.Instance.Play("boss_attack_2_1");
+                SoundManager.Instance.Play("throwing");
+
+                var bullet = Instantiate(bulletPrefab, bulletPoint.transform.position, Quaternion.identity, Reference.Instance.stageRect);
+                bullet.move.x *= transform.localScale.x;
+
+                var scale = bullet.transform.localScale;
+                scale.x = transform.localScale.x;
+                bullet.transform.localScale = scale;
                 isAttackDamage = false;
             }
             if (image.sprite != attackSprite2_2)
                 image.sprite = attackSprite2_2;
-
-            if (!isAttack2Stop)
-            {
-
-                if (Util.IsHitPlayer(attackRange2))
-                {
-                    Reference.Instance.player.TakeDamage(1);
-                    SoundManager.Instance.Play("boss_attack_2_2");
-                }
-
-                attack2Speed += Time.deltaTime * 3;
-                transform.position += dir * attack2Speed * Time.deltaTime;
-
-
-                var pos = Rect.anchoredPosition;
-
-                if (pos.x > 149 && dir.x > 0)
-                {
-                    pos.x = 149;
-                    attackTime = moveTime - 1;
-                    isAttack2Stop = true;
-                    SoundManager.Instance.Play("boss_attack_2_2");
-                }
-                if (pos.x < 11 && dir.x < 0)
-                {
-                    pos.x = 11;
-                    attackTime = moveTime - 1;
-                    isAttack2Stop = true;
-                    SoundManager.Instance.Play("boss_attack_2_2");
-                }
-            }
-
         }
-        else if (attackTime < 6)
+        else if (attackTime < 1.5f)
         {
+            // 攻撃後の戻り
             if (image.sprite != normalSprite1)
                 image.sprite = normalSprite1;
         }
         else
         {
-            attackState = 1;
-            attakKind = 0;
-
+            // 攻撃終了
             isAttack = false;
             spriteChangeTimer = 0;
         }
@@ -243,10 +215,9 @@ public class Boss2 : Enemy, ICharacter
         image.sprite = isNormalSprite ? normalSprite1 : normalSprite2;
     }
 
-    public void TakeDamage(int damage)
+    public override void TakeDamage(int damage, string soundName)
     {
         if (isDead) { return; }
-
 
         hp -= damage;
         if (hp <= 0)

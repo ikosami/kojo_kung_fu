@@ -30,7 +30,7 @@ public class Enemy_Range : Enemy, ICharacter
             // 攻撃発動
             if (isAttackDamage)
             {
-                SoundManager.Instance.Play("enemy_attack");
+                SoundManager.Instance.Play("throwing");
 
                 var shuri = Instantiate(bulletPrefab, bulletPoint.transform.position, Quaternion.identity, Reference.Instance.stageRect);
                 shuri.move.x *= transform.localScale.x;
