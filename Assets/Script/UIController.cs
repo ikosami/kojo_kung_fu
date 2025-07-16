@@ -20,7 +20,6 @@ public class UIController : MonoBehaviour
     {
         stageText.text = $"STAGE-{stage}";
 
-
         var stageData = Reference.Instance.stageDataList.List.Find(x => x.StageNum == stage);
         StageBackFrontImage.sprite = stageData.stageFrontSprite;
         StageBackImage.sprite = stageData.stageBackSprite;
@@ -54,13 +53,16 @@ public class UIController : MonoBehaviour
 
     internal void SetDojo(int dojo)
     {
-        stageText.text = $"Dojo" + dojo;
+        stageText.text = $"Dojo-" + dojo;
 
         dojoObj.gameObject.SetActive(true);
         for (int i = 0; i < manuals.Length; i++)
         {
             manuals[i].SetActive(i == dojo); ;
         }
+
+        StageBackFrontImage.gameObject.SetActive(false);
+        StageBackImage.gameObject.SetActive(false);
     }
 
 }

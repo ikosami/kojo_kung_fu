@@ -13,19 +13,18 @@ public class Boss2 : Enemy, ICharacter
     [SerializeField] Bullet bulletPrefab;
     [SerializeField] Transform bulletPoint;
 
-    int attakKind = 0;
-    int attackState = 1;
+    [SerializeField] RectTransform[] fallAttackRects;
+
+    [SerializeField] int attackKind = 0;
+    [SerializeField] int attackState = 1;
 
     protected override void Start()
     {
         hp = hpMax;
         Reference.Instance.enemyList.Add(this);
-        RandomAttackKind();
-    }
 
-    void RandomAttackKind()
-    {
-        attakKind = Random.Range(0, 2);
+        attackState = 1;
+        SetAttackKind();
     }
 
     protected override void Update()
@@ -46,17 +45,20 @@ public class Boss2 : Enemy, ICharacter
     {
         if (!isAttack) { return; }
 
-
-        switch (attakKind)
+        switch (attackKind)
         {
-            case 0:
+            case 1:
                 Attack1();
                 break;
-            case 1:
+            case 2:
                 Attack2();
+                break;
+            case 3:
+                Attack3();
                 break;
         }
     }
+
 
     private void Attack1()
     {
@@ -92,14 +94,8 @@ public class Boss2 : Enemy, ICharacter
             if (attackState == 1)
             {
                 attackState = 2;
-                RandomAttackKind();
             }
-            else if (attackState == 2)
-            {
-                attackState = 3;
-                //2連続で腕攻撃だったら次は突進
-                attakKind = 1;
-            }
+            SetAttackKind();
             isAttack = false;
             spriteChangeTimer = 0;
         }
@@ -108,13 +104,13 @@ public class Boss2 : Enemy, ICharacter
     {
         attackTime += Time.deltaTime;
 
-        if (attackTime < 0.5f)
+        if (attackTime < 1f)
         {
             // 攻撃前の溜め
             if (image.sprite != attackSprite2_1)
                 image.sprite = attackSprite2_1;
         }
-        else if (attackTime < 1f)
+        else if (attackTime < 2f)
         {
             // 攻撃発動
             if (isAttackDamage)
@@ -132,7 +128,7 @@ public class Boss2 : Enemy, ICharacter
             if (image.sprite != attackSprite2_2)
                 image.sprite = attackSprite2_2;
         }
-        else if (attackTime < 1.5f)
+        else if (attackTime < 3f)
         {
             // 攻撃後の戻り
             if (image.sprite != normalSprite1)
@@ -140,12 +136,145 @@ public class Boss2 : Enemy, ICharacter
         }
         else
         {
+
+            if (attackState == 1)//接近してパンチ
+            {
+                attackState = 2;//ジャンプしてスタンプ攻撃
+            }
+            else if (attackState == 4)
+            {
+                Vector3 diff = Reference.Instance.player.transform.position - transform.position;
+
+                if (diff.x * dir.x > 0)
+                {
+                    // 正面
+                    attackState = 5;
+                }
+                else if (diff.x * dir.x < 0)
+                {
+                    attackState = 6;
+                }
+            }
+            else if (attackState == 5)
+            {
+                attackState = 6;
+            }
+            SetAttackKind();
+
+
             // 攻撃終了
             isAttack = false;
             spriteChangeTimer = 0;
         }
     }
+    private void Attack3()
+    {
 
+        if (attackTime < 1f)
+        {
+            if (image.sprite != normalSprite1)
+                image.sprite = normalSprite1;
+            attackTime += Time.deltaTime;
+            if (attackTime >= 1)
+            {
+                SoundManager.Instance.Play("boss2_stamp");
+            }
+        }
+        else if (attackTime < 2f)
+        {
+            if (image.sprite != attackSprite3_1)
+                image.sprite = attackSprite3_1;
+
+            transform.position += (dir + new Vector3(0, moveSpeed.x, 0)) * Time.deltaTime * 2.5f; // 突進の移動速度を上げる
+
+            attackTime += Time.deltaTime;
+        }
+        else if (attackTime < 2.5f)
+        {
+            if (image.sprite != attackSprite3_2)
+                image.sprite = attackSprite3_2;
+
+            if (isAttackDamage)
+            {
+                foreach (var attackRange in fallAttackRects)
+                {
+                    if (Util.IsHitPlayer(attackRange))
+                    {
+                        SoundManager.Instance.Play("enemy_attack");
+                        Reference.Instance.player.TakeDamage(1);
+                        isAttackDamage = false;
+                        break;
+                    }
+                }
+            }
+
+            transform.position += new Vector3(0, -moveSpeed.x, 0) * Time.deltaTime * 5f; // 突進の移動速度を上げる
+
+            attackTime += Time.deltaTime;
+            if (attackTime >= 2.5)
+            {
+                var pos = rect.anchoredPosition;
+                pos.y = BaseHeight;
+                rect.anchoredPosition = pos;
+                SoundManager.Instance.Play("boss2_fall");
+            }
+        }
+        else if (attackTime < 4f)
+        {
+            attackTime += Time.deltaTime;
+        }
+        else
+        {
+            if (attackState == 2)
+            {
+                attackState = Random.Range(3, 5);
+            }
+            else if (attackState == 3)//もう一度スタンプ攻撃
+            {
+                attackState = 4;
+            }
+            else if (attackState == 4)
+            {
+                attackState = 5;
+            }
+            if (attackState == 6)
+            {
+                attackState = Random.Range(1, 5);
+            }
+            SetAttackKind();
+
+            isAttack = false;
+            spriteChangeTimer = 0;
+        }
+    }
+
+    public void SetAttackKind()
+    {
+        switch (attackState)
+        {
+            case 1:
+                attackKind = 1;
+                break;
+            case 2:
+                attackKind = 3;
+                break;
+            case 3:
+                attackKind = 3;
+                break;
+            case 4:
+                attackKind = 2;
+                break;
+            case 5:
+                attackKind = 2;
+                break;
+            case 6:
+                attackKind = 3;
+                break;
+        }
+
+    }
+
+    bool isFirstFall = true;
 
     /// <summary>
     /// ボスの移動を制御する関数
@@ -154,21 +283,25 @@ public class Boss2 : Enemy, ICharacter
     {
         var pos = rect.anchoredPosition;
 
-        // ボスが空中にいる場合、重力を適用して落下させる
-        if (pos.y > floorHeight)
+        if (isFirstFall)
         {
-            currentJumpVelocity -= gravity * Time.deltaTime;
-            pos.y += currentJumpVelocity * Time.deltaTime;
-            rect.anchoredPosition = pos;
-
-            // ボスが地面に到達した場合、位置を修正し、ジャンプ速度をリセットする
-            if (pos.y <= floorHeight)
+            // ボスが空中にいる場合、重力を適用して落下させる
+            if (pos.y > floorHeight)
             {
-                pos.y = floorHeight;
+                currentJumpVelocity -= gravity * Time.deltaTime;
+                pos.y += currentJumpVelocity * Time.deltaTime;
                 rect.anchoredPosition = pos;
-                currentJumpVelocity = 0;
+
+                // ボスが地面に到達した場合、位置を修正し、ジャンプ速度をリセットする
+                if (pos.y <= floorHeight)
+                {
+                    pos.y = floorHeight;
+                    rect.anchoredPosition = pos;
+                    currentJumpVelocity = 0;
+                    isFirstFall = false;
+                }
+                return;
             }
-            return;
         }
 
         // 攻撃中は移動しない
@@ -194,13 +327,15 @@ public class Boss2 : Enemy, ICharacter
         // ボスを移動させる
         transform.position += dir * Time.deltaTime;
 
+        int[] range = new int[] { 0, 100, 999, 300 };
         // プレイヤーが攻撃範囲に入った場合、攻撃を開始する
-        if (Mathf.Abs(player.transform.position.x - transform.position.x) < 100)
+        if (Mathf.Abs(player.transform.position.x - transform.position.x) < range[attackKind])
         {
             isAttack = true;
             isAttackDamage = true;
             attackTime = 0;
         }
+
     }
 
     private void HandleNormalSpriteAnimation()
@@ -217,6 +352,8 @@ public class Boss2 : Enemy, ICharacter
 
     public override void TakeDamage(int damage, string soundName)
     {
+        Debug.LogError("Boss2 TakeDamage " + damage + " " + soundName);
+
         if (isDead) { return; }
 
         hp -= damage;
@@ -257,15 +394,8 @@ public class Boss2 : Enemy, ICharacter
             yield return null;
         }
 
-        yield return new WaitForSeconds(2f); // 少し待機
-                                             //Reference.Instance.completePanel.SetActive(true);
-                                             //SoundManager.Instance.Play("stage_clear");
-
-
-        //yield return new WaitForSeconds(4f); // 少し待機
-
         Reference.Instance.StageComplete(BossNum);
-
+        yield return new WaitForSeconds(2f); // 少し待機
         Reference.Instance.player.MoveEnd();
     }
 

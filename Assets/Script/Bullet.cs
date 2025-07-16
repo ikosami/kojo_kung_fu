@@ -3,6 +3,8 @@ using UnityEngine.UI;
 
 public class Bullet : MonoBehaviour
 {
+    [SerializeField] bool isEnemy = true;
+
     [SerializeField] RectTransform bodyRect; // 本体当たり判定範囲
     [SerializeField] Image image; // 本体の画像コンポーネント
 
@@ -33,9 +35,20 @@ public class Bullet : MonoBehaviour
 
         bodyRect.anchoredPosition += move * Time.deltaTime;
 
-        if (Util.IsHitPlayer(attackRange))
+        if (isEnemy)
         {
-            Reference.Instance.player.TakeDamage(1);
+            if (Util.IsHitPlayer(attackRange))
+            {
+                Reference.Instance.player.TakeDamage(1);
+            }
+        }
+        else
+        {
+            var enemyList = Util.GetEnemyList(attackRange);
+            foreach (var enemy in enemyList)
+            {
+                enemy.TakeDamage(1);
+            }
         }
     }
 }

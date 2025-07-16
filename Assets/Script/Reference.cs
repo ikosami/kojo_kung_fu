@@ -94,7 +94,6 @@ public class Reference : MonoBehaviour
     {
         SaveDataManager.Dojo = bossNum;
 
-
         if (SaveDataManager.NoDamage)
         {
             SoundManager.Instance.Play("stage_clear_nodamage");

@@ -49,6 +49,7 @@ public class Enemy_Fall : Enemy, ICharacter
                         SoundManager.Instance.Play("enemy_attack");
                         Reference.Instance.player.TakeDamage(1);
                         isAttackDamage = false;
+                        break;
                     }
                 }
             }

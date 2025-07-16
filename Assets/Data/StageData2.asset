@@ -18,13 +18,6 @@ MonoBehaviour:
   stageDataList:
   - popEnemy:
     - EnemyIndex: 8
-      SpawnTime: 1
-    - EnemyIndex: 11
-      SpawnTime: 2
-    - EnemyIndex: 12
-      SpawnTime: 4
-  - popEnemy:
-    - EnemyIndex: 8
       SpawnTime: 0
   - popEnemy:
     - EnemyIndex: 0
@@ -57,3 +50,10 @@ MonoBehaviour:
       SpawnTime: 1
     - EnemyIndex: 12
       SpawnTime: 3
+  - popEnemy:
+    - EnemyIndex: 8
+      SpawnTime: 1
+    - EnemyIndex: 11
+      SpawnTime: 2
+    - EnemyIndex: 12
+      SpawnTime: 4

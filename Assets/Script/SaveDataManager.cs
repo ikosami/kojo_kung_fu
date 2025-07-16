@@ -25,11 +25,7 @@ public class SaveDataManager : MonoBehaviour
             Life++;
         }
 
-
-        if (NowStage + 1 <= stageCnt)
-        {
-            NowStage++;
-        }
+        NowStage++;
         Debug.LogError("NowStage " + NowStage);
         MaxStage = Mathf.Max(MaxStage, NowStage);
     }

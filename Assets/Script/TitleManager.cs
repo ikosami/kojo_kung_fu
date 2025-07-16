@@ -21,7 +21,7 @@ public class TitleManager : MonoBehaviour
     private void Start()
     {
         maxStage = SaveDataManager.MaxStage;
-        stage = maxStage;
+        stage = Mathf.Clamp(stage, 1, Mathf.Min(maxStage, SaveDataManager.stageCnt));
         stageText.text = stage.ToString();
     }
 
@@ -52,14 +52,14 @@ public class TitleManager : MonoBehaviour
                 if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.A))
                 {
                     stage--;
-                    stage = Mathf.Clamp(stage, 1, maxStage);
+                    stage = Mathf.Clamp(stage, 1, Mathf.Min(maxStage, SaveDataManager.stageCnt));
                     stageText.text = stage.ToString();
                     starObj.SetActive(SaveDataManager.GetStageNoDamage(stage));
                 }
                 if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.D))
                 {
                     stage++;
-                    stage = Mathf.Clamp(stage, 1, maxStage);
+                    stage = Mathf.Clamp(stage, 1, Mathf.Min(maxStage, SaveDataManager.stageCnt));
                     stageText.text = stage.ToString();
                     starObj.SetActive(SaveDataManager.GetStageNoDamage(stage));
                 }

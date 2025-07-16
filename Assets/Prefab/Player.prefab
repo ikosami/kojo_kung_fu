@@ -75,6 +75,41 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!1 &645276902593329782
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1101660906621557572}
+  m_Layer: 0
+  m_Name: w
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1101660906621557572
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 645276902593329782}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8012917357639025747}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 6, y: 2}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &816804702818950757
 GameObject:
   m_ObjectHideFlags: 0
@@ -412,6 +447,7 @@ RectTransform:
   - {fileID: 4091247748268086491}
   - {fileID: 5628559883714986002}
   - {fileID: 3845595869419872038}
+  - {fileID: 1101660906621557572}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
@@ -472,6 +508,8 @@ MonoBehaviour:
   floorHeight: -73
   maxJumpHeight: -55
   rect: {fileID: 8012917357639025747}
+  bulletPrefab: {fileID: 929839833784847807, guid: 82bf99084e93b0d4da6aef17af16014a, type: 3}
+  bulletPoint: {fileID: 1101660906621557572}
   image: {fileID: 757763695416623951}
   normalSprite1: {fileID: 21300000, guid: f2a353cb686e5d34cb1c08c29dd63649, type: 3}
   normalSprite2: {fileID: 21300000, guid: e8cef39ce5c49e548b7ad992d72dc1d3, type: 3}
@@ -482,6 +520,7 @@ MonoBehaviour:
   jumpSprite: {fileID: 21300000, guid: 705e9876c8dc4df4892299843ec64d6a, type: 3}
   deadSprite: {fileID: 21300000, guid: 62ebd759c7794cd49860b54e4504a402, type: 3}
   slidingSprite: {fileID: 21300000, guid: 8947e120344ebb044a6715cb1b66ca00, type: 3}
+  throwingSprite: {fileID: 21300000, guid: 33d02e8dc1b36bf43a6f40f08d76b813, type: 3}
   bodySlidingRange: {fileID: 5628559883714986002}
   attackSlidingRange: {fileID: 3845595869419872038}
   bodyRange: {fileID: 4498021155532351042}
@@ -491,6 +530,8 @@ MonoBehaviour:
   jumpSpeed: 70
   maxJumpVelocity: 50
   gravity: 100
+  damageStopTime: 0.2
+  invincibleTime: 0.5
   moveSpeed: {x: 120, y: 0, z: 0}
   attackDuration: 0.2
   attackTimeout: 0.3

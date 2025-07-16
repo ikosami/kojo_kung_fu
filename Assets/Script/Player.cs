@@ -12,6 +12,9 @@ public class Player : MonoBehaviour, ICharacter
     [SerializeField] RectTransform rect;
     public RectTransform Rect => rect;
 
+    [SerializeField] Bullet bulletPrefab;
+    [SerializeField] Transform bulletPoint;
+    float throwingTimer = 0f;
 
     [SerializeField] Image image;
     [SerializeField] Sprite normalSprite1;
@@ -28,10 +31,13 @@ public class Player : MonoBehaviour, ICharacter
     [SerializeField] Sprite deadSprite;
 
     [SerializeField] Sprite slidingSprite;
+    [SerializeField] Sprite throwingSprite;
+
     bool isSliding = false;
     float slidingTimer = 0f;
     float slidingStopTime = 0;
     float slidingWaitTimer = 0;
+
 
     public RectTransform BodyColRect => isSliding ? bodySlidingRange : bodyRange;
 
@@ -108,7 +114,17 @@ public class Player : MonoBehaviour, ICharacter
         //デバッグクリア
         if (Input.GetKeyDown(KeyCode.B) && Input.GetKey(KeyCode.LeftShift))
         {
-            MoveEnd();
+            if (Reference.Instance.isBoss)
+            {
+                foreach (var enemy in Reference.Instance.enemyList)
+                {
+                    enemy.TakeDamage(9999);
+                }
+            }
+            else
+            {
+                MoveEnd();
+            }
         }
 
         //ポーズ
@@ -165,6 +181,12 @@ public class Player : MonoBehaviour, ICharacter
 
         damageTimer += Time.deltaTime;
         if (damageTimer < damageStopTime) return;
+
+        if (throwingTimer > 0)
+        {
+            throwingTimer -= Time.deltaTime;
+            return;
+        }
 
         Move();
         var pos = rect.anchoredPosition;
@@ -393,7 +415,17 @@ public class Player : MonoBehaviour, ICharacter
                 return;
             }
 
-            if ((Input.GetKey(KeyCode.DownArrow) || Input.GetKey(KeyCode.S)) && Reference.Instance.StageNum >= 2 && IsGround)
+            if ((Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.W)) && Reference.Instance.StageNum >= 3 && IsGround)
+            {
+                SoundManager.Instance.Play("throwing");
+
+                var shuri = Instantiate(bulletPrefab, bulletPoint.transform.position, Quaternion.identity, Reference.Instance.stageRect);
+                shuri.move.x *= transform.localScale.x;
+
+                image.sprite = throwingSprite;
+                throwingTimer = 0.5f;
+            }
+            else if ((Input.GetKey(KeyCode.DownArrow) || Input.GetKey(KeyCode.S)) && Reference.Instance.StageNum >= 2 && IsGround)
             {
                 if (slidingWaitTimer > 0)
                 {
@@ -621,8 +653,25 @@ public class Player : MonoBehaviour, ICharacter
         else
         {
             SaveDataManager.Dojo = 0;
-            SceneManager.LoadScene("GameScene");
-        }
 
+            if (SaveDataManager.NowStage > SaveDataManager.stageCnt)
+            {
+                Reference.Instance.completePanel.SetActive(true);
+                StartCoroutine(WaitRun(() =>
+                {
+                    SceneManager.LoadScene("LoadScene");
+                }));
+            }
+            else
+            {
+                SceneManager.LoadScene("GameScene");
+            }
+        }
+    }
+
+    private IEnumerator WaitRun(Action value)
+    {
+        yield return new WaitForSeconds(10f);
+        value?.Invoke();
     }
 }

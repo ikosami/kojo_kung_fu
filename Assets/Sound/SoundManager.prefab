@@ -79,6 +79,10 @@ MonoBehaviour:
     clip: {fileID: 8300000, guid: 294ec0acb4a876844b6066b0fa9cfd38, type: 3}
   - key: stage_clear_nodamage
     clip: {fileID: 8300000, guid: b4b4194971e7b374297d0bab00b0cfdc, type: 3}
+  - key: boss2_fall
+    clip: {fileID: 8300000, guid: 376af97f36451fc48a62cca125cb7de4, type: 3}
+  - key: boss2_stamp
+    clip: {fileID: 8300000, guid: 7535858d8c5785a499d530150e6c76ea, type: 3}
 --- !u!82 &210168011316505491
 AudioSource:
   m_ObjectHideFlags: 0
