@@ -400,12 +400,11 @@ public class Player : MonoBehaviour, ICharacter
                     return;
                 }
 
-
                 isSliding = true;
                 image.sprite = slidingSprite;
                 slidingTimer = 1f;
                 slidingStopTime = 0;
-                SoundManager.Instance.Play("attack");
+                SoundManager.Instance.Play("sliding");
 
             }
             else if (isJumping)

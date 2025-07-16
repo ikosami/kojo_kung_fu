@@ -264,8 +264,7 @@ public class Boss2 : Enemy, ICharacter
 
         //yield return new WaitForSeconds(4f); // 少し待機
 
-        SaveDataManager.Dojo = BossNum;
-        SaveDataManager.NextStage();
+        Reference.Instance.StageComplete(BossNum);
 
         Reference.Instance.player.MoveEnd();
     }

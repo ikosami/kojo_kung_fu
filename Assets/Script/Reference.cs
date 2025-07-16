@@ -89,4 +89,21 @@ public class Reference : MonoBehaviour
         uiController.SetHp(SaveDataManager.Hp);
         uiController.SetLife();
     }
+
+    internal void StageComplete(int bossNum)
+    {
+        SaveDataManager.Dojo = bossNum;
+
+
+        if (SaveDataManager.NoDamage)
+        {
+            SoundManager.Instance.Play("stage_clear_nodamage");
+        }
+        else
+        {
+            SoundManager.Instance.Play("stage_clear");
+        }
+
+        SaveDataManager.NextStage();
+    }
 }

@@ -350,7 +350,7 @@ MonoBehaviour:
   isJumpEnemy: 0
   maxJumpVelocity: 50
   gravity: 100
-  floorHeight: -73
+  floorHeight: -72
   jumpWaitTime: 2
   jumpTimer: 0
   attackStartDistance: 150

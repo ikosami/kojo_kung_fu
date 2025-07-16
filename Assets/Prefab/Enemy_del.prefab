@@ -369,12 +369,12 @@ MonoBehaviour:
   isJumpEnemy: 0
   maxJumpVelocity: 50
   gravity: 100
-  floorHeight: -73
+  floorHeight: -72
   jumpWaitTime: 2
   jumpTimer: 0
   attackStartDistance: 200
   backDistance: -1
-  BaseHeight: -73
+  BaseHeight: -72
   bulletPrefab: {fileID: 929839833784847807, guid: 036b0fec1d0b57240a155fd70a9a5375, type: 3}
   bulletPoint: {fileID: 9084953141422319832}
   attackWaitSprite: {fileID: 21300000, guid: 38ad3b427ec29d14ab3d20a247e0e86a, type: 3}
