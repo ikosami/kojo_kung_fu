@@ -802,6 +802,7 @@ MonoBehaviour:
   bgmClips:
   - {fileID: 8300000, guid: 028acf4eafedced40b3818338f6357bc, type: 3}
   - {fileID: 8300000, guid: 1f91842ff9f68d648a5622e4c0d48aec, type: 3}
+  - {fileID: 8300000, guid: d544a314ef657334c8219f68d1be0ba1, type: 3}
 --- !u!4 &1668929545
 Transform:
   m_ObjectHideFlags: 0

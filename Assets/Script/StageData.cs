@@ -5,8 +5,8 @@ using UnityEngine;
 [CreateAssetMenu]
 public class StageData : ScriptableObject
 {
-    public Sprite stageBackSprite;
-    public Sprite stageFrontSprite;
+    public Sprite[] stageBackSprites;
+    public Sprite[] stageFrontSprites;
     public int StageNum;
     public List<StageEntityData> stageDataList;
 }

@@ -12,8 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85ccda6be2a41a8459580058a37f9a7a, type: 3}
   m_Name: StageData2
   m_EditorClassIdentifier: 
-  stageBackSprite: {fileID: 21300000, guid: c9f6438f00f95cd48bf944e4aa322400, type: 3}
-  stageFrontSprite: {fileID: 21300000, guid: fc64ea1e50bb3d147b787622819a514e, type: 3}
+  stageBackSprites:
+  - {fileID: 21300000, guid: c9f6438f00f95cd48bf944e4aa322400, type: 3}
+  stageFrontSprites:
+  - {fileID: 21300000, guid: fc64ea1e50bb3d147b787622819a514e, type: 3}
   StageNum: 2
   stageDataList:
   - popEnemy:

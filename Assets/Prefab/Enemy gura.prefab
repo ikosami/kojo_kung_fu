@@ -164,7 +164,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2558180912156655907, guid: 5fb8191b2b3c52a45a9580bcbf70087c, type: 3}
       propertyPath: m_Pivot.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2558180912156655907, guid: 5fb8191b2b3c52a45a9580bcbf70087c, type: 3}
       propertyPath: m_AnchorMax.x
@@ -224,7 +224,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2558180912156655907, guid: 5fb8191b2b3c52a45a9580bcbf70087c, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -12
+      value: -34
       objectReference: {fileID: 0}
     - target: {fileID: 2558180912156655907, guid: 5fb8191b2b3c52a45a9580bcbf70087c, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -350,12 +350,12 @@ MonoBehaviour:
   isJumpEnemy: 0
   maxJumpVelocity: 50
   gravity: 100
-  floorHeight: -72
+  floorHeight: -93
   jumpWaitTime: 2
   jumpTimer: 0
   attackStartDistance: 150
   backDistance: -1
-  BaseHeight: -29
+  BaseHeight: -51
   FalledSprite: {fileID: 21300000, guid: 13b3fc0100aa6d04babff62da8f13b07, type: 3}
   Climb1Sprite: {fileID: 21300000, guid: f949a349339b8134f9c4756950625f3a, type: 3}
   Climb2Sprite: {fileID: 21300000, guid: 0cd7a09aedcb7984892723c29f7d6050, type: 3}

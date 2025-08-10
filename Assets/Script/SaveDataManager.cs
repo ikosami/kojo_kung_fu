@@ -2,7 +2,7 @@
 
 public class SaveDataManager : MonoBehaviour
 {
-    public const int stageCnt = 2;
+    public const int stageCnt = 3;
 
     const string keyNowStage = "now_stage";
     public static int NowStage

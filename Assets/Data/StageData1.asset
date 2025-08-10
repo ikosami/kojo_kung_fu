@@ -12,32 +12,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85ccda6be2a41a8459580058a37f9a7a, type: 3}
   m_Name: StageData1
   m_EditorClassIdentifier: 
-  stageBackSprite: {fileID: 21300000, guid: c636c703e3f8534438f7fcb47c40c2b1, type: 3}
-  stageFrontSprite: {fileID: 21300000, guid: 551867d1e4fb3534cbcc06f450b43518, type: 3}
+  stageBackSprites:
+  - {fileID: 21300000, guid: c636c703e3f8534438f7fcb47c40c2b1, type: 3}
+  stageFrontSprites:
+  - {fileID: 21300000, guid: 551867d1e4fb3534cbcc06f450b43518, type: 3}
   StageNum: 1
   stageDataList:
   - popEnemy:
     - EnemyIndex: 0
       SpawnTime: 0
-    IsStageEnd: 0
   - popEnemy:
     - EnemyIndex: 0
       SpawnTime: 0
-    IsStageEnd: 0
   - popEnemy:
     - EnemyIndex: 1
       SpawnTime: 0
-    IsStageEnd: 0
   - popEnemy:
     - EnemyIndex: 2
       SpawnTime: 0
-    IsStageEnd: 0
   - popEnemy:
     - EnemyIndex: 0
       SpawnTime: 0
     - EnemyIndex: 0
       SpawnTime: 1
-    IsStageEnd: 0
   - popEnemy:
     - EnemyIndex: 0
       SpawnTime: 0
@@ -45,7 +42,6 @@ MonoBehaviour:
       SpawnTime: 1
     - EnemyIndex: 2
       SpawnTime: 2
-    IsStageEnd: 0
   - popEnemy:
     - EnemyIndex: 4
       SpawnTime: 0
@@ -53,4 +49,3 @@ MonoBehaviour:
       SpawnTime: 0
     - EnemyIndex: 6
       SpawnTime: 2
-    IsStageEnd: 0
