@@ -19,24 +19,23 @@ MonoBehaviour:
   - {fileID: 21300000, guid: e61c385ec29773a479638ca00a74a8f4, type: 3}
   StageNum: 3
   stageDataList:
-  - popEnemy: []
   - popEnemy:
     - EnemyIndex: 12
       SpawnTime: 2
   - popEnemy:
-    - EnemyIndex: 15
+    - EnemyIndex: 14
       SpawnTime: 2
-    - EnemyIndex: 18
+    - EnemyIndex: 17
       SpawnTime: 4
   - popEnemy:
     - EnemyIndex: 10
       SpawnTime: 1
-    - EnemyIndex: 17
+    - EnemyIndex: 16
       SpawnTime: 3
     - EnemyIndex: 13
       SpawnTime: 4
   - popEnemy:
-    - EnemyIndex: 19
+    - EnemyIndex: 18
       SpawnTime: 1
   - popEnemy:
     - EnemyIndex: 0
@@ -46,12 +45,12 @@ MonoBehaviour:
     - EnemyIndex: 7
       SpawnTime: 4
   - popEnemy:
-    - EnemyIndex: 19
+    - EnemyIndex: 18
       SpawnTime: 1
     - EnemyIndex: 6
       SpawnTime: 2
     - EnemyIndex: 13
       SpawnTime: 4
   - popEnemy:
-    - EnemyIndex: 21
+    - EnemyIndex: 20
       SpawnTime: 1

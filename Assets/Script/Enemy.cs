@@ -360,7 +360,7 @@ public class Enemy : MonoBehaviour, ICharacter
     private IEnumerator Dead()
     {
         Vector3 startPos = transform.position;
-        float duration = 1.0f; // 飛び上がりから落下までの時間
+        float duration = 2.0f; // 飛び上がりから落下までの時間
         float distance = transform.localScale.x * -200f; // 後方への移動距離
         float gravity = -2000f; // 重力加速度
         float elapsed = 0f;
