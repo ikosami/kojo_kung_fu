@@ -20,13 +20,11 @@ MonoBehaviour:
   StageNum: 3
   stageDataList:
   - popEnemy:
-    - EnemyIndex: 12
+    - EnemyIndex: 18
       SpawnTime: 2
   - popEnemy:
-    - EnemyIndex: 14
+    - EnemyIndex: 21
       SpawnTime: 2
-    - EnemyIndex: 17
-      SpawnTime: 4
   - popEnemy:
     - EnemyIndex: 10
       SpawnTime: 1

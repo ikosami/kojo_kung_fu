@@ -68,10 +68,10 @@ MonoBehaviour:
     prefab: {fileID: 2924202750309349873, guid: 9131ba611ba987b4cb19d6647b27ee26, type: 3}
     offset: -75
   - name: "\u93A7\u30CE\u30BA\u30D1\u30B9\u53F3\u30FB\u901A\u5E38"
-    prefab: {fileID: 1791271363018290104, guid: 8e2f3147e76c9c945a8253bc8699fc53, type: 3}
+    prefab: {fileID: 6299321028775514580, guid: 8e2f3147e76c9c945a8253bc8699fc53, type: 3}
     offset: 75
   - name: "\u93A7\u30CE\u30BA\u30D1\u30B9\u5DE6\u30FB\u901A\u5E38"
-    prefab: {fileID: 1791271363018290104, guid: 8e2f3147e76c9c945a8253bc8699fc53, type: 3}
+    prefab: {fileID: 6299321028775514580, guid: 8e2f3147e76c9c945a8253bc8699fc53, type: 3}
     offset: -75
   - name: "\u93A7\u30CE\u30BA\u30D1\u30B9\u53F3\u30FB\u7A81\u9032"
     prefab: {fileID: 168792105171293277, guid: 8afb29975f1d24e48b5e1897349c8f61, type: 3}

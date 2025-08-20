@@ -350,7 +350,7 @@ public class Boss2 : Enemy, ICharacter
         image.sprite = isNormalSprite ? normalSprite1 : normalSprite2;
     }
 
-    public override void TakeDamage(int damage, string soundName)
+    public override void TakeDamage(int damage, bool breakAttack, string soundName)
     {
         Debug.LogError("Boss2 TakeDamage " + damage + " " + soundName);
 

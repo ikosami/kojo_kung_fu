@@ -161,7 +161,7 @@ GameObject:
   - component: {fileID: 402700691192310984}
   - component: {fileID: 8028195517538856302}
   - component: {fileID: 729050446527201827}
-  - component: {fileID: 1791271363018290104}
+  - component: {fileID: 6299321028775514580}
   m_Layer: 0
   m_Name: Enemy_nozupasu
   m_TagString: Untagged
@@ -219,7 +219,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 0a1ea3fd758c8ac4285fe0afe93d21e0, type: 3}
+  m_Sprite: {fileID: 21300000, guid: e6be40eb7ae95b042b2eb557e73930e6, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -229,7 +229,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &1791271363018290104
+--- !u!114 &6299321028775514580
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -238,7 +238,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 8383244373198931134}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7b187a646d1c8a748820b1d7cc203c8f, type: 3}
+  m_Script: {fileID: 11500000, guid: 18a4c0c687337f8459185ab07a8d28c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   rect: {fileID: 402700691192310984}
@@ -264,6 +264,8 @@ MonoBehaviour:
   attackStartDistance: 50
   backDistance: -1
   BaseHeight: -93
+  attackRects: []
+  armorObj: {fileID: 4218923405746043113, guid: 441bc9d3f08c4e04ebf9ea8d9ea32bab, type: 3}
 --- !u!1 &8510671946503736906
 GameObject:
   m_ObjectHideFlags: 0

@@ -173,7 +173,7 @@ public class Boss : MonoBehaviour, ICharacter
                     {
                         if (Util.IsHitPlayer(range))
                         {
-                            Reference.Instance.player.TakeDamage(1, "boss_attack_2_2");
+                            Reference.Instance.player.TakeDamage(1, false, "boss_attack_2_2");
                             isDamageHit = true;
                             break;
                         }
@@ -287,7 +287,7 @@ public class Boss : MonoBehaviour, ICharacter
         image.sprite = isNormalSprite ? normalSprite1 : normalSprite2;
     }
 
-    public void TakeDamage(int damage, string soundName = "")
+    public virtual void TakeDamage(int damage, bool breakAttack, string soundName = "")
     {
         if (isDead) { return; }
 

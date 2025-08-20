@@ -118,7 +118,7 @@ public class Player : MonoBehaviour, ICharacter
             {
                 foreach (var enemy in Reference.Instance.enemyList)
                 {
-                    enemy.TakeDamage(9999);
+                    enemy.TakeDamage(9999, true);
                 }
             }
             else
@@ -207,7 +207,8 @@ public class Player : MonoBehaviour, ICharacter
                 var enemyList = Util.GetEnemyList(attackSlidingRange);
                 foreach (var enemy in enemyList)
                 {
-                    enemy.TakeDamage(3);
+                    //スライディング攻撃
+                    enemy.TakeDamage(3, false);
                     slidingStopTime = Mathf.Min(0.2f, slidingTimer);
                     slidingTimer = 0;
                     break;
@@ -450,7 +451,7 @@ public class Player : MonoBehaviour, ICharacter
                     var enemyList = Util.GetEnemyList(attackJumpRange);
                     foreach (var enemy in enemyList)
                     {
-                        enemy.TakeDamage(3);
+                        enemy.TakeDamage(3, true);
                     }
                 }
             }
@@ -506,7 +507,7 @@ public class Player : MonoBehaviour, ICharacter
             var enemyList = Util.GetEnemyList(attack1Range);
             foreach (var enemy in enemyList)
             {
-                enemy.TakeDamage(2);
+                enemy.TakeDamage(2, false);
             }
         }
         else
@@ -515,7 +516,7 @@ public class Player : MonoBehaviour, ICharacter
             var enemyList = Util.GetEnemyList(attack2Range);
             foreach (var enemy in enemyList)
             {
-                enemy.TakeDamage(3);
+                enemy.TakeDamage(3, true);
             }
         }
         ChangeAttackSprite();
@@ -533,7 +534,7 @@ public class Player : MonoBehaviour, ICharacter
             image.sprite = attackSprite2;
     }
 
-    public void TakeDamage(int damage, string soundName = "")
+    public void TakeDamage(int damage, bool breakAttack = false, string soundName = "")
     {
         if (damageTimer < invincibleTime)
         {

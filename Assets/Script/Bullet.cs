@@ -47,7 +47,7 @@ public class Bullet : MonoBehaviour
             var enemyList = Util.GetEnemyList(attackRange);
             foreach (var enemy in enemyList)
             {
-                enemy.TakeDamage(1);
+                enemy.TakeDamage(1, false);
             }
         }
     }
