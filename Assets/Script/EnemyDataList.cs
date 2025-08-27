@@ -25,5 +25,4 @@ public class EnemyData
 {
     public string name;
     public Enemy prefab;
-    public int offset;
 }

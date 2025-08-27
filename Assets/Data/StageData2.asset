@@ -19,43 +19,61 @@ MonoBehaviour:
   StageNum: 2
   stageDataList:
   - popEnemy:
-    - EnemyIndex: 8
+    - EnemyIndex: 4
       SpawnTime: 0
+      SpanwOffset: 75
   - popEnemy:
     - EnemyIndex: 0
       SpawnTime: 0
-    - EnemyIndex: 9
-      SpawnTime: 1
-  - popEnemy:
-    - EnemyIndex: 6
-      SpawnTime: 0
-    - EnemyIndex: 7
-      SpawnTime: 1
+      SpanwOffset: 75
     - EnemyIndex: 4
+      SpawnTime: 1
+      SpanwOffset: -75
+  - popEnemy:
+    - EnemyIndex: 3
+      SpawnTime: 0
+      SpanwOffset: 75
+    - EnemyIndex: 3
+      SpawnTime: 1
+      SpanwOffset: -75
+    - EnemyIndex: 2
       SpawnTime: 4
+      SpanwOffset: 75
   - popEnemy:
-    - EnemyIndex: 8
-      SpawnTime: 0
-    - EnemyIndex: 11
-      SpawnTime: 1
-  - popEnemy:
-    - EnemyIndex: 6
-      SpawnTime: 0
     - EnemyIndex: 4
+      SpawnTime: 0
+      SpanwOffset: 75
+    - EnemyIndex: 5
       SpawnTime: 1
-    - EnemyIndex: 9
+      SpanwOffset: -75
+  - popEnemy: []
+  - popEnemy:
+    - EnemyIndex: 3
+      SpawnTime: 0
+      SpanwOffset: 75
+    - EnemyIndex: 2
+      SpawnTime: 1
+      SpanwOffset: 75
+    - EnemyIndex: 4
       SpawnTime: 2
+      SpanwOffset: -75
   - popEnemy:
     - EnemyIndex: 0
       SpawnTime: 0
-    - EnemyIndex: 1
+      SpanwOffset: 75
+    - EnemyIndex: 0
       SpawnTime: 1
-    - EnemyIndex: 12
+      SpanwOffset: -75
+    - EnemyIndex: 6
       SpawnTime: 3
+      SpanwOffset: 75
   - popEnemy:
-    - EnemyIndex: 8
+    - EnemyIndex: 4
       SpawnTime: 1
-    - EnemyIndex: 11
+      SpanwOffset: 75
+    - EnemyIndex: 5
       SpawnTime: 2
-    - EnemyIndex: 12
+      SpanwOffset: -75
+    - EnemyIndex: 6
       SpawnTime: 4
+      SpanwOffset: 75

@@ -21,5 +21,6 @@ public class PopData
 {
     public int EnemyIndex;
     public int SpawnTime;
+    public int SpanwOffset;
 }
 

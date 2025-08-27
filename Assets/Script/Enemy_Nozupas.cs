@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEditor.Build;
+using UnityEngine;
 
 /// <summary>
 /// 敵キャラクターの挙動を制御するクラス。
@@ -8,11 +10,15 @@ public class Enemy_Nozupas : Enemy, ICharacter
 {
     [SerializeField] RectTransform[] attackRects;
 
-    [SerializeField] GameObject armorObj;
+    public NozupasSprite[] nozupasSprites;
+    [SerializeField] FallItem armorObj;
+    [SerializeField] Transform armorPoint;
     bool isArmor = true;
 
+    bool chargeAttack = false;
+    float chargeAttackTime = 0f;
 
-    bool isClimb = false;
+    [SerializeField] bool isChargeAttack = false;
 
     public override bool CanLook
     {
@@ -22,91 +28,161 @@ public class Enemy_Nozupas : Enemy, ICharacter
         }
     }
 
+    void Armor()
+    {
+        var armor = Instantiate(armorObj, armorPoint.transform.position, Quaternion.identity, Reference.Instance.stageRect);
+        armor.transform.localScale = transform.localScale;
+
+        var player = Reference.Instance.player;
+        if (player.transform.position.x < transform.position.x)
+        {
+            armor.fallPower.x *= -1;
+        }
+        isArmor = false;
+    }
+
     public override void TakeDamage(int damage, bool breakAttack, string soundName = "")
     {
+
+        //効かない
         if (isArmor)
         {
-
+            if (breakAttack)
+            {
+                Armor();
+                moveSpeed *= 1.2f;
+                isAttack = false;
+                base.TakeDamage(0, breakAttack, soundName);
+                return;
+            }
+            else
+            {
+                return;
+            }
         }
+        isAttack = false;
+
+
         base.TakeDamage(damage, breakAttack, soundName);
+    }
+
+    NozupasSprite NozupasSprite
+    {
+        get
+        {
+            if (isArmor)
+            {
+                return nozupasSprites[0];
+            }
+            else
+            {
+                return nozupasSprites[1];
+            }
+        }
     }
 
     protected override void HandleAttack()
     {
-        //
         if (!isAttack) { return; }
 
         attackTime += Time.deltaTime;
 
-        if (attackTime < 0.5f)
+        if (isChargeAttack)
         {
-            // 攻撃前の溜め
-            if (image.sprite != normalSprite1)
-                image.sprite = normalSprite1;
-        }
-        else if (attackTime < 1f)
-        {
-            //斜め下に移動d
-            transform.position += (dir + new Vector3(0, -moveSpeed.x, 0)) * Time.deltaTime * 2;
-            // 攻撃発動
-            if (isAttackDamage)
+            if (attackTime < 1f)
             {
-                foreach (var attackRange in attackRects)
+                // 攻撃前の溜め
+                HandleNormalSpriteAnimation2();
+                chargeAttackTime = 2;
+            }
+            else if (attackTime < 4.0f - 0.1f)
+            {
+                transform.position += dir * Time.deltaTime;
+
+                chargeAttackTime += Time.deltaTime;
+                if (chargeAttackTime > 0.15f)
                 {
-                    if (Util.IsHitPlayer(attackRange))
+                    chargeAttack = !chargeAttack;
+                    chargeAttackTime = 0f;
+                    SetSprite(chargeAttack ? NozupasSprite.attackSprite1 : NozupasSprite.attackWaitSprite);
+
+                    // 攻撃発動
+                    if (chargeAttack)
                     {
                         SoundManager.Instance.Play("enemy_attack");
-                        Reference.Instance.player.TakeDamage(1);
+                        if (Util.IsHitPlayer(attackRange))
+                        {
+                            Reference.Instance.player.TakeDamage(1);
+                        }
                         isAttackDamage = false;
-                        break;
                     }
                 }
+
             }
-            if (IsGround)
+            else if (attackTime < 5f)
             {
-                attackTime = 1f; // 攻撃時間をリセット
+                // 攻撃後の戻り
+                SetSprite(NozupasSprite.normalSprite1);
             }
             else
             {
-
-                attackTime = 0.5f; // 攻撃時間をリセット       
+                // 攻撃終了
+                isAttack = false;
+                spriteChangeTimer = 0;
             }
-
-            if (image.sprite != attackSprite1)
-                image.sprite = attackSprite1;
-        }
-        else if (attackTime < 1.5f)
-        {
-
-            // 攻撃後の戻り
-            if (image.sprite != normalSprite1)
-                image.sprite = normalSprite1;
-        }
-        else if (rect.anchoredPosition.y < BaseHeight + 10)
-        {
-            transform.position += new Vector3(0, moveSpeed.x / 2, 0) * Time.deltaTime;
-            isClimb = true;
         }
         else
         {
-            var pos = rect.anchoredPosition;
-            pos.y = BaseHeight;
-            rect.anchoredPosition = pos;
-
-            // 攻撃終了
-            isAttack = false;
-            isClimb = false;
-            spriteChangeTimer = 0;
-
+            if (attackTime < 1f)
+            {
+                // 攻撃前の溜め
+                SetSprite(NozupasSprite.attackWaitSprite);
+            }
+            else if (attackTime < 2f)
+            {
+                // 攻撃発動
+                if (isAttackDamage)
+                {
+                    SoundManager.Instance.Play("enemy_attack");
+                    if (Util.IsHitPlayer(attackRange))
+                    {
+                        Reference.Instance.player.TakeDamage(1);
+                    }
+                    isAttackDamage = false;
+                }
+                SetSprite(NozupasSprite.attackSprite1);
+            }
+            else if (attackTime < 2.5f)
+            {
+                // 攻撃後の戻り
+                SetSprite(NozupasSprite.normalSprite1);
+            }
+            else
+            {
+                // 攻撃終了
+                isAttack = false;
+                spriteChangeTimer = 0;
+            }
         }
     }
+
 
     protected override void Update()
     {
         base.Update();
 
-        if (isClimb)
-            HandleNormalSpriteAnimation2();
+    }
+
+    protected override void HandleNormalSpriteAnimation()
+    {
+        if (isAttack) { return; }
+        spriteChangeTimer += Time.deltaTime;
+        if (spriteChangeTimer >= spriteChangeInterval)
+        {
+            spriteChangeTimer -= spriteChangeInterval;
+            isNormalSprite = !isNormalSprite;
+        }
+        image.sprite = isNormalSprite ? NozupasSprite.normalSprite1 : NozupasSprite.normalSprite2;
     }
 
 
@@ -115,13 +191,26 @@ public class Enemy_Nozupas : Enemy, ICharacter
     /// </summary>
     private void HandleNormalSpriteAnimation2()
     {
+
+        var changeTime = 0.01f;
         spriteChangeTimer += Time.deltaTime;
-        if (spriteChangeTimer >= spriteChangeInterval)
+        if (spriteChangeTimer >= changeTime)
         {
-            spriteChangeTimer -= spriteChangeInterval;
+            spriteChangeTimer -= changeTime;
             isNormalSprite = !isNormalSprite;
         }
-        image.sprite = isNormalSprite ? normalSprite1 : normalSprite1;
+        image.sprite = isNormalSprite ? NozupasSprite.attackWaitSprite : NozupasSprite.chargeSprite;
     }
 
+}
+
+
+[Serializable]
+public class NozupasSprite
+{
+    public Sprite normalSprite1;
+    public Sprite normalSprite2;
+    public Sprite attackWaitSprite;
+    public Sprite attackSprite1;
+    public Sprite chargeSprite;
 }

@@ -79,7 +79,7 @@ public class StageManager : MonoBehaviour
                     enemyRect.anchorMin = stage.anchorMin;
                     enemyRect.anchorMax = stage.anchorMax;
                     // 座標を設定
-                    enemyRect.anchoredPosition = new Vector2(-currentX + enemyPopData.offset, -73);
+                    enemyRect.anchoredPosition = new Vector2(-currentX + popEnemy.SpanwOffset, -73);
 
                     Util.SetAnchorWithKeepingPosition(enemyRect, originalAnchorMin, originalAnchorMax);
 

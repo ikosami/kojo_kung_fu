@@ -3,6 +3,9 @@ using UnityEngine;
 
 public class FallItem : MonoBehaviour
 {
+    public Vector3 fallPower = new Vector3(200f, 700, 0); // 初期の落下力
+    [SerializeField] Transform body;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -16,12 +19,12 @@ public class FallItem : MonoBehaviour
     {
         Vector3 startPos = transform.position;
         float duration = 2.0f; // 飛び上がりから落下までの時間
-        float distance = transform.localScale.x * -200f; // 後方への移動距離
+        float distance = fallPower.x; // 後方への移動距離
         float gravity = -2000f; // 重力加速度
         float elapsed = 0f;
 
         // 初速度を計算（自由落下を考慮）
-        float velocityY = 700;
+        float velocityY = fallPower.y;
 
         Vector3 velocity = new Vector3(distance / duration, velocityY, 0f); // X方向 & Y方向の初速度
 
@@ -38,7 +41,7 @@ public class FallItem : MonoBehaviour
             velocity.y += gravity * Time.deltaTime; // 重力の影響を加える
 
             // 現在の位置を更新
-            transform.position += velocity * Time.deltaTime;
+            body.transform.position += velocity * Time.deltaTime;
 
             yield return null;
         }

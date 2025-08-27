@@ -58,6 +58,7 @@ public class StageDataList : ScriptableObject
             if (!int.TryParse(parts[1], out int entityIndex)) continue;
             var enemyName = parts[2];
             if (!int.TryParse(parts[3], out int spawnTime)) continue;
+            if (!int.TryParse(parts[4], out int spawnOffset)) continue;
 
             if (!stageDict.TryGetValue(stageNum, out var stageData)) continue;
 
@@ -74,7 +75,8 @@ public class StageDataList : ScriptableObject
             stageData.stageDataList[entityIndex].popEnemy.Add(new PopData
             {
                 EnemyIndex = enemyIndex,
-                SpawnTime = spawnTime
+                SpawnTime = spawnTime,
+                SpanwOffset = spawnOffset
             });
 #if UNITY_EDITOR
             EditorUtility.SetDirty(stageData);

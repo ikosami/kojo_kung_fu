@@ -174,7 +174,6 @@ public class Player : MonoBehaviour, ICharacter
                 image.enabled = blinkIndex % 2 == 0;
                 return;
             }
-
         }
 
         if (Reference.Instance.IsGameOver) { return; }

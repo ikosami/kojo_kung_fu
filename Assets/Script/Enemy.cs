@@ -88,18 +88,10 @@ public class Enemy : MonoBehaviour, ICharacter
         // 死亡時は何もしない
         if (isDead) { return; }
 
-        // ダメージ演出中はスプライトをダメージ用にし、一定時間後に戻す
-        if (damageWaitTime > 0)
+
+        if (Damaging())
         {
-            damageWaitTime -= Time.deltaTime;
-            if (damageWaitTime <= 0)
-            {
-                image.sprite = isNormalSprite ? normalSprite1 : normalSprite2;
-            }
-            else
-            {
-                return;
-            }
+            return;
         }
         // 移動処理
         Move();
@@ -111,6 +103,29 @@ public class Enemy : MonoBehaviour, ICharacter
         HandleNormalSpriteAnimation();
     }
 
+    protected bool Damaging()
+    {
+        // ダメージ演出中はスプライトをダメージ用にし、一定時間後に戻す
+        if (damageWaitTime > 0)
+        {
+            damageWaitTime -= Time.deltaTime;
+            if (damageWaitTime <= 0)
+            {
+                image.sprite = isNormalSprite ? normalSprite1 : normalSprite2;
+            }
+            else
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    protected void SetSprite(Sprite sprite)
+    {
+        if (image.sprite != sprite)
+            image.sprite = sprite;
+    }
+
     protected bool isAttackDamage = false; // 攻撃ダメージ判定用フラグ
 
     /// <summary>
@@ -118,7 +133,7 @@ public class Enemy : MonoBehaviour, ICharacter
     /// </summary>
     protected virtual void HandleAttack()
     {
-        //
+
         if (!isAttack) { return; }
 
         attackTime += Time.deltaTime;
@@ -126,8 +141,7 @@ public class Enemy : MonoBehaviour, ICharacter
         if (attackTime < 0.5f)
         {
             // 攻撃前の溜め
-            if (image.sprite != normalSprite1)
-                image.sprite = normalSprite1;
+            SetSprite(normalSprite1);
         }
         else if (attackTime < 1f)
         {
@@ -141,14 +155,12 @@ public class Enemy : MonoBehaviour, ICharacter
                 }
                 isAttackDamage = false;
             }
-            if (image.sprite != attackSprite1)
-                image.sprite = attackSprite1;
+            SetSprite(attackSprite1);
         }
         else if (attackTime < 1.5f)
         {
             // 攻撃後の戻り
-            if (image.sprite != normalSprite1)
-                image.sprite = normalSprite1;
+            SetSprite(normalSprite1);
         }
         else
         {
@@ -311,7 +323,7 @@ public class Enemy : MonoBehaviour, ICharacter
     /// <summary>
     /// 通常時のスプライトアニメーション（点滅）の処理。
     /// </summary>
-    private void HandleNormalSpriteAnimation()
+    protected virtual void HandleNormalSpriteAnimation()
     {
         if (isAttack) { return; }
         spriteChangeTimer += Time.deltaTime;
