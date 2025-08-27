@@ -37,8 +37,13 @@ public class Enemy_MolFire : Enemy, ICharacter
             // 攻撃発動
             if (isAttackDamage)
             {
-                //SoundManager.Instance.Play("throwing");
-                isAttackDamage = false;
+                if (Util.IsHitPlayer(attackRange))
+                {
+                    SoundManager.Instance.Play("enemy_attack");
+                    Reference.Instance.player.TakeDamage(1);
+                    isAttackDamage = false;
+                    isAttackDamage = false;
+                }
             }
 
             var spriteChangeTime = 0.3f;
