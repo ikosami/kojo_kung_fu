@@ -2142,17 +2142,23 @@ MonoBehaviour:
   attackStartDistance: 50
   backDistance: -1
   BaseHeight: -64
-  attackSprite2_1: {fileID: 21300000, guid: 06f01b5afbc6c9e4096f0b77b980be6b, type: 3}
-  attackSprite2_2: {fileID: 21300000, guid: 4ff15df9154d985438fd686e8836d611, type: 3}
-  attackSprite3_1: {fileID: 21300000, guid: 0d29f97164be9514c9d5de4c14ff0517, type: 3}
-  attackSprite3_2: {fileID: 21300000, guid: 0d7f0dfb5f0bd1e40865080c1a1607f0, type: 3}
+  normalSprite_1: {fileID: 21300000, guid: 72a128da23826274297318f24796d410, type: 3}
+  normalSprite_2: {fileID: 0}
+  normalSprite_3: {fileID: 0}
+  fireSprite_1: {fileID: 21300000, guid: 96f764dd4fa5e7f4e84accf0f8cdff3f, type: 3}
+  fireSprite_2: {fileID: 0}
+  fireSprite_3: {fileID: 0}
+  fireSprite_4: {fileID: 0}
+  iceSprite_1: {fileID: 21300000, guid: 55ecf8c928572b94b931e4b1e74b41c9, type: 3}
+  iceSprite_2: {fileID: 0}
+  iceSprite_3: {fileID: 0}
   bulletPrefab: {fileID: 929839833784847807, guid: aabad7379f68dd341bcc51796a9e2775, type: 3}
   bulletPoint: {fileID: 2096610536}
   fallAttackRects:
   - {fileID: 1378674741}
   - {fileID: 1218141709}
-  attackKind: 0
-  attackState: 1
+  moveState: 0
+  attackHeight: -70
   BossNum: 2
 --- !u!222 &1652142397
 CanvasRenderer:
@@ -2171,7 +2177,7 @@ RectTransform:
   m_GameObject: {fileID: 1652142394}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: -1, y: 1, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2104714946}
@@ -2184,7 +2190,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 129.1, y: -88.1}
-  m_SizeDelta: {x: 32, y: 30}
+  m_SizeDelta: {x: 53, y: 39}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!1 &1661626849
 GameObject:

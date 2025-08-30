@@ -15,7 +15,7 @@ public class BossSceneManager : MonoBehaviour
         var dojo = SaveDataManager.Dojo;
         if (dojo != 0)
         {
-            Debug.LogError("DOjo " + dojo);
+            Debug.LogError("Dojo " + dojo);
             Reference.Instance.SetDojo(dojo);
             bgm.clip = dojoBgmClip;
             bgm.Play();

@@ -1,17 +1,17 @@
-﻿using System;
-using System.Collections;
-using UnityEngine;
-using UnityEngine.UI;
+﻿using UnityEngine;
 
 /// <summary>
 /// 敵キャラクターの挙動を制御するクラス。
 /// 移動、攻撃、ダメージ処理、アニメーション、死亡処理などを担当する。
 /// </summary>
-public class Enemy_MolFire : Enemy, ICharacter
+public class Enemy_Fall2 : Enemy, ICharacter
 {
+    bool isFall = false;
+    bool isFalling = false;
+    float jumpIntervalTimer = 1;
+
     [SerializeField] Sprite attackSprite2;
     float attackSpriteTimer = 0;
-
     protected override void HandleAttack()
     {
         //
@@ -73,6 +73,68 @@ public class Enemy_MolFire : Enemy, ICharacter
             spriteChangeTimer = 0;
         }
     }
+
+    protected override void Move()
+    {
+        if (!isFall)
+        {
+            if (isFalling)
+            {
+                JumpMove();
+
+                // 着地判定
+                if (IsGround)
+                {
+                    // プレイヤーの位置に応じて移動方向・向きを決定
+                    LookPlayer();
+                    JumpEnd();
+                    isFall = true;
+                    jumpIntervalTimer = 1;
+                }
+                else
+                {
+
+                    // 攻撃発動
+                    if (isAttackDamage)
+                    {
+                        if (Util.IsHitPlayer(attackRange))
+                        {
+                            SoundManager.Instance.Play("enemy_attack");
+                            Reference.Instance.player.TakeDamage(1);
+                            isAttackDamage = false;
+                        }
+                    }
+
+                }
+
+            }
+            else
+            {
+                var player = Reference.Instance.player;
+                var distance = Mathf.Abs(player.transform.position.x - transform.position.x);
+                if (distance < 120)
+                {
+                    isFalling = true;
+                    isAttackDamage = true;
+                }
+            }
+        }
+        else
+        {
+            if (!isAttack)
+            {
+                jumpIntervalTimer -= Time.deltaTime;
+                if (jumpIntervalTimer < 0)
+                {
+                    jumpIntervalTimer = 1;
+                    StartAttackFlg();
+                }
+            }
+
+        }
+    }
+
+
 
     private void Jump()
     {

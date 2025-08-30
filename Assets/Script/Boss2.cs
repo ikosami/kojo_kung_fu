@@ -338,7 +338,7 @@ public class Boss2 : Enemy, ICharacter
 
     }
 
-    private void HandleNormalSpriteAnimation()
+    protected override void HandleNormalSpriteAnimation()
     {
         if (isAttack) { return; }
         spriteChangeTimer += Time.deltaTime;

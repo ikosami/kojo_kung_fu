@@ -23,11 +23,17 @@ MonoBehaviour:
     - EnemyIndex: 6
       SpawnTime: 2
       SpanwOffset: 75
+    - EnemyIndex: 11
+      SpawnTime: 0
+      SpanwOffset: 110
   - popEnemy:
     - EnemyIndex: 7
       SpawnTime: 4
       SpanwOffset: -75
   - popEnemy:
+    - EnemyIndex: 11
+      SpawnTime: 0
+      SpanwOffset: 85
     - EnemyIndex: 5
       SpawnTime: 1
       SpanwOffset: 75
@@ -38,6 +44,9 @@ MonoBehaviour:
       SpawnTime: 4
       SpanwOffset: -75
   - popEnemy:
+    - EnemyIndex: 11
+      SpawnTime: 0
+      SpanwOffset: 95
     - EnemyIndex: 8
       SpawnTime: 1
       SpanwOffset: 75
@@ -46,6 +55,9 @@ MonoBehaviour:
     - EnemyIndex: 8
       SpawnTime: 1
       SpanwOffset: 75
+    - EnemyIndex: 11
+      SpawnTime: 0
+      SpanwOffset: 110
   - popEnemy:
     - EnemyIndex: 8
       SpawnTime: 1
@@ -56,3 +68,6 @@ MonoBehaviour:
     - EnemyIndex: 6
       SpawnTime: 4
       SpanwOffset: -75
+    - EnemyIndex: 11
+      SpawnTime: 0
+      SpanwOffset: 80

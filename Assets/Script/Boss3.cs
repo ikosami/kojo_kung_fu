@@ -1,30 +1,54 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using UnityEngine;
-using UnityEngine.SceneManagement;
-using UnityEngine.UI;
 
 public class Boss3 : Enemy, ICharacter
 {
-    [SerializeField] Sprite attackSprite2_1;
-    [SerializeField] Sprite attackSprite2_2;
-    [SerializeField] Sprite attackSprite3_1;
-    [SerializeField] Sprite attackSprite3_2;
+    [SerializeField] Sprite normalSprite_1;
+    [SerializeField] Sprite normalSprite_2;
+    [SerializeField] Sprite normalSprite_3;
+
+    [SerializeField] Sprite fireSprite_1;
+    [SerializeField] Sprite fireSprite_2;
+    [SerializeField] Sprite fireSprite_3;
+    [SerializeField] Sprite fireSprite_4;
+
+    [SerializeField] Sprite iceSprite_1;
+    [SerializeField] Sprite iceSprite_2;
+    [SerializeField] Sprite iceSprite_3;
 
     [SerializeField] Bullet bulletPrefab;
     [SerializeField] Transform bulletPoint;
 
     [SerializeField] RectTransform[] fallAttackRects;
 
-    [SerializeField] int attackKind = 0;
-    [SerializeField] int attackState = 1;
+    [SerializeField] int moveState = 0;
+    float moveTimer = 0;
+
+    float preHeight = 0;
+    [SerializeField] float attackHeight = 200;
+
+    int preState = 0;
+
+    public Vector2 pos
+    {
+        get
+        {
+            return rect.anchoredPosition;
+        }
+        set
+        {
+            rect.anchoredPosition = value;
+        }
+    }
+
 
     protected override void Start()
     {
         hp = hpMax;
         Reference.Instance.enemyList.Add(this);
-
-        attackState = 1;
-        SetAttackKind();
+        preState = 0;
+        moveTimer = 0;
     }
 
     protected override void Update()
@@ -35,319 +59,85 @@ public class Boss3 : Enemy, ICharacter
 
         if (isDead) { return; }
 
-        Move();
-        HandleAttack();
-        HandleNormalSpriteAnimation();
-
-    }
-
-    protected override void HandleAttack()
-    {
-        if (!isAttack) { return; }
-
-        switch (attackKind)
+        switch (moveState)
         {
+            case 0:
+                moveTimer += Time.deltaTime;
+                if (moveTimer > 1)
+                {
+                    ChangeState(1);
+                }
+                break;
             case 1:
-                Attack1();
+                if (ChangeFire(fireSprite_1))
+                {
+                    preState = 1;
+                    ChangeState(2);
+                }
                 break;
             case 2:
-                Attack2();
+                if (ChangeFire(iceSprite_1))
+                {
+                    preState = 2;
+                    ChangeState(1);
+                }
                 break;
             case 3:
-                Attack3();
                 break;
         }
     }
 
-
-    private void Attack1()
+    //ふわーっと浮かび上がる
+    private bool ChangeFire(Sprite target)
     {
-        attackTime += Time.deltaTime;
-
-        if (attackTime < 1f)
+        float duration = 1f; // 移動にかける時間（秒）
+        if (moveTimer == 0)
         {
-            if (image.sprite != normalSprite1)
-                image.sprite = normalSprite1;
+            preHeight = pos.y;
         }
-        else if (attackTime < 2f)
-        {
-            if (isAttackDamage)
-            {
-                if (Util.IsHitPlayer(attackRange))
-                {
-                    Reference.Instance.player.TakeDamage(1);
-                }
 
-                SoundManager.Instance.Play("boss_attack_1");
-                isAttackDamage = false;
-            }
-            if (image.sprite != attackSprite1)
-                image.sprite = attackSprite1;
-        }
-        else if (attackTime < 3f)
+        moveTimer += Time.deltaTime;
+
+        // 線形補間でY座標を更新
+        float t = Mathf.Clamp01(moveTimer / duration);
+        float newY = Mathf.Lerp(preHeight, attackHeight, t);
+        pos = new Vector2(pos.x, newY);
+
+        Sprite sprite = null;
+        if (preState == 0)
         {
-            if (image.sprite != normalSprite1)
-                image.sprite = normalSprite1;
+            sprite = normalSprite_1;
+        }
+        else if (preState == 1)
+        {
+            sprite = fireSprite_1;
+        }
+        else if (preState == 2)
+        {
+            sprite = iceSprite_1;
+        }
+
+        if (moveTimer > 0.5f)
+        {
+            SetSprite(((int)(moveTimer * 15)) % 2 == 0 ? sprite : target);
         }
         else
         {
-            if (attackState == 1)
-            {
-                attackState = 2;
-            }
-            SetAttackKind();
-            isAttack = false;
-            spriteChangeTimer = 0;
+            SetSprite(target);
         }
-    }
-    private void Attack2()
-    {
-        attackTime += Time.deltaTime;
 
-        if (attackTime < 1f)
+        if (moveTimer > duration)
         {
-            // 攻撃前の溜め
-            if (image.sprite != attackSprite2_1)
-                image.sprite = attackSprite2_1;
+            return true;
         }
-        else if (attackTime < 2f)
-        {
-            // 攻撃発動
-            if (isAttackDamage)
-            {
-                SoundManager.Instance.Play("throwing");
-
-                var bullet = Instantiate(bulletPrefab, bulletPoint.transform.position, Quaternion.identity, Reference.Instance.stageRect);
-                bullet.move.x *= transform.localScale.x;
-
-                var scale = bullet.transform.localScale;
-                scale.x = transform.localScale.x;
-                bullet.transform.localScale = scale;
-                isAttackDamage = false;
-            }
-            if (image.sprite != attackSprite2_2)
-                image.sprite = attackSprite2_2;
-        }
-        else if (attackTime < 3f)
-        {
-            // 攻撃後の戻り
-            if (image.sprite != normalSprite1)
-                image.sprite = normalSprite1;
-        }
-        else
-        {
-
-            if (attackState == 1)//接近してパンチ
-            {
-                attackState = 2;//ジャンプしてスタンプ攻撃
-            }
-            else if (attackState == 4)
-            {
-                Vector3 diff = Reference.Instance.player.transform.position - transform.position;
-
-                if (diff.x * dir.x > 0)
-                {
-                    // 正面
-                    attackState = 5;
-                }
-                else if (diff.x * dir.x < 0)
-                {
-                    attackState = 6;
-                }
-            }
-            else if (attackState == 5)
-            {
-                attackState = 6;
-            }
-            SetAttackKind();
-
-
-            // 攻撃終了
-            isAttack = false;
-            spriteChangeTimer = 0;
-        }
-    }
-    private void Attack3()
-    {
-
-        if (attackTime < 1f)
-        {
-            if (image.sprite != normalSprite1)
-                image.sprite = normalSprite1;
-            attackTime += Time.deltaTime;
-            if (attackTime >= 1)
-            {
-                SoundManager.Instance.Play("boss2_stamp");
-            }
-        }
-        else if (attackTime < 2f)
-        {
-            if (image.sprite != attackSprite3_1)
-                image.sprite = attackSprite3_1;
-
-            transform.position += (dir + new Vector3(0, moveSpeed.x, 0)) * Time.deltaTime * 2.5f; // 突進の移動速度を上げる
-
-            attackTime += Time.deltaTime;
-        }
-        else if (attackTime < 2.5f)
-        {
-            if (image.sprite != attackSprite3_2)
-                image.sprite = attackSprite3_2;
-
-            if (isAttackDamage)
-            {
-                foreach (var attackRange in fallAttackRects)
-                {
-                    if (Util.IsHitPlayer(attackRange))
-                    {
-                        SoundManager.Instance.Play("enemy_attack");
-                        Reference.Instance.player.TakeDamage(1);
-                        isAttackDamage = false;
-                        break;
-                    }
-                }
-            }
-
-            transform.position += new Vector3(0, -moveSpeed.x, 0) * Time.deltaTime * 5f; // 突進の移動速度を上げる
-
-            attackTime += Time.deltaTime;
-            if (attackTime >= 2.5)
-            {
-                var pos = rect.anchoredPosition;
-                pos.y = BaseHeight;
-                rect.anchoredPosition = pos;
-                SoundManager.Instance.Play("boss2_fall");
-            }
-        }
-        else if (attackTime < 4f)
-        {
-            attackTime += Time.deltaTime;
-        }
-        else
-        {
-            if (attackState == 2)
-            {
-                attackState = Random.Range(3, 5);
-            }
-            else if (attackState == 3)//もう一度スタンプ攻撃
-            {
-                attackState = 4;
-            }
-            else if (attackState == 4)
-            {
-                attackState = 5;
-            }
-            if (attackState == 6)
-            {
-                attackState = Random.Range(1, 5);
-            }
-            SetAttackKind();
-
-            isAttack = false;
-            spriteChangeTimer = 0;
-        }
+        return false;
     }
 
-    public void SetAttackKind()
+
+    void ChangeState(int state)
     {
-        switch (attackState)
-        {
-            case 1:
-                attackKind = 1;
-                break;
-            case 2:
-                attackKind = 3;
-                break;
-            case 3:
-                attackKind = 3;
-                break;
-            case 4:
-                attackKind = 2;
-                break;
-            case 5:
-                attackKind = 2;
-                break;
-            case 6:
-                attackKind = 3;
-                break;
-        }
-
-    }
-
-    bool isFirstFall = true;
-
-    /// <summary>
-    /// ボスの移動を制御する関数
-    /// </summary>
-    protected override void Move()
-    {
-        var pos = rect.anchoredPosition;
-
-        if (isFirstFall)
-        {
-            // ボスが空中にいる場合、重力を適用して落下させる
-            if (pos.y > floorHeight)
-            {
-                currentJumpVelocity -= gravity * Time.deltaTime;
-                pos.y += currentJumpVelocity * Time.deltaTime;
-                rect.anchoredPosition = pos;
-
-                // ボスが地面に到達した場合、位置を修正し、ジャンプ速度をリセットする
-                if (pos.y <= floorHeight)
-                {
-                    pos.y = floorHeight;
-                    rect.anchoredPosition = pos;
-                    currentJumpVelocity = 0;
-                    isFirstFall = false;
-                }
-                return;
-            }
-        }
-
-        // 攻撃中は移動しない
-        if (isAttack) { return; }
-
-        var player = Reference.Instance.player;
-
-        // ボスが地面にいる場合、プレイヤーの位置に応じて移動方向を決定する
-        if (pos.y <= floorHeight)
-        {
-            if (player.transform.position.x > transform.position.x)
-            {
-                dir = moveSpeed;
-                transform.localScale = new Vector3(1, 1, 1);
-            }
-            else
-            {
-                dir = -moveSpeed;
-                transform.localScale = new Vector3(-1, 1, 1);
-            }
-        }
-
-        // ボスを移動させる
-        transform.position += dir * Time.deltaTime;
-
-        int[] range = new int[] { 0, 100, 999, 300 };
-        // プレイヤーが攻撃範囲に入った場合、攻撃を開始する
-        if (Mathf.Abs(player.transform.position.x - transform.position.x) < range[attackKind])
-        {
-            isAttack = true;
-            isAttackDamage = true;
-            attackTime = 0;
-        }
-
-    }
-
-    private void HandleNormalSpriteAnimation()
-    {
-        if (isAttack) { return; }
-        spriteChangeTimer += Time.deltaTime;
-        if (spriteChangeTimer >= spriteChangeInterval)
-        {
-            spriteChangeTimer -= spriteChangeInterval;
-            isNormalSprite = !isNormalSprite;
-        }
-        image.sprite = isNormalSprite ? normalSprite1 : normalSprite2;
+        moveState = state;
+        moveTimer = 0;
     }
 
     public override void TakeDamage(int damage, bool breakAttack, string soundName)
@@ -365,7 +155,7 @@ public class Boss3 : Enemy, ICharacter
     private IEnumerator Dead()
     {
         Vector3 startPos = transform.position;
-        float duration = 1.0f; // 飛び上がりから落下までの時間
+        float duration = 2.0f; // 飛び上がりから落下までの時間
         float distance = transform.localScale.x * -200f; // 後方への移動距離
         float gravity = -2000f; // 重力加速度
         float elapsed = 0f;
