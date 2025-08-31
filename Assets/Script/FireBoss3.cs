@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class Bullet : MonoBehaviour
+public class FireBoss3 : MonoBehaviour
 {
     [SerializeField] bool isEnemy = true;
 
@@ -14,7 +14,12 @@ public class Bullet : MonoBehaviour
     int nowSpriteIndex = 0; // 現在のスプライトインデックス
     float spriteChangeTimer = 0f; // スプライト切り替え用タイマー
 
+    int state = 0;
+    [SerializeField] float flyTime = 2;
+    float timer = 0;
+
     public Vector2 move;
+    public Vector2 fallMove;
     bool isDamage = true;
 
     // Update is called once per frame
@@ -34,7 +39,29 @@ public class Bullet : MonoBehaviour
             spriteChangeTimer = 0f;
         }
 
-        bodyRect.anchoredPosition += move * Time.deltaTime;
+        switch (state)
+        {
+            case 0:
+                bodyRect.anchoredPosition += move * Time.deltaTime;
+                timer += Time.deltaTime;
+
+                if (timer >= flyTime)
+                {
+                    timer = 0;
+                    state = 1;
+                    bodyRect.anchoredPosition = new Vector2(Random.Range(-60, 60), bodyRect.anchoredPosition.y);
+                    transform.rotation = Quaternion.Euler(0, 0, 0);
+                }
+                break;
+            case 1:
+
+                bodyRect.anchoredPosition += fallMove * Time.deltaTime;
+                if (bodyRect.anchoredPosition.y <= -300)
+                {
+                    Destroy(gameObject);
+                }
+                break;
+        }
 
         if (isDamage)
         {
@@ -44,7 +71,6 @@ public class Bullet : MonoBehaviour
                 {
                     Reference.Instance.player.TakeDamage(1);
                     isDamage = false;
-                    Destroy(gameObject);
                 }
             }
             else
@@ -53,9 +79,6 @@ public class Bullet : MonoBehaviour
                 foreach (var enemy in enemyList)
                 {
                     enemy.TakeDamage(1, false);
-                    isDamage = false;
-                    Destroy(gameObject);
-                    break;
                 }
             }
         }

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections;
-using UnityEngine;
-using UnityEngine.UI;
+﻿using UnityEngine;
 
 /// <summary>
 /// 敵キャラクターの挙動を制御するクラス。
@@ -11,6 +8,8 @@ public class Enemy_MolFire : Enemy, ICharacter
 {
     [SerializeField] Sprite attackSprite2;
     float attackSpriteTimer = 0;
+
+    [SerializeField] string attackSE = "fire";
 
     protected override void HandleAttack()
     {
@@ -30,6 +29,8 @@ public class Enemy_MolFire : Enemy, ICharacter
                 currentJumpVelocity = maxJumpVelocity;
                 attackTime = 0.51f;
                 attackSpriteTimer = 0;
+
+                SoundManager.Instance.Play(attackSE);
             }
         }
         else if (attackTime < 1f)

@@ -114,6 +114,7 @@ public class Enemy_Fall2 : Enemy, ICharacter
                 var distance = Mathf.Abs(player.transform.position.x - transform.position.x);
                 if (distance < 120)
                 {
+                    SoundManager.Instance.Play("otamaro_fall");
                     isFalling = true;
                     isAttackDamage = true;
                 }
@@ -126,6 +127,7 @@ public class Enemy_Fall2 : Enemy, ICharacter
                 jumpIntervalTimer -= Time.deltaTime;
                 if (jumpIntervalTimer < 0)
                 {
+                    SoundManager.Instance.Play("otamaro_fall");
                     jumpIntervalTimer = 1;
                     StartAttackFlg();
                 }

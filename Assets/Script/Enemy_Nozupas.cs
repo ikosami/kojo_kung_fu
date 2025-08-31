@@ -1,5 +1,4 @@
 ﻿using System;
-using UnityEditor.Build;
 using UnityEngine;
 
 /// <summary>
@@ -57,6 +56,7 @@ public class Enemy_Nozupas : Enemy, ICharacter
             }
             else
             {
+                SoundManager.Instance.Play("nozu_mukou");
                 return;
             }
         }
@@ -109,6 +109,7 @@ public class Enemy_Nozupas : Enemy, ICharacter
                     // 攻撃発動
                     if (chargeAttack)
                     {
+
                         SoundManager.Instance.Play("enemy_attack");
                         if (Util.IsHitPlayer(attackRange))
                         {

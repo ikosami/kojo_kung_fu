@@ -83,6 +83,16 @@ MonoBehaviour:
     clip: {fileID: 8300000, guid: 376af97f36451fc48a62cca125cb7de4, type: 3}
   - key: boss2_stamp
     clip: {fileID: 8300000, guid: 7535858d8c5785a499d530150e6c76ea, type: 3}
+  - key: nozu_mukou
+    clip: {fileID: 8300000, guid: b776eb080d1f89246943b08f4b9681ef, type: 3}
+  - key: otamaro_fall
+    clip: {fileID: 8300000, guid: 06d1a752d67f9de4ab39a29d862ea4cb, type: 3}
+  - key: boss_change
+    clip: {fileID: 8300000, guid: 8f88704b1559dac48973339a6a2d3f17, type: 3}
+  - key: fire
+    clip: {fileID: 8300000, guid: 8fabed609f5f20245aa92d766e9d1758, type: 3}
+  - key: ice
+    clip: {fileID: 8300000, guid: a207ec7e37b9a3b44840d8e6f1a004a4, type: 3}
 --- !u!82 &210168011316505491
 AudioSource:
   m_ObjectHideFlags: 0

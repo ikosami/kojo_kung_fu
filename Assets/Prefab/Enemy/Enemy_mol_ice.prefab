@@ -93,6 +93,14 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 21300000, guid: 50c7c791b0219cc4bab0594bf8bec48f, type: 3}
     - target: {fileID: 6153590876507659125, guid: 450def266b37c4e41a4cf8a050be89c6, type: 3}
+      propertyPath: attackSE
+      value: ice
+      objectReference: {fileID: 0}
+    - target: {fileID: 6153590876507659125, guid: 450def266b37c4e41a4cf8a050be89c6, type: 3}
+      propertyPath: damageSprite
+      value: 
+      objectReference: {fileID: 21300000, guid: e8d6cf38e82f6b2428806f84396380fd, type: 3}
+    - target: {fileID: 6153590876507659125, guid: 450def266b37c4e41a4cf8a050be89c6, type: 3}
       propertyPath: attackSprite1
       value: 
       objectReference: {fileID: 21300000, guid: 2fd2fc0cbf161ae41996a19e4cbe919a, type: 3}
