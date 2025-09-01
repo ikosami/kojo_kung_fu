@@ -31,6 +31,9 @@ public class Boss3 : Enemy, ICharacter
     [SerializeField] float leftPoint = 30;
     [SerializeField] float rightPoint = 130;
 
+
+    [SerializeField] IceBoss3_1 iceBoss3_1;
+
     [SerializeField] FireBoss3 fireBoss3;
     [SerializeField] GameObject fireWheel;
     [SerializeField] RectTransform[] fireWheelAttacks;
@@ -73,7 +76,7 @@ public class Boss3 : Enemy, ICharacter
                 moveTimer += Time.deltaTime;
                 if (moveTimer > 2)
                 {
-                    ChangeState(1);
+                    ChangeState(2);
                 }
                 break;
             case 1:
@@ -87,7 +90,7 @@ public class Boss3 : Enemy, ICharacter
                 if (ChangeFire(iceSprite_1))
                 {
                     preState = 2;
-                    ChangeState(1);
+                    ChangeState(5);
                 }
                 break;
             case 3:
@@ -102,7 +105,48 @@ public class Boss3 : Enemy, ICharacter
                     ChangeState(3);
                 }
                 break;
+            case 5:
+                if (IceBlock())
+                {
+                    ChangeState(3);
+                }
+                break;
         }
+    }
+
+    private bool IceBlock()
+    {
+        float preTimer = moveTimer;
+        moveTimer += Time.deltaTime;
+
+        // 攻撃＆表示を同一箇所で処理
+        float attackTime1 = 1f;
+        float attackTime2 = 1.5f;
+        float attackTime3 = 2f;
+        float attackDur = 0.3f; // 表示継続時間
+
+        if (moveTimer >= attackTime1 && moveTimer < attackTime1 + attackDur)
+        {
+            if (preTimer < attackTime1) IceBullet();
+            SetSprite(iceSprite_2);
+        }
+        else if (moveTimer >= attackTime2 && moveTimer < attackTime2 + attackDur)
+        {
+            if (preTimer < attackTime2) IceBullet();
+            SetSprite(iceSprite_2);
+        }
+        else if (moveTimer >= attackTime3 && moveTimer < attackTime3 + attackDur)
+        {
+            if (preTimer < attackTime3) IceBullet();
+            SetSprite(iceSprite_2);
+        }
+        else
+        {
+            SetSprite(iceSprite_1);
+        }
+
+        if (moveTimer > 8f) return true;
+        return false;
     }
 
     private bool FireWheel()
@@ -171,12 +215,12 @@ public class Boss3 : Enemy, ICharacter
 
         if (moveTimer >= attackTime1 && moveTimer < attackTime1 + attackDur)
         {
-            if (preTimer < attackTime1) FireBullet();
+            if (preTimer < attackTime1) FireBullet(true);
             SetSprite(fireSprite_2);
         }
         else if (moveTimer >= attackTime2 && moveTimer < attackTime2 + attackDur)
         {
-            if (preTimer < attackTime2) FireBullet();
+            if (preTimer < attackTime2) FireBullet(false);
             SetSprite(fireSprite_2);
         }
         else
@@ -187,11 +231,17 @@ public class Boss3 : Enemy, ICharacter
         if (moveTimer > 8f) return true;
         return false;
     }
+    void IceBullet()
+    {
+        SoundManager.Instance.Play("ice");
+        Instantiate(iceBoss3_1, bulletPoint.transform.position, Quaternion.identity, Reference.Instance.stageRect);
+    }
 
-    void FireBullet()
+    void FireBullet(bool isPlayerFollow)
     {
         SoundManager.Instance.Play("fire");
-        Instantiate(fireBoss3, bulletPoint.transform.position, Quaternion.Euler(0, 0, 180), Reference.Instance.stageRect);
+        var fire = Instantiate(fireBoss3, bulletPoint.transform.position, Quaternion.Euler(0, 0, 180), Reference.Instance.stageRect);
+        fire.isPlayerFollow = isPlayerFollow;
     }
 
     //ふわーっと浮かび上がる

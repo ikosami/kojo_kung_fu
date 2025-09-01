@@ -11,6 +11,9 @@ public class SpriteAnim : MonoBehaviour
 
     private void Update()
     {
+        if (Reference.Instance.IsClear) return;
+        if (Reference.Instance.isPause) return;
+        if (Reference.Instance.IsGameOver) { return; }
         timer += Time.deltaTime;
         if (timer >= time)
         {

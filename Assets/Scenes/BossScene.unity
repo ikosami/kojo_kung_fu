@@ -2476,20 +2476,21 @@ MonoBehaviour:
   backDistance: -1
   BaseHeight: -64
   normalSprite_1: {fileID: 21300000, guid: 72a128da23826274297318f24796d410, type: 3}
-  normalSprite_2: {fileID: 0}
-  normalSprite_3: {fileID: 0}
+  normalSprite_2: {fileID: 21300000, guid: f454fadea66b84248be0c9b8b8f50d68, type: 3}
+  normalSprite_3: {fileID: 21300000, guid: f4362ee42c2cc174ea6572f275379ae7, type: 3}
   fireSprite_1: {fileID: 21300000, guid: 96f764dd4fa5e7f4e84accf0f8cdff3f, type: 3}
   fireSprite_2: {fileID: 21300000, guid: d4f0733156ee2e04191ef05e4524550a, type: 3}
   fireSprite_3: {fileID: 0}
   fireSprite_4: {fileID: 0}
   iceSprite_1: {fileID: 21300000, guid: 55ecf8c928572b94b931e4b1e74b41c9, type: 3}
-  iceSprite_2: {fileID: 0}
-  iceSprite_3: {fileID: 0}
+  iceSprite_2: {fileID: 21300000, guid: 4c9a5a602e46fd144bb24f166c6a52a6, type: 3}
+  iceSprite_3: {fileID: 21300000, guid: 8b9fff0b6743ff44eb74921168a13945, type: 3}
   bulletPoint: {fileID: 2096610536}
   moveState: 0
   attackHeight: -70
   leftPoint: 30
   rightPoint: 130
+  iceBoss3_1: {fileID: 1909104866606152416, guid: 6cfac2b54f19dd84e936d959d9ccab2a, type: 3}
   fireBoss3: {fileID: 426242221616029363, guid: 20dc167537466854cb115edf03ef8c2e, type: 3}
   fireWheel: {fileID: 694395467}
   fireWheelAttacks:

@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class FireBoss3 : MonoBehaviour
+public class IceBoss3_1 : MonoBehaviour
 {
     [SerializeField] bool isEnemy = true;
 
@@ -15,7 +15,7 @@ public class FireBoss3 : MonoBehaviour
     float spriteChangeTimer = 0f; // スプライト切り替え用タイマー
 
     int state = 0;
-    [SerializeField] float flyTime = 2;
+    [SerializeField] float floor = 2;
     float timer = 0;
 
     public Vector2 move;
@@ -31,42 +31,26 @@ public class FireBoss3 : MonoBehaviour
         if (Reference.Instance.isPause) return;
         if (Reference.Instance.IsGameOver) { return; }
 
-        spriteChangeTimer += Time.deltaTime;
-        if (spriteChangeTimer >= 0.2f)
-        {
-            // スプライトを切り替える
-            nowSpriteIndex = (nowSpriteIndex + 1) % sprites.Length;
-            image.sprite = sprites[nowSpriteIndex];
-            spriteChangeTimer = 0f;
-        }
-
         switch (state)
         {
             case 0:
                 bodyRect.anchoredPosition += move * Time.deltaTime;
                 timer += Time.deltaTime;
 
-                if (timer >= flyTime)
+                if (bodyRect.anchoredPosition.y <= floor)
                 {
+                    var pos = bodyRect.anchoredPosition;
+                    pos.y = floor;
+                    bodyRect.anchoredPosition = pos;
+
                     timer = 0;
                     state = 1;
-                    if (isPlayerFollow)
-                    {
-                        var pos = bodyRect.transform.position;
-                        pos.x = Reference.Instance.player.transform.position.x;
-                        bodyRect.transform.position = pos;
-                    }
-                    else
-                    {
-                        bodyRect.anchoredPosition = new Vector2(Random.Range(-60, 60), bodyRect.anchoredPosition.y);
-                    }
-                    transform.rotation = Quaternion.Euler(0, 0, 0);
                 }
                 break;
             case 1:
 
                 bodyRect.anchoredPosition += fallMove * Time.deltaTime;
-                if (bodyRect.anchoredPosition.y <= -300)
+                if (bodyRect.anchoredPosition.x <= -300)
                 {
                     Destroy(gameObject);
                 }

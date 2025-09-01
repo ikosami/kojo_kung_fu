@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: StageData3
   m_EditorClassIdentifier: 
   stageBackSprites:
-  - {fileID: 21300000, guid: 29ab490e700ee8f4fa0501adbab68e53, type: 3}
-  - {fileID: 21300000, guid: 515bb2c89647f58489a115de6a9f3159, type: 3}
+  - {fileID: 21300000, guid: af73d571d037c8f4d819c08cdfeb06c7, type: 3}
+  - {fileID: 21300000, guid: 83759b78229139c4492a1fa2c07800d5, type: 3}
   stageFrontSprites:
-  - {fileID: 21300000, guid: e61c385ec29773a479638ca00a74a8f4, type: 3}
+  - {fileID: 21300000, guid: 9f80cab3e0ff2b049b8956ebd38dfd4d, type: 3}
   StageNum: 3
   stageDataList:
   - popEnemy:
