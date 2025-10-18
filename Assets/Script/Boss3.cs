@@ -1,24 +1,22 @@
-﻿using System;
+﻿using NUnit.Framework.Interfaces;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
+using Random = UnityEngine.Random;
 
 public class Boss3 : Enemy, ICharacter
 {
-    [SerializeField] Sprite normalSprite_1;
-    [SerializeField] Sprite normalSprite_2;
-    [SerializeField] Sprite normalSprite_3;
+    [SerializeField] Sprite normalSprite_idle;
+    [SerializeField] Sprite normalSprite_fly;
+    [SerializeField] Sprite normalSprite_attack_idle;
+    [SerializeField] Sprite normalSprite_attack;
+    [SerializeField] Sprite normalSprite_fall;
+    [SerializeField] Sprite normalSprite_damage;
 
-    [SerializeField] Sprite fireSprite_1;
-    [SerializeField] Sprite fireSprite_2;
-    [SerializeField] Sprite fireSprite_3;
-    [SerializeField] Sprite fireSprite_4;
-
-    [SerializeField] Sprite iceSprite_1;
-    [SerializeField] Sprite iceSprite_2;
-    [SerializeField] Sprite iceSprite_3;
 
     [SerializeField] Transform bulletPoint;
+    [SerializeField] Transform[] bulletFireBallPoints;
+    [SerializeField] Transform bulletPointIce;
 
 
     [SerializeField] int moveState = 0;
@@ -27,16 +25,23 @@ public class Boss3 : Enemy, ICharacter
     bool isRight = true;
     Vector2 targetPos;
     Vector2 prePos;
+
+    [SerializeField] Transform[] iceBulletPoints;
+
     [SerializeField] float attackHeight = 200;
+    [SerializeField] float downHeight = 100;
     [SerializeField] float leftPoint = 30;
     [SerializeField] float rightPoint = 130;
 
 
     [SerializeField] IceBoss3_1 iceBoss3_1;
+    [SerializeField] IceBoss3_2 iceBoss3_2;
+    List<IceBoss3_2> iceFallList = new List<IceBoss3_2>();
 
-    [SerializeField] FireBoss3 fireBoss3;
-    [SerializeField] GameObject fireWheel;
-    [SerializeField] RectTransform[] fireWheelAttacks;
+    [SerializeField] FireBoss3_1 fireBoss3_1;
+    [SerializeField] FireBoss3_2 fireBoss3_2;
+    [SerializeField] GameObject damageFieldObj;
+    [SerializeField] RectTransform[] damageFieldAttacks;
 
     //属性
     int preState = 0;
@@ -62,6 +67,8 @@ public class Boss3 : Enemy, ICharacter
         moveTimer = 0;
     }
 
+    List<int> moveList = new List<int> { 1, 2, 3, 4 };
+
     protected override void Update()
     {
         if (Reference.Instance.IsClear) return;
@@ -70,109 +77,10 @@ public class Boss3 : Enemy, ICharacter
 
         if (isDead) { return; }
 
-        switch (moveState)
+
+        if (damageFieldObj.activeSelf)
         {
-            case 0:
-                moveTimer += Time.deltaTime;
-                if (moveTimer > 2)
-                {
-                    ChangeState(2);
-                }
-                break;
-            case 1:
-                if (ChangeFire(fireSprite_1))
-                {
-                    preState = 1;
-                    ChangeState(3);
-                }
-                break;
-            case 2:
-                if (ChangeFire(iceSprite_1))
-                {
-                    preState = 2;
-                    ChangeState(5);
-                }
-                break;
-            case 3:
-                if (FireBoal())
-                {
-                    ChangeState(4);
-                }
-                break;
-            case 4:
-                if (FireWheel())
-                {
-                    ChangeState(3);
-                }
-                break;
-            case 5:
-                if (IceBlock())
-                {
-                    ChangeState(3);
-                }
-                break;
-        }
-    }
-
-    private bool IceBlock()
-    {
-        float preTimer = moveTimer;
-        moveTimer += Time.deltaTime;
-
-        // 攻撃＆表示を同一箇所で処理
-        float attackTime1 = 1f;
-        float attackTime2 = 1.5f;
-        float attackTime3 = 2f;
-        float attackDur = 0.3f; // 表示継続時間
-
-        if (moveTimer >= attackTime1 && moveTimer < attackTime1 + attackDur)
-        {
-            if (preTimer < attackTime1) IceBullet();
-            SetSprite(iceSprite_2);
-        }
-        else if (moveTimer >= attackTime2 && moveTimer < attackTime2 + attackDur)
-        {
-            if (preTimer < attackTime2) IceBullet();
-            SetSprite(iceSprite_2);
-        }
-        else if (moveTimer >= attackTime3 && moveTimer < attackTime3 + attackDur)
-        {
-            if (preTimer < attackTime3) IceBullet();
-            SetSprite(iceSprite_2);
-        }
-        else
-        {
-            SetSprite(iceSprite_1);
-        }
-
-        if (moveTimer > 8f) return true;
-        return false;
-    }
-
-    private bool FireWheel()
-    {
-        float duration = 3f; // 移動にかける時間（秒）
-        if (moveTimer == 0)
-        {
-            SoundManager.Instance.Play("fire");
-            prePos = new Vector2(pos.x, pos.y);
-
-            if (isRight)
-            {
-                targetPos = new Vector2(leftPoint, pos.y);
-            }
-            else
-            {
-                targetPos = new Vector2(rightPoint, pos.y);
-            }
-            fireWheel.SetActive(true);
-            SetSprite(fireSprite_2);
-        }
-
-
-        if (isAttackDamage)
-        {
-            foreach (var attackRange in fireWheelAttacks)
+            foreach (var attackRange in damageFieldAttacks)
             {
                 if (Util.IsHitPlayer(attackRange))
                 {
@@ -183,70 +91,289 @@ public class Boss3 : Enemy, ICharacter
                 }
             }
         }
+        Damaging();
 
 
-        moveTimer += Time.deltaTime;
-        // 線形補間でY座標を更新
-        float t = Mathf.Clamp01(moveTimer / duration);
-        float newY = Mathf.Lerp(prePos.x, targetPos.x, t);
-        pos = new Vector2(newY, pos.y);
-
-        if (moveTimer > duration)
+        switch (moveState)
         {
-            fireWheel.SetActive(false);
-            SetSprite(fireSprite_1);
-            isRight = !isRight;
-            transform.localScale = new Vector3(isRight ? -1 : 1, 1, 1);
+            case -2://初期待機
 
+                moveTimer += Time.deltaTime;
+                if (moveTimer > 1)
+                {
+                    ChangeState(0);
+                }
+                break;
+            case -1://ダウン状態
+                if (ChangeDown())
+                {
+                    ChangeState(0);
+                }
+                break;
+            case 0:
+                if (FlyMove())
+                {
+                    moveList = new List<int> { 1, 2, 3, 4 };
+
+                    SetRandomState();
+                }
+                break;
+            case 1:
+                if (FireFall())
+                {
+                    SetRandomState();
+                }
+                break;
+            case 2:
+                if (FireBoal())
+                {
+                    SetRandomState();
+                }
+                break;
+            case 3:
+                if (IceBlock())
+                {
+                    SetRandomState();
+                }
+                break;
+            case 4:
+                if (IceFall())
+                {
+                    SetRandomState();
+                }
+                break;
+        }
+    }
+
+    protected override bool Damaging()
+    {
+        if (moveState != -1)
+        {
+            return false;
+        }
+        // ダメージ演出中はスプライトをダメージ用にし、一定時間後に戻す
+        if (damageWaitTime > 0)
+        {
+            damageWaitTime -= Time.deltaTime;
+            if (damageWaitTime <= 0)
+            {
+                image.sprite = normalSprite_fall;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+        return true;
+    }
+
+    private void SetRandomState()
+    {
+        if (moveList.Count == 0)
+        {
+            ChangeState(-1);
+            return;
+        }
+
+        var random = Random.Range(0, moveList.Count);
+        var state = moveList[random];
+        moveList.RemoveAt(random);
+
+        ChangeState(state);
+    }
+
+    private bool IceFall()
+    {
+        if (moveTimer == 0)
+        {
+            SoundManager.Instance.Play("ice");
+
+            int offset = 3;
+            // 右端の offset+1 までを避けてランダム取得
+            int random = Random.Range(offset, iceBulletPoints.Length - offset - 1);
+            iceFallList.Clear();
+            for (int i = 0; i < iceBulletPoints.Length; i++)
+            {
+                if (i == random || i == random + 1) continue;
+
+                Transform ice = iceBulletPoints[i];
+                var iceObj = Instantiate(iceBoss3_2, ice.transform.position, Quaternion.identity, Reference.Instance.stageRect);
+                iceFallList.Add(iceObj);
+            }
+            SetSprite(normalSprite_attack_idle);
+
+        }
+        float preTimer = moveTimer;
+        moveTimer += Time.deltaTime;
+        var fallTimer = 1.5f;
+        if (moveTimer > fallTimer && preTimer < fallTimer)
+        {
+            foreach (var ice in iceFallList)
+            {
+                if (ice != null)
+                {
+                    ice.Fall();
+                }
+            }
+            iceFallList.Clear();
+            SetSprite(normalSprite_attack);
+        }
+        if (moveTimer > fallTimer + 1)
+        {
+            SetSprite(normalSprite_fly);
+        }
+
+
+        if (moveTimer > 8f)
+        {
             return true;
         }
         return false;
     }
 
+    private bool IceBlock()
+    {
+        float preTimer = moveTimer;
+        moveTimer += Time.deltaTime;
+
+        float startTime = 1f;     // 最初の攻撃開始時刻
+        float interval = 2f;    // 一定間隔
+        int attackCount = 4;      // 回数
+        float attackDur = 1f;   // 表示継続時間
+        float endWait = 2f; // 終了後の待機時間
+
+        bool attacking = false;
+        for (int i = 0; i < attackCount; i++)
+        {
+            float t = startTime + interval * i;
+            if (moveTimer >= t && moveTimer < t + attackDur)
+            {
+                if (preTimer < t) IceBullet();
+                SetSprite(normalSprite_attack);
+                attacking = true;
+                break;
+            }
+        }
+
+
+        if (startTime + interval * (attackCount - 1) + attackDur < moveTimer)
+        {
+            SetSprite(normalSprite_fly);
+        }
+        else if (!attacking)
+        {
+            SetSprite(normalSprite_attack_idle);
+        }
+
+
+        if (moveTimer > startTime + interval * (attackCount - 1) + attackDur + endWait)
+            return true;
+        return false;
+    }
+
+    private bool FireFall()
+    {
+        float preTimer = moveTimer;
+        moveTimer += Time.deltaTime;
+
+        float startTime = 1f;     // 最初の攻撃開始時刻
+        float interval = 0.75f;    // 一定間隔
+        int attackCount = 6;      // 回数
+        float attackDur = 0.3f;   // 表示継続時間
+        float endWait = 2f; // 終了後の待機時間
+
+        bool attacking = false;
+        for (int i = 0; i < attackCount; i++)
+        {
+            float t = startTime + interval * i;
+            if (moveTimer >= t && moveTimer < t + attackDur)
+            {
+                if (preTimer < t) FireBullet(false); // インデックスで切替例
+                SetSprite(normalSprite_attack);
+                attacking = true;
+                break;
+            }
+        }
+
+        if (startTime + interval * (attackCount - 1) + attackDur < moveTimer)
+        {
+            SetSprite(normalSprite_fly);
+        }
+        else if (!attacking)
+        {
+            SetSprite(normalSprite_attack_idle);
+        }
+
+
+        if (moveTimer > startTime + interval * (attackCount - 1) + attackDur + endWait)
+            return true;
+        return false;
+    }
     private bool FireBoal()
     {
         float preTimer = moveTimer;
         moveTimer += Time.deltaTime;
 
-        // 攻撃＆表示を同一箇所で処理
-        float attackTime1 = 1f;
-        float attackTime2 = 1.5f;
-        float attackDur = 0.3f; // 表示継続時間
+        float startTime = 1f;     // 最初の攻撃開始時刻
+        float interval = 1.5f;    // 一定間隔
+        int attackCount = 5;      // 回数
+        float attackDur = 1f;   // 表示継続時間
+        float endWait = 2f; // 終了後の待機時間
 
-        if (moveTimer >= attackTime1 && moveTimer < attackTime1 + attackDur)
+        bool attacking = false;
+        for (int i = 0; i < attackCount; i++)
         {
-            if (preTimer < attackTime1) FireBullet(true);
-            SetSprite(fireSprite_2);
-        }
-        else if (moveTimer >= attackTime2 && moveTimer < attackTime2 + attackDur)
-        {
-            if (preTimer < attackTime2) FireBullet(false);
-            SetSprite(fireSprite_2);
-        }
-        else
-        {
-            SetSprite(fireSprite_1);
+            float t = startTime + interval * i;
+            if (moveTimer >= t && moveTimer < t + attackDur)
+            {
+                if (preTimer < t) FireBall(i % 2);
+                SetSprite(normalSprite_attack);
+                attacking = true;
+                break;
+            }
         }
 
-        if (moveTimer > 8f) return true;
+
+        if (startTime + interval * (attackCount - 1) + attackDur < moveTimer)
+        {
+            SetSprite(normalSprite_fly);
+        }
+        else if (!attacking)
+        {
+            SetSprite(normalSprite_attack_idle);
+        }
+
+
+        if (moveTimer > startTime + interval * (attackCount - 1) + attackDur + endWait)
+            return true;
         return false;
     }
+
+
     void IceBullet()
     {
         SoundManager.Instance.Play("ice");
-        Instantiate(iceBoss3_1, bulletPoint.transform.position, Quaternion.identity, Reference.Instance.stageRect);
+        var bullet = Instantiate(iceBoss3_1, bulletPointIce.transform.position, Quaternion.identity, Reference.Instance.stageRect);
     }
-
     void FireBullet(bool isPlayerFollow)
     {
         SoundManager.Instance.Play("fire");
-        var fire = Instantiate(fireBoss3, bulletPoint.transform.position, Quaternion.Euler(0, 0, 180), Reference.Instance.stageRect);
+        var fire = Instantiate(fireBoss3_1, bulletPoint.transform.position, Quaternion.Euler(0, 0, 180), Reference.Instance.stageRect);
         fire.isPlayerFollow = isPlayerFollow;
+    }
+    private void FireBall(int index)
+    {
+        SoundManager.Instance.Play("fire");
+        var point = bulletFireBallPoints[index];
+        var fire = Instantiate(fireBoss3_2, point.transform.position, Quaternion.identity, Reference.Instance.stageRect);
     }
 
     //ふわーっと浮かび上がる
-    private bool ChangeFire(Sprite target)
+    private bool FlyMove()
     {
+        SetSprite(normalSprite_fly);
+
         float duration = 1f; // 移動にかける時間（秒）
         if (moveTimer == 0)
         {
@@ -261,30 +388,38 @@ public class Boss3 : Enemy, ICharacter
         float newY = Mathf.Lerp(prePos.y, attackHeight, t);
         pos = new Vector2(pos.x, newY);
 
-        Sprite sprite = null;
-        if (preState == 0)
-        {
-            sprite = normalSprite_1;
-        }
-        else if (preState == 1)
-        {
-            sprite = fireSprite_1;
-        }
-        else if (preState == 2)
-        {
-            sprite = iceSprite_1;
-        }
-
-        if (moveTimer < 0.5f)
-        {
-            SetSprite(((int)(moveTimer * 15)) % 2 == 0 ? sprite : target);
-        }
-        else
-        {
-            SetSprite(target);
-        }
 
         if (moveTimer > duration)
+        {
+            damageFieldObj.SetActive(true);
+            return true;
+        }
+        return false;
+    }
+
+
+    //落ちる
+    private bool ChangeDown()
+    {
+        float duration = 1f; // 移動にかける時間（秒）
+        if (moveTimer == 0)
+        {
+            damageFieldObj.SetActive(false);
+            SoundManager.Instance.Play("boss_change");
+            prePos = new Vector2(pos.x, pos.y);
+            targetPos = new Vector2(isRight ? rightPoint : leftPoint, downHeight);
+            SetSprite(normalSprite_fall);
+        }
+
+        moveTimer += Time.deltaTime;
+
+        // 線形補間でY座標を更新
+        float t = Mathf.Clamp01(moveTimer / duration);
+        pos = new Vector2(Mathf.Lerp(prePos.x, targetPos.x, t), Mathf.Lerp(prePos.y, targetPos.y, t));
+
+
+
+        if (moveTimer > 4)
         {
             return true;
         }
@@ -299,9 +434,18 @@ public class Boss3 : Enemy, ICharacter
         isAttackDamage = true;
     }
 
+
+    int downDamage = 0;
     public override void TakeDamage(int damage, bool breakAttack, string soundName)
     {
         if (isDead) { return; }
+
+        if (moveState == -1)
+        {
+            SetSprite(normalSprite_damage);
+            damageWaitTime = 0.5f;
+        }
+
 
         hp -= damage;
         if (hp <= 0)

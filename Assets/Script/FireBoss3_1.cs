@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class FireBoss3 : MonoBehaviour
+public class FireBoss3_1 : MonoBehaviour
 {
     [SerializeField] bool isEnemy = true;
 

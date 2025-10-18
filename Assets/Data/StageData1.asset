@@ -22,42 +22,54 @@ MonoBehaviour:
     - EnemyIndex: 0
       SpawnTime: 0
       SpanwOffset: 75
+      IsRespawnPoint: 0
   - popEnemy:
     - EnemyIndex: 0
       SpawnTime: 0
       SpanwOffset: 75
+      IsRespawnPoint: 0
   - popEnemy:
     - EnemyIndex: 0
       SpawnTime: 0
       SpanwOffset: -75
+      IsRespawnPoint: 0
   - popEnemy:
     - EnemyIndex: 1
       SpawnTime: 0
       SpanwOffset: 75
+      IsRespawnPoint: 0
   - popEnemy:
     - EnemyIndex: 0
       SpawnTime: 0
       SpanwOffset: 75
+      IsRespawnPoint: 1
     - EnemyIndex: 0
       SpawnTime: 1
       SpanwOffset: 75
+      IsRespawnPoint: 0
   - popEnemy:
     - EnemyIndex: 0
       SpawnTime: 0
       SpanwOffset: 75
+      IsRespawnPoint: 0
     - EnemyIndex: 2
       SpawnTime: 1
       SpanwOffset: -75
+      IsRespawnPoint: 0
     - EnemyIndex: 1
       SpawnTime: 2
       SpanwOffset: 75
+      IsRespawnPoint: 0
   - popEnemy:
     - EnemyIndex: 2
       SpawnTime: 0
       SpanwOffset: 75
+      IsRespawnPoint: 0
     - EnemyIndex: 2
       SpawnTime: 0
       SpanwOffset: -75
+      IsRespawnPoint: 0
     - EnemyIndex: 3
       SpawnTime: 2
       SpanwOffset: 75
+      IsRespawnPoint: 0

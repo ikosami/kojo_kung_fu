@@ -15,6 +15,17 @@ public class StageData : ScriptableObject
 public class StageEntityData
 {
     public List<PopData> popEnemy;
+    public bool IsRespawnPoint
+    {
+        get
+        {
+            foreach (var pop in popEnemy)
+            {
+                if (pop.IsRespawnPoint) return true;
+            }
+            return false;
+        }
+    }
 }
 [Serializable]
 public class PopData
@@ -22,5 +33,6 @@ public class PopData
     public int EnemyIndex;
     public int SpawnTime;
     public int SpanwOffset;
+    public bool IsRespawnPoint;
 }
 

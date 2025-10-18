@@ -2,7 +2,7 @@
 
 public class SaveDataManager : MonoBehaviour
 {
-    public const int stageCnt = 3;
+    public const int stageCnt = 4;
 
     const string keyNowStage = "now_stage";
     public static int NowStage
@@ -14,6 +14,20 @@ public class SaveDataManager : MonoBehaviour
         set
         {
             PlayerPrefs.SetInt(keyNowStage, value);
+            NowArea = 0;
+        }
+    }
+
+    const string keyNowArea = "now_area";
+    public static int NowArea
+    {
+        get
+        {
+            return PlayerPrefs.GetInt(keyNowArea, 0);
+        }
+        set
+        {
+            PlayerPrefs.SetInt(keyNowArea, value);
         }
     }
 
@@ -87,7 +101,8 @@ public class SaveDataManager : MonoBehaviour
     {
         get
         {
-            return PlayerPrefs.GetInt(keyLife, 0);
+            var life = PlayerPrefs.GetInt(keyLife, 0);
+            return life;
         }
         set
         {

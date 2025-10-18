@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.LowLevel;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -16,6 +17,9 @@ public class Player : MonoBehaviour, ICharacter
     [SerializeField] Transform bulletPoint;
     float throwingTimer = 0f;
 
+    [SerializeField] Bullet bullet2Prefab;
+    [SerializeField] Transform bullet2Point;
+
     [SerializeField] Image image;
     [SerializeField] Sprite normalSprite1;
     [SerializeField] Sprite normalSprite2;
@@ -29,6 +33,7 @@ public class Player : MonoBehaviour, ICharacter
     [SerializeField] Sprite attackSprite3;
     [SerializeField] Sprite jumpSprite;
     [SerializeField] Sprite deadSprite;
+    [SerializeField] Sprite chargeShotSprite;
 
     [SerializeField] Sprite slidingSprite;
     [SerializeField] Sprite throwingSprite;
@@ -80,13 +85,21 @@ public class Player : MonoBehaviour, ICharacter
     [SerializeField] float startTimer = 1;
     int centerPos = 78;
 
+    [SerializeField] Image chargeImage;
+    float chargeTimer = 0;
+    float chargeNeedTime = 1;
+    float chargeSpriteSpan = 0.05f;
+
+    float isChargeShootTimer = 0;
+
     [SerializeField] bool isInitEffect = true;
 
-    private bool isBackMove
+
+    private bool canScrollStage
     {
         get
         {
-            return !Reference.Instance.isBoss && (Reference.Instance.stageRect.anchoredPosition.x <= 0 && Rect.anchoredPosition.x >= centerPos);
+            return !Reference.Instance.isStopState && !Reference.Instance.isBoss && (Reference.Instance.stageRect.anchoredPosition.x <= 0 && Rect.anchoredPosition.x >= centerPos);
         }
     }
 
@@ -112,26 +125,40 @@ public class Player : MonoBehaviour, ICharacter
         if (Reference.Instance.IsGameOver) return;
 
         //デバッグクリア
-        if (Input.GetKeyDown(KeyCode.B) && Input.GetKey(KeyCode.LeftShift))
+        if (Input.GetKey(KeyCode.LeftShift))
         {
-            if (Reference.Instance.isBoss)
+            if (Input.GetKeyDown(KeyCode.B))
             {
-                foreach (var enemy in Reference.Instance.enemyList)
+                if (Reference.Instance.isBoss)
                 {
-                    enemy.TakeDamage(9999, true);
+                    foreach (var enemy in Reference.Instance.enemyList)
+                    {
+                        enemy.TakeDamage(9999, true);
+                    }
+                }
+                else
+                {
+                    MoveEnd();
                 }
             }
-            else
+            if (Input.GetKeyDown(KeyCode.H))
             {
-                MoveEnd();
+                SaveDataManager.Hp++;
+                Debug.LogError("Hp " + SaveDataManager.Hp);
+                Reference.Instance.UpdateStateView();
             }
         }
+
+
+        if (Reference.Instance.PlayerStop) return;
+
 
         //ポーズ
         if (Input.GetKeyDown(KeyCode.Space))
         {
             Reference.Instance.isPause = !Reference.Instance.isPause;
         }
+
 
         //タイトルに戻る
         if (Reference.Instance.isPause)
@@ -187,14 +214,60 @@ public class Player : MonoBehaviour, ICharacter
             return;
         }
 
+        if (isChargeShootTimer > 0)
+        {
+            isChargeShootTimer -= Time.deltaTime;
+            return;
+        }
+
         Move();
         var pos = rect.anchoredPosition;
         HandleJump(ref pos);
         rect.anchoredPosition = pos;
         HandleAttack();
-
+        Charge();
     }
+    private void Charge()
+    {
+        if (Reference.Instance.StageNum < 4)
+            return;
 
+        if (IsChargeInput)
+        {
+            chargeTimer += Time.deltaTime;
+            if (chargeTimer > chargeNeedTime)
+            {
+                var time = chargeTimer - chargeNeedTime;
+                int span = (int)(time / chargeSpriteSpan);
+
+                // 一定間隔で白点滅
+                bool isVisible = (span % 2 == 0);
+                if (chargeImage.gameObject.activeSelf != isVisible)
+                    chargeImage.gameObject.SetActive(isVisible);
+            }
+            else
+            {
+                // チャージ中でまだ必要時間に達していない場合は非表示
+                if (chargeImage.gameObject.activeSelf)
+                    chargeImage.gameObject.SetActive(false);
+            }
+        }
+        else
+        {
+            if (chargeTimer > chargeNeedTime && IsGround)
+            {
+                SoundManager.Instance.Play("fire");
+                var fire = Instantiate(bullet2Prefab, bullet2Point.transform.position, Quaternion.Euler(0, 0, 180), Reference.Instance.stageRect);
+                image.sprite = chargeShotSprite;
+                isChargeShootTimer = 0.5f;
+            }
+
+            // 攻撃ボタンが離されたらリセット
+            chargeTimer = 0f;
+            if (chargeImage.gameObject.activeSelf)
+                chargeImage.gameObject.SetActive(false);
+        }
+    }
 
 
     private void Move()
@@ -282,16 +355,34 @@ public class Player : MonoBehaviour, ICharacter
             transform.localScale = new Vector3(-1, 1, 1);
             MovePos(moveSpeed * transform.localScale.x);
         }
+
+
+        if (Reference.Instance.StageNum == 4 && canScrollStage)
+        {
+            var posStage = Reference.Instance.stageRect.anchoredPosition;
+
+            int stopPos = -288;
+            if (posStage.x < stopPos)
+            {
+                Reference.Instance.isStopState = true;
+                posStage.x = stopPos;
+                Reference.Instance.stageRect.anchoredPosition = posStage;
+                stopPosition = stopPos;
+
+                FindFirstObjectByType<Stage4Door>().Close();
+            }
+        }
     }
 
+    int stopPosition = 0;
     private void MovePos(Vector3 move)
     {
-        if (isBackMove)
+        if (canScrollStage)
         {
             Reference.Instance.stageRect.transform.position -= move * Time.deltaTime;
-
             var pos = Rect.anchoredPosition;
             pos.x = centerPos;
+
             Rect.anchoredPosition = pos;
         }
         else
@@ -308,10 +399,12 @@ public class Player : MonoBehaviour, ICharacter
             {
                 pos.x = 149;
             }
+
+
             Rect.anchoredPosition = pos;
 
             var stagePos = Reference.Instance.stageRect.anchoredPosition;
-            stagePos.x = 0;
+            stagePos.x = stopPosition;
             Reference.Instance.stageRect.anchoredPosition = stagePos;
         }
     }
@@ -398,6 +491,7 @@ public class Player : MonoBehaviour, ICharacter
     }
 
     bool IsAttackInput => Input.GetKeyDown(KeyCode.Z) || Input.GetKeyDown(KeyCode.J);
+    bool IsChargeInput => Input.GetKey(KeyCode.Z) || Input.GetKey(KeyCode.J);
 
     private void HandleAttack()
     {

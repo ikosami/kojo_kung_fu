@@ -103,7 +103,7 @@ public class Enemy : MonoBehaviour, ICharacter
         HandleNormalSpriteAnimation();
     }
 
-    protected bool Damaging()
+    protected virtual bool Damaging()
     {
         // ダメージ演出中はスプライトをダメージ用にし、一定時間後に戻す
         if (damageWaitTime > 0)

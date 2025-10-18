@@ -59,6 +59,7 @@ public class StageDataList : ScriptableObject
             var enemyName = parts[2];
             if (!int.TryParse(parts[3], out int spawnTime)) continue;
             if (!int.TryParse(parts[4], out int spawnOffset)) continue;
+            bool isRespawnPoint = parts[5].ToString() != string.Empty;
 
             if (!stageDict.TryGetValue(stageNum, out var stageData)) continue;
 
@@ -76,7 +77,8 @@ public class StageDataList : ScriptableObject
             {
                 EnemyIndex = enemyIndex,
                 SpawnTime = spawnTime,
-                SpanwOffset = spawnOffset
+                SpanwOffset = spawnOffset,
+                IsRespawnPoint = isRespawnPoint
             });
 #if UNITY_EDITOR
             EditorUtility.SetDirty(stageData);

@@ -8,7 +8,7 @@ public class IceBoss3_1 : MonoBehaviour
     [SerializeField] RectTransform bodyRect; // 本体当たり判定範囲
     [SerializeField] Image image; // 本体の画像コンポーネント
 
-    [SerializeField] RectTransform attackRange;
+    [SerializeField] RectTransform[] attackRanges;
 
     [SerializeField] Sprite[] sprites;
     int nowSpriteIndex = 0; // 現在のスプライトインデックス
@@ -34,26 +34,17 @@ public class IceBoss3_1 : MonoBehaviour
         switch (state)
         {
             case 0:
-                bodyRect.anchoredPosition += move * Time.deltaTime;
+
                 timer += Time.deltaTime;
-
-                if (bodyRect.anchoredPosition.y <= floor)
+                if (timer >= 1)
                 {
-                    var pos = bodyRect.anchoredPosition;
-                    pos.y = floor;
-                    bodyRect.anchoredPosition = pos;
-
                     timer = 0;
                     state = 1;
                 }
                 break;
             case 1:
 
-                bodyRect.anchoredPosition += fallMove * Time.deltaTime;
-                if (bodyRect.anchoredPosition.x <= -300)
-                {
-                    Destroy(gameObject);
-                }
+                bodyRect.anchoredPosition += move * Time.deltaTime;
                 break;
         }
 
@@ -61,18 +52,25 @@ public class IceBoss3_1 : MonoBehaviour
         {
             if (isEnemy)
             {
-                if (Util.IsHitPlayer(attackRange))
+                foreach (var attackRange in attackRanges)
                 {
-                    Reference.Instance.player.TakeDamage(1);
-                    isDamage = false;
+                    if (Util.IsHitPlayer(attackRange))
+                    {
+                        Reference.Instance.player.TakeDamage(1);
+                        isDamage = false;
+                        break;
+                    }
                 }
             }
             else
             {
-                var enemyList = Util.GetEnemyList(attackRange);
-                foreach (var enemy in enemyList)
+                foreach (var attackRange in attackRanges)
                 {
-                    enemy.TakeDamage(1, false);
+                    var enemyList = Util.GetEnemyList(attackRange);
+                    foreach (var enemy in enemyList)
+                    {
+                        enemy.TakeDamage(1, false);
+                    }
                 }
             }
         }

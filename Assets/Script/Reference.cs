@@ -21,6 +21,9 @@ public class Reference : MonoBehaviour
         SetScore(score);
     }
     public RectTransform stageRect => uiController.StageRect;
+
+    public bool PlayerStop = false;
+
     public bool isPause = false;
 
 
@@ -28,6 +31,7 @@ public class Reference : MonoBehaviour
     public bool isGameOverEnd = false;
     public bool isBoss = false;
     public bool isDojo = false;
+    public bool isStopState = false;
     public Player player;
     public const int SizeX = 160;
     public const int SizeY = 120;
@@ -44,9 +48,25 @@ public class Reference : MonoBehaviour
     public bool IsClear = false;
     public UIController uiController;
 
+    public GameObject debugPanel;
+
     private void Start()
     {
+        if (SaveDataManager.Hp < 0)
+            SaveDataManager.Hp = 3;
+        if (SaveDataManager.Life < 0)
+        {
+            SaveDataManager.Life = 0;
+        }
         UpdateStateView();
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape) && Input.GetKey(KeyCode.D))
+        {
+            debugPanel.gameObject.SetActive(!debugPanel.gameObject.activeSelf);
+        }
     }
 
     public void SetStage(int stageNum)
