@@ -22,9 +22,9 @@ public class Boss4 : Enemy, ICharacter
     [SerializeField] Transform[] bulletFireBallPoints;  // ミサイル上空発射用
     [SerializeField] Transform[] iceBulletPoints;  // ミサイル用
 
-    [SerializeField] IceBoss3_1 iceBoss3_1;  // 射撃用
-    [SerializeField] IceBoss3_2 iceBoss3_2;  // ミサイル用
-    [SerializeField] FireBoss3_2 fireBoss3_2;  // ミサイル上空発射用
+    [SerializeField] Boss4_Shoot boss4_Shoot;  // 射撃用
+    [SerializeField] Boss4_Missile boss4_Missile;  // ミサイル用
+    [SerializeField] Boss4_MissileAir boss4_MissileAir;  // ミサイル上空発射用
 
     [SerializeField] int moveState = 0;
     float moveTimer = 0;
@@ -33,16 +33,25 @@ public class Boss4 : Enemy, ICharacter
     float attack2Speed = 0;
     bool isAttack2Stop = false;
     bool isDamageHit = false;
-    List<IceBoss3_2> iceFallList = new List<IceBoss3_2>();
+    List<Boss4_Missile> iceFallList = new List<Boss4_Missile>();
 
-    List<int> moveList = new List<int> { 1, 2, 3, 4, 5, 6 };
+    bool isFirstAttack = true;  // 開幕攻撃かどうか
+    int attackPattern = 2;  // 現在のパターン位置（②～⑥）
 
     protected override void Start()
     {
         hp = hpMax;
         Reference.Instance.enemyList.Add(this);
         moveTimer = 0;
-        ChangeState(0);
+        isFirstAttack = true;
+        attackPattern = 2;
+        
+        // 初期位置を地面に設定
+        var pos = rect.anchoredPosition;
+        pos.y = BaseHeight;
+        rect.anchoredPosition = pos;
+        
+        ChangeState(3);  // 開幕スタンプ
     }
 
     protected override void Update()
@@ -53,58 +62,53 @@ public class Boss4 : Enemy, ICharacter
 
         if (isDead) { return; }
 
-        Damaging();
-
-        // 移動処理（攻撃中以外）
-        if (moveState > 0 && moveState <= 3)
+        if (Damaging())
         {
-            Move();
+            return;
         }
-
-        HandleNormalSpriteAnimation();
 
         switch (moveState)
         {
             case 0:  // 待機・移動
-                if (MoveAndCheckAttack())
+                if (IdleMove())
                 {
-                    SetRandomState();
+                    NextPattern();
                 }
                 break;
             case 1:  // 近接攻撃
                 if (MeleeAttack())
                 {
-                    SetRandomState();
+                    NextPattern();
                 }
                 break;
             case 2:  // 突進
                 if (DashAttack())
                 {
-                    SetRandomState();
+                    NextPattern();
                 }
                 break;
             case 3:  // スタンプ
                 if (StampAttack())
                 {
-                    SetRandomState();
+                    StampAttackFinish();
                 }
                 break;
             case 4:  // 射撃
                 if (ShootAttack())
                 {
-                    SetRandomState();
+                    ShootAttackFinish();
                 }
                 break;
             case 5:  // ミサイル
                 if (MissileAttack())
                 {
-                    SetRandomState();
+                    NextPattern();
                 }
                 break;
             case 6:  // ミサイル上空発射
                 if (MissileAirAttack())
                 {
-                    SetRandomState();
+                    NextPattern();
                 }
                 break;
         }
@@ -127,18 +131,64 @@ public class Boss4 : Enemy, ICharacter
         return false;
     }
 
-    private void SetRandomState()
+    // プレイヤーが近くにいるか判定
+    bool IsPlayerNear()
     {
-        if (moveList.Count == 0)
+        var player = Reference.Instance.player;
+        float distance = Mathf.Abs(player.transform.position.x - transform.position.x);
+        return distance < 80f;  // 距離80未満なら近い
+    }
+
+    // 次のパターンに進む
+    void NextPattern()
+    {
+        switch (attackPattern)
         {
-            moveList = new List<int> { 1, 2, 3, 4, 5, 6 };
+            case 2:  // ②近接攻撃 → ③へ
+                attackPattern = 3;
+                // ③ミサイル 又は ミサイル上空発射
+                if (Random.Range(0, 2) == 0)
+                {
+                    ChangeState(5);  // ミサイル
+                }
+                else
+                {
+                    ChangeState(6);  // ミサイル上空発射
+                }
+                break;
+            case 3:  // ③ミサイル/ミサイル上空発射 → ④へ
+                attackPattern = 4;
+                // ④突進 又は スタンプ
+                if (Random.Range(0, 2) == 0)
+                {
+                    ChangeState(2);  // 突進
+                }
+                else
+                {
+                    ChangeState(3);  // スタンプ
+                }
+                break;
+            case 4:  // ④突進/スタンプ → ⑤へ
+                attackPattern = 5;
+                // ⑤PLが近くにいる場合は近接攻撃、遠い場合はスタンプ
+                if (IsPlayerNear())
+                {
+                    ChangeState(1);  // 近接攻撃
+                }
+                else
+                {
+                    ChangeState(3);  // スタンプ
+                }
+                break;
+            case 5:  // ⑤近接攻撃/スタンプ → ⑥へ
+                attackPattern = 6;
+                ChangeState(4);  // ⑥射撃
+                break;
+            case 6:  // ⑥射撃 → ②へ（これはcase 4で処理される）
+                attackPattern = 2;
+                ChangeState(1);  // ②近接攻撃
+                break;
         }
-
-        var random = Random.Range(0, moveList.Count);
-        var state = moveList[random];
-        moveList.RemoveAt(random);
-
-        ChangeState(state);
     }
 
     void ChangeState(int state)
@@ -151,14 +201,50 @@ public class Boss4 : Enemy, ICharacter
         attack2Speed = 0;
     }
 
+    // スタンプ攻撃終了処理
+    void StampAttackFinish()
+    {
+        if (isFirstAttack)
+        {
+            // 開幕後：PLが近くにいる場合②へ、居ない場合は③へ
+            if (IsPlayerNear())
+            {
+                attackPattern = 2;  // ②近接攻撃
+                ChangeState(1);
+            }
+            else
+            {
+                attackPattern = 3;  // ③ミサイルまたはミサイル上空発射
+                NextPattern();
+            }
+            isFirstAttack = false;
+        }
+        else
+        {
+            NextPattern();
+        }
+    }
+
+    // 射撃攻撃終了処理
+    void ShootAttackFinish()
+    {
+        // ⑥射撃 → ②へ
+        attackPattern = 2;
+        ChangeState(1);  // ②近接攻撃
+    }
+
+    // 待機・移動処理
+    private bool IdleMove()
+    {
+        Move();
+        HandleNormalSpriteAnimation();
+        return MoveAndCheckAttack();
+    }
+
     // 移動と攻撃開始判定
     private bool MoveAndCheckAttack()
     {
-        Move();
-
         var player = Reference.Instance.player;
-        var pos = rect.anchoredPosition;
-
         // プレイヤーが攻撃範囲に入った場合、攻撃を開始
         if (Mathf.Abs(player.transform.position.x - transform.position.x) < 80)
         {
@@ -173,16 +259,16 @@ public class Boss4 : Enemy, ICharacter
         var pos = rect.anchoredPosition;
 
         // ボスが空中にいる場合、重力を適用して落下させる
-        if (pos.y > floorHeight)
+        if (pos.y > BaseHeight)
         {
             currentJumpVelocity -= gravity * Time.deltaTime;
             pos.y += currentJumpVelocity * Time.deltaTime;
             rect.anchoredPosition = pos;
 
             // ボスが地面に到達した場合、位置を修正し、ジャンプ速度をリセットする
-            if (pos.y <= floorHeight)
+            if (pos.y <= BaseHeight)
             {
-                pos.y = floorHeight;
+                pos.y = BaseHeight;
                 rect.anchoredPosition = pos;
                 currentJumpVelocity = 0;
             }
@@ -192,8 +278,12 @@ public class Boss4 : Enemy, ICharacter
         var player = Reference.Instance.player;
 
         // ボスが地面にいる場合、プレイヤーの位置に応じて移動方向を決定する
-        if (pos.y <= floorHeight)
+        if (pos.y <= BaseHeight)
         {
+            // 地面に固定（毎フレーム実行）
+            pos.y = BaseHeight;
+            rect.anchoredPosition = pos;
+            
             if (player.transform.position.x > transform.position.x)
             {
                 dir = moveSpeed;
@@ -206,13 +296,14 @@ public class Boss4 : Enemy, ICharacter
             }
         }
 
-        // ボスを移動させる
+        // ボスを移動させる（Boss1、Boss2と同じくtransform.positionを使用）
         transform.position += dir * Time.deltaTime;
     }
 
     // 近接攻撃（Boss1のAttack1と同じ）
     private bool MeleeAttack()
     {
+        // 近接攻撃中は移動しない（Boss1と同じ）
         moveTimer += Time.deltaTime;
 
         if (moveTimer < 1f)
@@ -334,6 +425,21 @@ public class Boss4 : Enemy, ICharacter
         else if (moveTimer < 2f)
         {
             SetSprite(attackSprite3_1);
+            
+            // dirを更新（プレイヤーの方向に向ける）
+            var player = Reference.Instance.player;
+            if (player.transform.position.x > transform.position.x)
+            {
+                dir = moveSpeed;
+                transform.localScale = new Vector3(1, 1, 1);
+            }
+            else
+            {
+                dir = -moveSpeed;
+                transform.localScale = new Vector3(-1, 1, 1);
+            }
+            
+            // ジャンプ: Y方向に上昇、X方向に移動（Boss2と同じ）
             transform.position += (dir + new Vector3(0, moveSpeed.x, 0)) * Time.deltaTime * 2.5f;
             moveTimer += Time.deltaTime;
         }
@@ -355,8 +461,10 @@ public class Boss4 : Enemy, ICharacter
                 }
             }
 
+            // 落下: Y方向に下降（Boss2と同じ）
             transform.position += new Vector3(0, -moveSpeed.x, 0) * Time.deltaTime * 5f;
             moveTimer += Time.deltaTime;
+            
             if (moveTimer >= 2.5)
             {
                 var pos = rect.anchoredPosition;
@@ -367,6 +475,10 @@ public class Boss4 : Enemy, ICharacter
         }
         else if (moveTimer < 4f)
         {
+            // 地面に固定
+            var pos = rect.anchoredPosition;
+            pos.y = BaseHeight;
+            rect.anchoredPosition = pos;
             moveTimer += Time.deltaTime;
         }
         else
@@ -431,7 +543,7 @@ public class Boss4 : Enemy, ICharacter
                 if (i == random || i == random + 1) continue;
 
                 Transform ice = iceBulletPoints[i];
-                var iceObj = Instantiate(iceBoss3_2, ice.transform.position, Quaternion.identity, Reference.Instance.stageRect);
+                var iceObj = Instantiate(boss4_Missile, ice.transform.position, Quaternion.identity, Reference.Instance.stageRect);
                 iceFallList.Add(iceObj);
             }
             SetSprite(normalSprite_attack_idle);
@@ -506,14 +618,14 @@ public class Boss4 : Enemy, ICharacter
     void IceBullet()
     {
         SoundManager.Instance.Play("ice");
-        var bullet = Instantiate(iceBoss3_1, bulletPointIce.transform.position, Quaternion.identity, Reference.Instance.stageRect);
+        var bullet = Instantiate(boss4_Shoot, bulletPointIce.transform.position, Quaternion.identity, Reference.Instance.stageRect);
     }
 
     private void FireBall(int index)
     {
         SoundManager.Instance.Play("fire");
         var point = bulletFireBallPoints[index];
-        var fire = Instantiate(fireBoss3_2, point.transform.position, Quaternion.identity, Reference.Instance.stageRect);
+        var fire = Instantiate(boss4_MissileAir, point.transform.position, Quaternion.identity, Reference.Instance.stageRect);
     }
 
     public override void TakeDamage(int damage, bool breakAttack, string soundName)
