@@ -69,6 +69,14 @@ public class Enemy : MonoBehaviour, ICharacter
     {
         hp = hpMax;
         Reference.Instance.enemyList.Add(this);
+        SetInitPos();
+    }
+
+    /// <summary>
+    /// 初期位置を設定する。継承先でオーバーライド可能。
+    /// </summary>
+    protected virtual void SetInitPos()
+    {
         var pos = rect.anchoredPosition;
         pos.y = BaseHeight;
         rect.anchoredPosition = pos;
@@ -185,6 +193,8 @@ public class Enemy : MonoBehaviour, ICharacter
             return pos.y <= floorHeight;
         }
     }
+
+    public Action<Enemy> OnDestroyed;
 
     /// <summary>
     /// 移動・ジャンプ・攻撃開始判定の処理。
@@ -402,5 +412,7 @@ public class Enemy : MonoBehaviour, ICharacter
 
         yield return new WaitForSeconds(0.5f); // 少し待機
         gameObject.SetActive(false); // オブジェクトを非表示にする
+
+        OnDestroyed?.Invoke(this);
     }
 }

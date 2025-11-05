@@ -9,6 +9,8 @@ public class Stage4Chair : MonoBehaviour
     [SerializeField] float targetPos = 12.5f;
     [SerializeField] float moveTime = 1.5f;
 
+    [SerializeField]Stage4_EnemyWave enemyWave;
+
     void Awake()
     {
         Rect = GetComponent<RectTransform>();
@@ -36,5 +38,13 @@ public class Stage4Chair : MonoBehaviour
 
         Rect.anchoredPosition = endPos;
         Reference.Instance.PlayerStop = false;
+
+yield return new WaitForSeconds(1f);
+
+        // 椅子の移動が完了したらウェーブシステムを開始
+        if (enemyWave != null)
+        {
+            enemyWave.StartWaveSystem();
+        }
     }
 }

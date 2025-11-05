@@ -18,8 +18,127 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 182f688a4686ef041a60df627795dc3d, type: 3}
   StageNum: 4
   stageDataList:
-  - popEnemy: []
-  - popEnemy: []
-  - popEnemy: []
-  - popEnemy: []
-  - popEnemy: []
+  - popEnemy:
+    - EnemyIndex: 0
+      SpawnTime: 0
+      SpanwOffset: 55
+      IsRespawnPoint: 0
+    - EnemyIndex: 0
+      SpawnTime: 1
+      SpanwOffset: -55
+      IsRespawnPoint: 0
+  - popEnemy:
+    - EnemyIndex: 0
+      SpawnTime: 0
+      SpanwOffset: 55
+      IsRespawnPoint: 0
+    - EnemyIndex: 0
+      SpawnTime: 1.5
+      SpanwOffset: -55
+      IsRespawnPoint: 0
+    - EnemyIndex: 0
+      SpawnTime: 3
+      SpanwOffset: 55
+      IsRespawnPoint: 0
+    - EnemyIndex: 0
+      SpawnTime: 4.5
+      SpanwOffset: -55
+      IsRespawnPoint: 0
+  - popEnemy:
+    - EnemyIndex: 0
+      SpawnTime: 0
+      SpanwOffset: 55
+      IsRespawnPoint: 0
+    - EnemyIndex: 0
+      SpawnTime: 1.5
+      SpanwOffset: -55
+      IsRespawnPoint: 0
+    - EnemyIndex: 1
+      SpawnTime: 3
+      SpanwOffset: 55
+      IsRespawnPoint: 0
+    - EnemyIndex: 4
+      SpawnTime: 6
+      SpanwOffset: -55
+      IsRespawnPoint: 0
+  - popEnemy:
+    - EnemyIndex: 2
+      SpawnTime: 0
+      SpanwOffset: 55
+      IsRespawnPoint: 0
+    - EnemyIndex: 2
+      SpawnTime: 1.5
+      SpanwOffset: -55
+      IsRespawnPoint: 0
+    - EnemyIndex: 5
+      SpawnTime: 3
+      SpanwOffset: 55
+      IsRespawnPoint: 0
+  - popEnemy:
+    - EnemyIndex: 0
+      SpawnTime: 0
+      SpanwOffset: 55
+      IsRespawnPoint: 0
+    - EnemyIndex: 0
+      SpawnTime: 3
+      SpanwOffset: 55
+      IsRespawnPoint: 0
+    - EnemyIndex: 0
+      SpawnTime: 5
+      SpanwOffset: 55
+      IsRespawnPoint: 0
+    - EnemyIndex: 3
+      SpawnTime: 6
+      SpanwOffset: -55
+      IsRespawnPoint: 0
+    - EnemyIndex: 3
+      SpawnTime: 9
+      SpanwOffset: -55
+      IsRespawnPoint: 0
+  - popEnemy:
+    - EnemyIndex: 1
+      SpawnTime: 0
+      SpanwOffset: 55
+      IsRespawnPoint: 0
+    - EnemyIndex: 1
+      SpawnTime: 1
+      SpanwOffset: -55
+      IsRespawnPoint: 0
+    - EnemyIndex: 7
+      SpawnTime: 3
+      SpanwOffset: 55
+      IsRespawnPoint: 0
+    - EnemyIndex: 8
+      SpawnTime: 6
+      SpanwOffset: -55
+      IsRespawnPoint: 0
+  - popEnemy:
+    - EnemyIndex: 4
+      SpawnTime: 0
+      SpanwOffset: 55
+      IsRespawnPoint: 0
+    - EnemyIndex: 5
+      SpawnTime: 0
+      SpanwOffset: -55
+      IsRespawnPoint: 0
+    - EnemyIndex: 9
+      SpawnTime: 6
+      SpanwOffset: 55
+      IsRespawnPoint: 0
+  - popEnemy:
+    - EnemyIndex: 9
+      SpawnTime: 0
+      SpanwOffset: 55
+      IsRespawnPoint: 0
+    - EnemyIndex: 4
+      SpawnTime: 3
+      SpanwOffset: -55
+      IsRespawnPoint: 0
+    - EnemyIndex: 3
+      SpawnTime: 6
+      SpanwOffset: 55
+      IsRespawnPoint: 0
+    - EnemyIndex: 10
+      SpawnTime: 9
+      SpanwOffset: 55
+      IsRespawnPoint: 0

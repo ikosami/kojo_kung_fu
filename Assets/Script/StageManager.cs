@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -17,6 +17,7 @@ public class StageManager : MonoBehaviour
 
     int timing = -144;
     int index = 0; // 生成するタイミングのインデックス
+    int currentStageNum = 0; // 現在のステージ番号
 
     private void Start()
     {
@@ -28,6 +29,7 @@ public class StageManager : MonoBehaviour
 
     public void SetStage(int num)
     {
+        currentStageNum = num; // 現在のステージ番号を保存
         var stageIndex = num - 1;
         bgm.clip = bgmClips[stageIndex];
         bgm.Play();
@@ -59,6 +61,9 @@ public class StageManager : MonoBehaviour
 
     void Update()
     {
+        // ステージ4は別制御のため、敵の出現処理をスキップ
+        if (currentStageNum == 4)
+            return;
 
         float currentX = stage.anchoredPosition.x;
         float nextSpawnX = timing * (index + 1); // timing の倍数
@@ -102,9 +107,10 @@ public class StageManager : MonoBehaviour
         }
     }
 
-    public void SpawnEnemy(Enemy prefab, int spanwOffset)
+    public Enemy SpawnEnemy(Enemy prefab, int spanwOffset)
     {
         Enemy newEnemy = Instantiate(prefab, Reference.Instance.uiController.EnemyParent);
+        
         RectTransform enemyRect = newEnemy.Rect;
         if (enemyRect != null)
         {
@@ -125,6 +131,7 @@ public class StageManager : MonoBehaviour
             // 座標を設定
             enemyRect.anchoredPosition = new Vector2(enemyRect.anchoredPosition.x, -73);
         }
+        return newEnemy;
     }
 
     IEnumerator WaitAction(Action onCallBack, float time)

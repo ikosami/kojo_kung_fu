@@ -257,7 +257,9 @@ public class Player : MonoBehaviour, ICharacter
             if (chargeTimer > chargeNeedTime && IsGround)
             {
                 SoundManager.Instance.Play("fire");
-                var fire = Instantiate(bullet2Prefab, bullet2Point.transform.position, Quaternion.Euler(0, 0, 180), Reference.Instance.stageRect);
+                Quaternion rotation = transform.localScale.x > 0 ? Quaternion.Euler(0, 0, 180) : Quaternion.identity;
+                var fire = Instantiate(bullet2Prefab, bullet2Point.transform.position, rotation, Reference.Instance.stageRect);
+                fire.move.x *= transform.localScale.x;
                 image.sprite = chargeShotSprite;
                 isChargeShootTimer = 0.5f;
             }

@@ -31,7 +31,7 @@ public class StageEntityData
 public class PopData
 {
     public int EnemyIndex;
-    public int SpawnTime;
+    public float SpawnTime;
     public int SpanwOffset;
     public bool IsRespawnPoint;
 }

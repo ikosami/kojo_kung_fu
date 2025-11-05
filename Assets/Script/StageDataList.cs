@@ -57,7 +57,7 @@ public class StageDataList : ScriptableObject
             if (!int.TryParse(parts[0], out int stageNum)) continue;
             if (!int.TryParse(parts[1], out int entityIndex)) continue;
             var enemyName = parts[2];
-            if (!int.TryParse(parts[3], out int spawnTime)) continue;
+            if (!float.TryParse(parts[3], out float spawnTime)) continue;
             if (!int.TryParse(parts[4], out int spawnOffset)) continue;
             bool isRespawnPoint = parts[5].ToString() != string.Empty;
 

@@ -312,7 +312,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: b6a9505bcc9ae114bbde1c7a3ffa3800, type: 3}
+  m_audioClip: {fileID: 0}
   m_Resource: {fileID: 8300000, guid: b6a9505bcc9ae114bbde1c7a3ffa3800, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 0.15333334
@@ -1873,6 +1873,7 @@ MonoBehaviour:
   - {fileID: 1661626849}
   - {fileID: 1568435780}
   - {fileID: 1652142394}
+  - {fileID: 0}
   bgm: {fileID: 156719905}
   bossBgmClip: {fileID: 8300000, guid: b6a9505bcc9ae114bbde1c7a3ffa3800, type: 3}
   dojoBgmClip: {fileID: 8300000, guid: 8aa192d2498ef51499925d8c0d51f4b3, type: 3}
@@ -3590,11 +3591,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c7c1e3d5f619ce547aa9233d53e2122f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  PlayerStop: 0
   isPause: 0
   IsGameOver: 0
   isGameOverEnd: 0
   isBoss: 1
   isDojo: 0
+  isStopState: 0
   player: {fileID: 82593994}
   completePanel: {fileID: 862038381}
   bgm: {fileID: 156719905}
@@ -3605,6 +3608,7 @@ MonoBehaviour:
   StageNum: 1
   IsClear: 0
   uiController: {fileID: 413532004}
+  debugPanel: {fileID: 0}
 --- !u!4 &1795731935
 Transform:
   m_ObjectHideFlags: 0
