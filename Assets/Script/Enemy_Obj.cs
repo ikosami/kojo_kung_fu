@@ -32,6 +32,24 @@ public class Enemy_Obj : Enemy, ICharacter
         // 移動しない（静止状態を維持）
     }
 
+    public override void TakeDamage(int damage, bool breakAttack, string soundName = "")
+    {
+        if (isDead) { return; }
+
+        if (breakAttack)
+        {
+            isAttack = false;
+        }
+
+        base.TakeDamage(damage, breakAttack, soundName);
+
+        if (!isDead)
+        {
+            damageWaitTime = 0f;
+            image.sprite = isNormalSprite ? normalSprite1 : normalSprite2;
+        }
+    }
+
     protected override void HandleAttack()
     {
         if (!isAttack) { return; }

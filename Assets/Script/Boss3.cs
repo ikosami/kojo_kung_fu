@@ -225,7 +225,7 @@ public class Boss3 : Enemy, ICharacter
         }
 
 
-        if (moveTimer > 8f)
+        if (moveTimer > 6f)
         {
             return true;
         }
@@ -417,9 +417,7 @@ public class Boss3 : Enemy, ICharacter
         float t = Mathf.Clamp01(moveTimer / duration);
         pos = new Vector2(Mathf.Lerp(prePos.x, targetPos.x, t), Mathf.Lerp(prePos.y, targetPos.y, t));
 
-
-
-        if (moveTimer > 4)
+        if (moveTimer > 8)
         {
             return true;
         }

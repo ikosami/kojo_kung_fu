@@ -42,13 +42,15 @@ public class Reference : MonoBehaviour
     public EnemyDataList enemyDataList;
     public StageDataList stageDataList;
 
+    public Transform screenLeftUp;
+    public Transform screenRightDown;
+
     public int score = 0;
     public int hp = 5;
     public int StageNum = 1; // 現在のステージ番号
     public bool IsClear = false;
     public UIController uiController;
 
-    public GameObject debugPanel;
 
     private void Start()
     {
@@ -59,14 +61,6 @@ public class Reference : MonoBehaviour
             SaveDataManager.Life = 0;
         }
         UpdateStateView();
-    }
-
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Escape) && Input.GetKey(KeyCode.D))
-        {
-            debugPanel.gameObject.SetActive(!debugPanel.gameObject.activeSelf);
-        }
     }
 
     public void SetStage(int stageNum)

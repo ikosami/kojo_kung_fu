@@ -19,7 +19,15 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 9f80cab3e0ff2b049b8956ebd38dfd4d, type: 3}
   StageNum: 3
   stageDataList:
-  - popEnemy: []
+  - popEnemy:
+    - EnemyIndex: 7
+      SpawnTime: 0
+      SpanwOffset: 75
+      IsRespawnPoint: 0
+    - EnemyIndex: 8
+      SpawnTime: 0
+      SpanwOffset: -75
+      IsRespawnPoint: 0
   - popEnemy:
     - EnemyIndex: 11
       SpawnTime: 0
@@ -61,6 +69,10 @@ MonoBehaviour:
       SpawnTime: 0
       SpanwOffset: 75
       IsRespawnPoint: 1
+    - EnemyIndex: 7
+      SpawnTime: 2
+      SpanwOffset: 75
+      IsRespawnPoint: 0
     - EnemyIndex: 11
       SpawnTime: 0
       SpanwOffset: 110

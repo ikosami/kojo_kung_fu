@@ -14,19 +14,28 @@ public class Boss4 : Enemy, ICharacter
     [SerializeField] Sprite normalSprite_attack_idle;  // 射撃待機用
     [SerializeField] Sprite normalSprite_attack;       // 射撃攻撃用
 
-    [SerializeField] RectTransform[] attackRange1;  // 近接攻撃用
-    [SerializeField] new RectTransform[] attackRange2;   // 突進用
-    [SerializeField] RectTransform[] fallAttackRects;  // スタンプ落下用
+    [SerializeField] Sprite normalSprite_attack_air_idle;
+    [SerializeField] Sprite normalSprite_attack_air;       // 射撃攻撃用
+    [SerializeField] Sprite missileSprite_attack;       // ミサイル攻撃用
 
+    [SerializeField] RectTransform[] attackRange1;  // 近接攻撃用
+    [SerializeField] RectTransform[] attackRangeDash;   // 突進用
+    [SerializeField] RectTransform[] fallAttackRects;  // スタンプ落下用
     [SerializeField] Transform bulletPointIce;  // 射撃発射ポイント
-    [SerializeField] Transform[] bulletFireBallPoints;  // ミサイル上空発射用
+    [SerializeField] Transform[] bulletMissileAirPoints;  // ミサイル上空発射用
     [SerializeField] Transform[] iceBulletPoints;  // ミサイル用
+    [SerializeField] Transform[] bulletMissilePoints;  // ミサイル用
+    [SerializeField] float[] bulletMissileHeight;  // ミサイル用
 
     [SerializeField] Boss4_Shoot boss4_Shoot;  // 射撃用
     [SerializeField] Boss4_Missile boss4_Missile;  // ミサイル用
     [SerializeField] Boss4_MissileAir boss4_MissileAir;  // ミサイル上空発射用
+    [SerializeField] Boss4_ShockWave boss4_ShockWave;  // ショックウェーブ用
+    [SerializeField] Transform boss4_ShockWavePoint;  // ショックウェーブ発射ポイント
 
     [SerializeField] int moveState = 0;
+
+    [SerializeField] RectTransform deadImageRect;
     float moveTimer = 0;
 
     new Vector3 dir;
@@ -37,6 +46,7 @@ public class Boss4 : Enemy, ICharacter
 
     bool isFirstAttack = true;  // 開幕攻撃かどうか
     int attackPattern = 2;  // 現在のパターン位置（②～⑥）
+    int nextShootIndex = 0;  // 次の発射インデックス
 
     protected override void Start()
     {
@@ -45,13 +55,13 @@ public class Boss4 : Enemy, ICharacter
         moveTimer = 0;
         isFirstAttack = true;
         attackPattern = 2;
-        
+
         // 初期位置を地面に設定
         var pos = rect.anchoredPosition;
         pos.y = BaseHeight;
         rect.anchoredPosition = pos;
-        
-        ChangeState(3);  // 開幕スタンプ
+
+        ChangeState(-1);  // 開幕スタンプ
     }
 
     protected override void Update()
@@ -69,6 +79,12 @@ public class Boss4 : Enemy, ICharacter
 
         switch (moveState)
         {
+            case -1:  // 待機・移動
+                if (Idle())
+                {
+                    ChangeState(3);
+                }
+                break;
             case 0:  // 待機・移動
                 if (IdleMove())
                 {
@@ -113,6 +129,18 @@ public class Boss4 : Enemy, ICharacter
                 break;
         }
     }
+
+    private bool Idle()
+    {
+        moveTimer += Time.deltaTime;
+
+        if (moveTimer < 1f)
+        {
+            return true;
+        }
+        return false;
+    }
+
 
     protected override bool Damaging()
     {
@@ -199,6 +227,8 @@ public class Boss4 : Enemy, ICharacter
         isAttack2Stop = false;
         isDamageHit = false;
         attack2Speed = 0;
+        nextShootIndex = 0;  // 発射インデックスをリセット
+
     }
 
     // スタンプ攻撃終了処理
@@ -215,7 +245,14 @@ public class Boss4 : Enemy, ICharacter
             else
             {
                 attackPattern = 3;  // ③ミサイルまたはミサイル上空発射
-                NextPattern();
+                if (Random.Range(0, 2) == 0)
+                {
+                    ChangeState(5);  // ミサイル
+                }
+                else
+                {
+                    ChangeState(6);  // ミサイル上空発射
+                }
             }
             isFirstAttack = false;
         }
@@ -283,7 +320,7 @@ public class Boss4 : Enemy, ICharacter
             // 地面に固定（毎フレーム実行）
             pos.y = BaseHeight;
             rect.anchoredPosition = pos;
-            
+
             if (player.transform.position.x > transform.position.x)
             {
                 dir = moveSpeed;
@@ -341,16 +378,29 @@ public class Boss4 : Enemy, ICharacter
     // 突進（Boss1のAttack2と同じ）
     private bool DashAttack()
     {
-        moveTimer += Time.deltaTime;
-
         float moveTime = 5;
-
-        if (moveTimer < 1)
+        if (moveTimer == 0)
         {
-            SetSprite(attackSprite2_1);
             attack2Speed = 0;
             isAttack2Stop = false;
             isDamageHit = false;
+
+            // プレイヤーの方向を確認してdirを設定
+            var player = Reference.Instance.player;
+            if (player.transform.position.x > transform.position.x)
+            {
+                dir = moveSpeed;
+                transform.localScale = new Vector3(1, 1, 1);
+            }
+            else
+            {
+                dir = -moveSpeed;
+                transform.localScale = new Vector3(-1, 1, 1);
+            }
+        }
+        else if (moveTimer < 1)
+        {
+            SetSprite(attackSprite2_1);
         }
         else if (moveTimer < moveTime)
         {
@@ -365,7 +415,7 @@ public class Boss4 : Enemy, ICharacter
             {
                 if (!isDamageHit)
                 {
-                    foreach (var range in attackRange2)
+                    foreach (var range in attackRangeDash)
                     {
                         if (Util.IsHitPlayer(range))
                         {
@@ -377,6 +427,7 @@ public class Boss4 : Enemy, ICharacter
                 }
 
                 attack2Speed += Time.deltaTime * 3;
+
                 transform.position += dir * attack2Speed * Time.deltaTime;
 
                 var pos = rect.anchoredPosition;
@@ -407,25 +458,19 @@ public class Boss4 : Enemy, ICharacter
         {
             return true;
         }
+
+        moveTimer += Time.deltaTime;
         return false;
     }
 
     // スタンプ（Boss2のAttack3と同じ）
     private bool StampAttack()
     {
-        if (moveTimer < 1f)
+        float preTimer = moveTimer;
+        moveTimer += Time.deltaTime;
+
+        if (preTimer == 0 && moveTimer > 0)
         {
-            SetSprite(normalSprite1);
-            moveTimer += Time.deltaTime;
-            if (moveTimer >= 1)
-            {
-                SoundManager.Instance.Play("boss2_stamp");
-            }
-        }
-        else if (moveTimer < 2f)
-        {
-            SetSprite(attackSprite3_1);
-            
             // dirを更新（プレイヤーの方向に向ける）
             var player = Reference.Instance.player;
             if (player.transform.position.x > transform.position.x)
@@ -438,10 +483,23 @@ public class Boss4 : Enemy, ICharacter
                 dir = -moveSpeed;
                 transform.localScale = new Vector3(-1, 1, 1);
             }
-            
+        }
+        else if (moveTimer < 1f)
+        {
+            SetSprite(normalSprite1);
+        }
+        else if (moveTimer < 2f)
+        {
+            // 1秒を超えた最初のフレームで音を鳴らす
+            if (preTimer < 1f)
+            {
+                SoundManager.Instance.Play("boss2_stamp");
+            }
+            SetSprite(attackSprite3_1);
+
+
             // ジャンプ: Y方向に上昇、X方向に移動（Boss2と同じ）
             transform.position += (dir + new Vector3(0, moveSpeed.x, 0)) * Time.deltaTime * 2.5f;
-            moveTimer += Time.deltaTime;
         }
         else if (moveTimer < 2.5f)
         {
@@ -463,23 +521,23 @@ public class Boss4 : Enemy, ICharacter
 
             // 落下: Y方向に下降（Boss2と同じ）
             transform.position += new Vector3(0, -moveSpeed.x, 0) * Time.deltaTime * 5f;
-            moveTimer += Time.deltaTime;
-            
-            if (moveTimer >= 2.5)
+        }
+        else if (moveTimer < 4f)
+        {
+            // 着地時の処理（最初のフレームのみ実行）
+            if (preTimer < 2.5f)
             {
                 var pos = rect.anchoredPosition;
                 pos.y = BaseHeight;
                 rect.anchoredPosition = pos;
                 SoundManager.Instance.Play("boss2_fall");
+                SpawnShockWave();
             }
-        }
-        else if (moveTimer < 4f)
-        {
+
             // 地面に固定
-            var pos = rect.anchoredPosition;
-            pos.y = BaseHeight;
-            rect.anchoredPosition = pos;
-            moveTimer += Time.deltaTime;
+            var pos2 = rect.anchoredPosition;
+            pos2.y = BaseHeight;
+            rect.anchoredPosition = pos2;
         }
         else
         {
@@ -488,151 +546,240 @@ public class Boss4 : Enemy, ICharacter
         return false;
     }
 
-    // 射撃（Boss3のIceBlockと同じ）
+    // 射撃
     private bool ShootAttack()
     {
         float preTimer = moveTimer;
         moveTimer += Time.deltaTime;
 
-        float startTime = 1f;     // 最初の攻撃開始時刻
-        float interval = 2f;       // 一定間隔
-        int attackCount = 4;       // 回数
-        float attackDur = 1f;      // 表示継続時間
-        float endWait = 2f;        // 終了後の待機時間
+        float prepareTime = 1f;        // 構え時間（1秒）
+        float firstSetStart = 1f;       // 1セット目開始時刻（1秒後）
+        float secondSetStart = 3f;      // 2セット目開始時刻（3秒後）
+        float interval = 0.2f;         // 発射間隔（0.2秒、変更しない）
+        int shotsPerSet = 4;           // 1セットあたりの発射数（4発）
+        int totalShots = 8;            // 合計発射数（2セット × 4発）
+        float attackAnimDur = 2f;      // 攻撃アニメーション表示時間（2秒）
+        float endWait = 0.5f;          // 終了後の待機時間
 
-        bool attacking = false;
-        for (int i = 0; i < attackCount; i++)
+        // 次の発射タイミングをチェック
+        if (nextShootIndex < totalShots)
         {
-            float t = startTime + interval * i;
-            if (moveTimer >= t && moveTimer < t + attackDur)
+            float t;
+            if (nextShootIndex < shotsPerSet)
             {
-                if (preTimer < t) IceBullet();
-                SetSprite(normalSprite_attack);
-                attacking = true;
-                break;
+                // 1セット目（0-3）：1秒、1.2秒、1.4秒、1.6秒
+                t = firstSetStart + interval * nextShootIndex;
+            }
+            else
+            {
+                // 2セット目（4-7）：3秒、3.2秒、3.4秒、3.6秒
+                int set2Index = nextShootIndex - shotsPerSet;
+                t = secondSetStart + interval * set2Index;
+            }
+
+            if (moveTimer >= t && preTimer < t)
+            {
+                SpawnShootProjectile();
+                nextShootIndex++;
             }
         }
 
-        if (startTime + interval * (attackCount - 1) + attackDur < moveTimer)
-        {
-            SetSprite(normalSprite1);
-        }
-        else if (!attacking)
+        // スプライト制御
+        // 構え中（0-1秒）
+        if (moveTimer < prepareTime)
         {
             SetSprite(normalSprite_attack_idle);
         }
-
-        if (moveTimer > startTime + interval * (attackCount - 1) + attackDur + endWait)
-            return true;
-        return false;
-    }
-
-    // ミサイル（Boss3のIceFallと同じ）
-    private bool MissileAttack()
-    {
-        if (moveTimer == 0)
+        // 1セット目攻撃アニメーション（1秒-3秒、2秒間）
+        else if (moveTimer >= firstSetStart && moveTimer < firstSetStart + attackAnimDur)
         {
-            SoundManager.Instance.Play("ice");
-
-            int offset = 3;
-            // 右端の offset+1 までを避けてランダム取得
-            int random = Random.Range(offset, iceBulletPoints.Length - offset - 1);
-            iceFallList.Clear();
-            for (int i = 0; i < iceBulletPoints.Length; i++)
-            {
-                if (i == random || i == random + 1) continue;
-
-                Transform ice = iceBulletPoints[i];
-                var iceObj = Instantiate(boss4_Missile, ice.transform.position, Quaternion.identity, Reference.Instance.stageRect);
-                iceFallList.Add(iceObj);
-            }
-            SetSprite(normalSprite_attack_idle);
-        }
-
-        float preTimer = moveTimer;
-        moveTimer += Time.deltaTime;
-        var fallTimer = 1.5f;
-        if (moveTimer > fallTimer && preTimer < fallTimer)
-        {
-            foreach (var ice in iceFallList)
-            {
-                if (ice != null)
-                {
-                    ice.Fall();
-                }
-            }
-            iceFallList.Clear();
             SetSprite(normalSprite_attack);
         }
-        if (moveTimer > fallTimer + 1)
+        // 1セット目と2セット目の間（3秒未満で1セット目終了後）
+        else if (moveTimer >= firstSetStart + attackAnimDur && moveTimer < secondSetStart)
+        {
+            SetSprite(normalSprite_attack_idle);
+        }
+        // 2セット目攻撃アニメーション（3秒-5秒、2秒間）
+        else if (moveTimer >= secondSetStart && moveTimer < secondSetStart + attackAnimDur)
+        {
+            SetSprite(normalSprite_attack);
+        }
+        // 全ての発射が終了し、攻撃スプライト表示も終了
+        else if (moveTimer >= secondSetStart + attackAnimDur)
         {
             SetSprite(normalSprite1);
         }
-
-        if (moveTimer > 8f)
+        // その他（念のため）
+        else
         {
+            SetSprite(normalSprite_attack_idle);
+        }
+
+        // 終了判定（2セット目のアニメーション終了 + 待機時間）
+        float totalTime = secondSetStart + attackAnimDur + endWait;
+        if (moveTimer > totalTime)
+            return true;
+        return false;
+    }
+
+    // ミサイルを1発発射する
+    private void SpawnMissile(int pointIndex)
+    {
+        if (pointIndex >= bulletMissilePoints.Length) return;
+
+        SoundManager.Instance.Play("ice");
+
+        var player = Reference.Instance.player;
+        // プレイヤーの方向を判定（プレイヤーが左側にいる場合は-1、右側にいる場合は1）
+        var direction = player.transform.position.x >= transform.position.x ? 1f : -1f;
+
+        Transform missilePoint = bulletMissilePoints[pointIndex];
+        var iceObj = Instantiate(boss4_Missile, missilePoint.transform.position, Quaternion.identity, Reference.Instance.stageRect);
+
+        // 目標高さを設定
+        if (pointIndex < bulletMissileHeight.Length)
+        {
+            iceObj.SetFloor(bulletMissileHeight[pointIndex]);
+        }
+
+        // プレイヤーが左側にいる場合は左向きに設定
+        if (direction < 0)
+        {
+            iceObj.SetLeft();
+        }
+
+        iceFallList.Add(iceObj);
+        SetSprite(missileSprite_attack);
+    }
+
+    // ミサイル（時間差で2発発射）
+    private bool MissileAttack()
+    {
+        float preTimer = moveTimer;
+        moveTimer += Time.deltaTime;
+
+        // 構え（0秒）
+        if (moveTimer < 1f)
+        {
+            if (preTimer == 0)
+            {
+                SetSprite(normalSprite2);
+            }
+        }
+        // 1発目発射（1秒）
+        else if (moveTimer >= 1f && preTimer < 1f)
+        {
+            SpawnMissile(0);
+        }
+        // 2発目発射（3秒）
+        else if (moveTimer >= 3f && preTimer < 3f)
+        {
+            SpawnMissile(1);
+        }
+        // 通常スプライトに戻す（発射後すぐ）
+        else if (moveTimer > 1.2f && moveTimer < 3f)
+        {
+            SetSprite(normalSprite2);
+        }
+        else if (moveTimer > 3.2f && moveTimer < 5f)
+        {
+            SetSprite(normalSprite2);
+        }
+
+        // 次の行動へ（5秒）
+        if (moveTimer >= 5f)
+        {
+            iceFallList.Clear();
             return true;
         }
         return false;
     }
 
-    // ミサイル上空発射（Boss3のFireBoalと同じ）
+    // ミサイル上空発射
     private bool MissileAirAttack()
     {
         float preTimer = moveTimer;
         moveTimer += Time.deltaTime;
 
-        float startTime = 1f;     // 最初の攻撃開始時刻
-        float interval = 1.5f;     // 一定間隔
-        int attackCount = 5;       // 回数
-        float attackDur = 1f;      // 表示継続時間
-        float endWait = 2f;        // 終了後の待機時間
+        float waitTime = 1f;        // 発射前の待機時間
+        float attackDur = 0.5f;     // 攻撃スプライト表示時間（0.5秒後にidleに戻す）
+        float idleWait = 1f;        // 発射待機スプライト表示時間
+        float endWait = 2f;         // 終了後の待機時間
 
-        bool attacking = false;
-        for (int i = 0; i < attackCount; i++)
+        if (moveTimer < waitTime)
         {
-            float t = startTime + interval * i;
-            if (moveTimer >= t && moveTimer < t + attackDur)
-            {
-                if (preTimer < t) FireBall(i % 2);
-                SetSprite(normalSprite_attack);
-                attacking = true;
-                break;
-            }
+            // 発射待機
+            SetSprite(normalSprite_attack_air_idle);
         }
-
-        if (startTime + interval * (attackCount - 1) + attackDur < moveTimer)
+        else if (moveTimer < waitTime + attackDur)
         {
+            // 発射タイミング（最初のフレームのみ発射）
+            if (preTimer < waitTime)
+            {
+                // 2発同時発射
+                SpawnAerialMissile(0);
+                SpawnAerialMissile(1);
+            }
+            SetSprite(normalSprite_attack_air);
+        }
+        else if (moveTimer < waitTime + attackDur + idleWait)
+        {
+            // 0.5秒後にidleスプライトに戻す
+            SetSprite(normalSprite_attack_air_idle);
+        }
+        else if (moveTimer < waitTime + attackDur + idleWait + endWait)
+        {
+            // 通常ポーズ
             SetSprite(normalSprite1);
         }
-        else if (!attacking)
+        else
         {
-            SetSprite(normalSprite_attack_idle);
-        }
-
-        if (moveTimer > startTime + interval * (attackCount - 1) + attackDur + endWait)
+            // 行動終了
             return true;
+        }
         return false;
     }
 
-    void IceBullet()
+    void SpawnShootProjectile()
     {
         SoundManager.Instance.Play("ice");
         var bullet = Instantiate(boss4_Shoot, bulletPointIce.transform.position, Quaternion.identity, Reference.Instance.stageRect);
+        var player = Reference.Instance.player;
+        var direction = player.transform.position.x >= transform.position.x ? 1f : -1f;
+        var bossScale = transform.localScale;
+        transform.localScale = new Vector3(Mathf.Abs(bossScale.x) * direction, bossScale.y, bossScale.z);
+        bullet.move = new Vector2(Mathf.Abs(bullet.move.x) * direction, bullet.move.y);
+        bullet.fallMove = new Vector2(Mathf.Abs(bullet.fallMove.x) * direction, bullet.fallMove.y);
+        var bulletScale = bullet.transform.localScale;
+        bullet.transform.localScale = new Vector3(Mathf.Abs(bulletScale.x) * direction, bulletScale.y, bulletScale.z);
     }
 
-    private void FireBall(int index)
+    // ショックウェーブを生成（1つのクラスで左右を制御）
+    void SpawnShockWave()
+    {
+        Instantiate(boss4_ShockWave, boss4_ShockWavePoint.position, Quaternion.identity, Reference.Instance.stageRect);
+    }
+
+    private void SpawnAerialMissile(int index)
     {
         SoundManager.Instance.Play("fire");
-        var point = bulletFireBallPoints[index];
+        var point = bulletMissileAirPoints[index];
         var fire = Instantiate(boss4_MissileAir, point.transform.position, Quaternion.identity, Reference.Instance.stageRect);
+        var player = Reference.Instance.player;
+        var direction = player.transform.position.x >= transform.position.x ? 1f : -1f;
+        var bossScale = transform.localScale;
+        transform.localScale = new Vector3(Mathf.Abs(bossScale.x) * direction, bossScale.y, bossScale.z);
+        fire.move = new Vector2(Mathf.Abs(fire.move.x) * direction, fire.move.y);
+        var fireScale = fire.transform.localScale;
+        fire.transform.localScale = new Vector3(Mathf.Abs(fireScale.x) * direction, fireScale.y, fireScale.z);
     }
 
     public override void TakeDamage(int damage, bool breakAttack, string soundName)
     {
         if (isDead) { return; }
 
-        image.sprite = damageSprite;
+        //image.sprite = damageSprite;
         damageWaitTime = 0.5f;
 
         hp -= damage;
@@ -646,7 +793,10 @@ public class Boss4 : Enemy, ICharacter
 
     private IEnumerator Dead()
     {
-        Vector3 startPos = transform.position;
+        deadImageRect.gameObject.SetActive(true);
+        // deadImageRectの位置を現在の位置に設定
+        deadImageRect.position = transform.position;
+
         float duration = 2.0f; // 飛び上がりから落下までの時間
         float distance = transform.localScale.x * -200f; // 後方への移動距離
         float gravity = -2000f; // 重力加速度
@@ -669,7 +819,8 @@ public class Boss4 : Enemy, ICharacter
             velocity.y += gravity * Time.deltaTime; // 重力の影響を加える
 
             // 現在の位置を更新
-            transform.position += velocity * Time.deltaTime;
+            Vector3 newPosition = deadImageRect.position + velocity * Time.deltaTime;
+            deadImageRect.position = newPosition;
 
             yield return null;
         }

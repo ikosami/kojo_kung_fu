@@ -8,6 +8,7 @@ public class Stage4Door : MonoBehaviour
     RectTransform Rect;
     [SerializeField] List<float> heights;
     [SerializeField] float spanTimer = 0.5f;
+    Coroutine coroutine;
 
     void Awake()
     {
@@ -17,7 +18,17 @@ public class Stage4Door : MonoBehaviour
     public void Close()
     {
         Reference.Instance.PlayerStop = true;
-        StartCoroutine(MoveIE(heights));
+        if (coroutine != null)
+        {
+            StopCoroutine(coroutine);
+        }
+        coroutine = StartCoroutine(MoveIE(heights, () =>
+        {
+            //扉がしまったら
+            var chair = FindFirstObjectByType<Stage4Chair>();
+            chair.SetDoor(this);
+            chair.OpenMove();
+        }));
     }
 
     public void Open()
@@ -25,10 +36,21 @@ public class Stage4Door : MonoBehaviour
         Reference.Instance.PlayerStop = true;
         var list = new List<float>(heights);
         list.Reverse();
-        StartCoroutine(MoveIE(list));
+
+        if (coroutine != null)
+        {
+            StopCoroutine(coroutine);
+        }
+        coroutine = StartCoroutine(MoveIE(list, () =>
+        {
+            Reference.Instance.PlayerStop = false;
+            //ボス戦でなければステージクリアを発生させる
+            Reference.Instance.player.MoveEnd();
+
+        }));
     }
 
-    private IEnumerator MoveIE(List<float> heights)
+    private IEnumerator MoveIE(List<float> heights, Action onComplete)
     {
         foreach (var h in heights)
         {
@@ -40,7 +62,6 @@ public class Stage4Door : MonoBehaviour
             }
             yield return new WaitForSeconds(spanTimer);
         }
-
-        FindFirstObjectByType<Stage4Chair>().Move();
+        onComplete?.Invoke();
     }
 }

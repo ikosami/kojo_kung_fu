@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -18,42 +19,31 @@ using UnityEngine;
 /// </summary>
 public class Stage4_EnemyWave : MonoBehaviour
 {
-    // ========================================
-    // 定数
-    // ========================================
     /// <summary>ゲーム開始から最初のウェーブが始まるまでの遅延時間（秒）</summary>
     private const float INITIAL_DELAY = 1f;
 
-    // ========================================
-    // 参照
-    // ========================================
     /// <summary>敵のスポーンを実際に実行するStageManager</summary>
-    [SerializeField]private StageManager stageManager;
-    
+    [SerializeField] private StageManager stageManager;
+
     /// <summary>現在のステージの全ウェーブデータのリスト（各ウェーブの敵構成を含む）</summary>
     private List<StageEntityData> stageDataList;
 
-    // ========================================
-    // 状態管理
-    // ========================================
     /// <summary>現在実行中（または次に実行する）ウェーブのインデックス（0始まり）</summary>
     private int currentWaveIndex = 0;
-    
+
     /// <summary>現在のウェーブでスポーンされた敵のリスト（倒されると削除される）</summary>
     private List<Enemy> currentEnemies = new List<Enemy>();
-    
+
     /// <summary>現在ウェーブのスポーン処理中かどうか（スポーン中は次のウェーブ開始をブロック）</summary>
     private bool isSpawningWave = false;
-    
-    /// <summary>ゲーム開始からの経過時間を測定するタイマー（初回ウェーブの遅延に使用）</summary>
-    private float initialTimer = 0f;
-    
+
     /// <summary>最初のウェーブが開始されたかどうかのフラグ</summary>
     private bool hasStartedFirstWave = false;
 
-    // ========================================
-    // Unityライフサイクル
-    // ========================================
+    bool isEnd = false;
+
+    public Action OnAllWaveCompleted;
+    Coroutine coroutine;
 
     /// <summary>
     /// 初期化処理
@@ -63,6 +53,8 @@ public class Stage4_EnemyWave : MonoBehaviour
     {
         // ステージデータの初期化
         InitializeStageData();
+
+        OnAllWaveCompleted += () => { isEnd = true; };
     }
 
     /// <summary>
@@ -72,7 +64,7 @@ public class Stage4_EnemyWave : MonoBehaviour
     void Update()
     {
         // ウェーブが開始されている場合のみ、完了チェックを行う
-        if (hasStartedFirstWave)
+        if (hasStartedFirstWave && !isEnd)
         {
             // 現在のウェーブの敵がすべて倒されたかチェックし、次のウェーブへ進む
             CheckWaveCompletion();
@@ -88,7 +80,7 @@ public class Stage4_EnemyWave : MonoBehaviour
         if (!hasStartedFirstWave)
         {
             hasStartedFirstWave = true;
-            StartCoroutine(StartNextWave());
+            coroutine = StartCoroutine(StartNextWave());
             Debug.Log("ウェーブシステムを開始しました");
         }
     }
@@ -120,8 +112,21 @@ public class Stage4_EnemyWave : MonoBehaviour
         }
         else
         {
+            OnAllWaveCompleted?.Invoke();
             Debug.LogError($"ステージ {SaveDataManager.NowStage} のデータが見つかりません！");
         }
+    }
+
+    public void DebugEnd()
+    {
+        OnAllWaveCompleted?.Invoke();
+        Debug.Log("デバッグ用ウェーブ完了");
+
+        //ウェーブの完了を強制的に発生させる
+        currentWaveIndex = stageDataList.Count;
+        StopCoroutine(coroutine);
+        isSpawningWave = false;
+
     }
 
     // ========================================
@@ -139,11 +144,18 @@ public class Stage4_EnemyWave : MonoBehaviour
     /// </summary>
     private void CheckWaveCompletion()
     {
-        Debug.Log("CheckWaveCompletion" + currentEnemies.Count);
         // 全条件を満たしている場合のみ次のウェーブを開始
-        if (!isSpawningWave && currentEnemies.Count == 0 && currentWaveIndex < stageDataList.Count)
+        if (!isSpawningWave)
         {
-            StartCoroutine(StartNextWave());
+            if (currentWaveIndex < stageDataList.Count)
+            {
+                coroutine = StartCoroutine(StartNextWave());
+            }
+            else
+            {
+                Debug.Log("すべてのウェーブが完了しました！");
+                OnAllWaveCompleted?.Invoke();
+            }
         }
     }
 
@@ -179,33 +191,33 @@ public class Stage4_EnemyWave : MonoBehaviour
 
         // ウェーブ開始時刻を記録
         float waveStartTime = Time.time;
-        
+
         // 敵データを取得
         var enemyDataList = Reference.Instance.enemyDataList.enemyDataList;
-        
+
         // 各敵をスポーン時間順にソート
         var sortedEnemies = new List<PopData>(stageData.popEnemy);
         sortedEnemies.Sort((a, b) => a.SpawnTime.CompareTo(b.SpawnTime));
-        
+
         // 敵を順次スポーン（ウェーブ開始からの経過時間で管理）
         foreach (var popEnemy in sortedEnemies)
         {
             // ウェーブ開始からの目標時間まで待機
             float targetTime = waveStartTime + popEnemy.SpawnTime;
             float waitTime = targetTime - Time.time;
-            
+
             if (waitTime > 0)
             {
                 yield return new WaitForSeconds(waitTime);
             }
-            
+
             // 敵のインデックスから実際の敵データ（プレハブ等）を取得
             var enemyPopData = enemyDataList[popEnemy.EnemyIndex];
             // StageManagerに敵のスポーンを依頼（位置オフセット付き）
             var enemy = stageManager.SpawnEnemy(enemyPopData.prefab, popEnemy.SpanwOffset);
             currentEnemies.Add(enemy);
             enemy.OnDestroyed += OnEnemyDestroyed;
-            
+
             Debug.Log($"敵をスポーンしました。経過時間: {Time.time - waveStartTime}秒");
         }
 

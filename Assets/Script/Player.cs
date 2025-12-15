@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using UnityEngine;
-using UnityEngine.LowLevel;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -34,6 +33,7 @@ public class Player : MonoBehaviour, ICharacter
     [SerializeField] Sprite jumpSprite;
     [SerializeField] Sprite deadSprite;
     [SerializeField] Sprite chargeShotSprite;
+    [SerializeField] Sprite chargeShotJumpSprite;
 
     [SerializeField] Sprite slidingSprite;
     [SerializeField] Sprite throwingSprite;
@@ -99,12 +99,18 @@ public class Player : MonoBehaviour, ICharacter
     {
         get
         {
-            return !Reference.Instance.isStopState && !Reference.Instance.isBoss && (Reference.Instance.stageRect.anchoredPosition.x <= 0 && Rect.anchoredPosition.x >= centerPos);
+            //イベント中などはスクロールしない
+            if (Reference.Instance.isStopState) return false;
+            //ボス戦などはスクロールしない
+            if (Reference.Instance.isBoss) return false;
+
+            return Reference.Instance.stageRect.anchoredPosition.x <= 0 && Rect.anchoredPosition.x >= centerPos;
         }
     }
 
     private void Start()
     {
+        //チカチカしながら開始
         if (isInitEffect)
         {
             totalBlinkTime = blinkInterval * blinkCount;
@@ -113,6 +119,7 @@ public class Player : MonoBehaviour, ICharacter
         }
         else
         {
+            //ボス戦などはそのまま開始
             totalBlinkTime = 0;
             startTimer = 0.5f;
             initTimer = 0;
@@ -123,33 +130,6 @@ public class Player : MonoBehaviour, ICharacter
     {
         if (Reference.Instance.IsClear) return;
         if (Reference.Instance.IsGameOver) return;
-
-        //デバッグクリア
-        if (Input.GetKey(KeyCode.LeftShift))
-        {
-            if (Input.GetKeyDown(KeyCode.B))
-            {
-                if (Reference.Instance.isBoss)
-                {
-                    foreach (var enemy in Reference.Instance.enemyList)
-                    {
-                        enemy.TakeDamage(9999, true);
-                    }
-                }
-                else
-                {
-                    MoveEnd();
-                }
-            }
-            if (Input.GetKeyDown(KeyCode.H))
-            {
-                SaveDataManager.Hp++;
-                Debug.LogError("Hp " + SaveDataManager.Hp);
-                Reference.Instance.UpdateStateView();
-            }
-        }
-
-
         if (Reference.Instance.PlayerStop) return;
 
 
@@ -254,13 +234,14 @@ public class Player : MonoBehaviour, ICharacter
         }
         else
         {
-            if (chargeTimer > chargeNeedTime && IsGround)
+            if (chargeTimer > chargeNeedTime)
             {
                 SoundManager.Instance.Play("fire");
                 Quaternion rotation = transform.localScale.x > 0 ? Quaternion.Euler(0, 0, 180) : Quaternion.identity;
                 var fire = Instantiate(bullet2Prefab, bullet2Point.transform.position, rotation, Reference.Instance.stageRect);
                 fire.move.x *= transform.localScale.x;
-                image.sprite = chargeShotSprite;
+                var chargeSprite = isJumping && chargeShotJumpSprite != null ? chargeShotJumpSprite : chargeShotSprite;
+                image.sprite = chargeSprite;
                 isChargeShootTimer = 0.5f;
             }
 
@@ -461,6 +442,13 @@ public class Player : MonoBehaviour, ICharacter
                     SoundManager.Instance.Play("jump");
                 }
 
+                if (isAttacking)
+                {
+                    isAttacking = false;
+                    attackStep = 0;
+                    nextAttackQueued = false;
+                    spriteChangeTimer = 0f;
+                }
                 isJumping = true;
                 isFalling = false;
                 currentJumpVelocity = jumpSpeed;
@@ -533,6 +521,15 @@ public class Player : MonoBehaviour, ICharacter
                 slidingTimer = 1f;
                 slidingStopTime = 0;
                 SoundManager.Instance.Play("sliding");
+
+                // コンボ攻撃の状態をリセットして見た目が通常に戻らないようにする
+                if (isAttacking)
+                {
+                    isAttacking = false;
+                    attackStep = 0;
+                    nextAttackQueued = false;
+                    spriteChangeTimer = 0f;
+                }
 
             }
             else if (isJumping)

@@ -14,8 +14,6 @@ public class Boss4_Shoot : MonoBehaviour
     int nowSpriteIndex = 0; // 現在のスプライトインデックス
     float spriteChangeTimer = 0f; // スプライト切り替え用タイマー
 
-    int state = 0;
-    [SerializeField] float floor = 2;
     float timer = 0;
 
     public Vector2 move;
@@ -43,20 +41,7 @@ public class Boss4_Shoot : MonoBehaviour
             }
         }
 
-        switch (state)
-        {
-            case 0:
-                timer += Time.deltaTime;
-                if (timer >= 1)
-                {
-                    timer = 0;
-                    state = 1;
-                }
-                break;
-            case 1:
-                bodyRect.anchoredPosition += move * Time.deltaTime;
-                break;
-        }
+        bodyRect.anchoredPosition += move * Time.deltaTime;
 
         if (isDamage)
         {
