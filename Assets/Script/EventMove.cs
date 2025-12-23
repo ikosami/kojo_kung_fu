@@ -11,22 +11,14 @@ public class EventMove : MonoBehaviour
         Instance = this;
     }
 
-    private HashSet<int> executedEvents = new HashSet<int>();
 
     public List<EventMoveData> eventMoves;
     public void Run(int index)
     {
-        // 既に実行済みのイベントは実行しない
-        if (executedEvents.Contains(index))
-        {
-            return;
-        }
-
         var eventData = eventMoves.Find(x => x.ID == index);
         if (eventData != null)
         {
             eventData.Action.Invoke();
-            executedEvents.Add(index);
         }
     }
 

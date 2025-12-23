@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -94,6 +95,9 @@ public class Player : MonoBehaviour, ICharacter
 
     [SerializeField] bool isInitEffect = true;
 
+    // 同じ停止位置でのイベント多重発火防止用
+    private readonly HashSet<float> triggeredStopPositions = new HashSet<float>();
+
 
     private bool canScrollStage
     {
@@ -126,6 +130,7 @@ public class Player : MonoBehaviour, ICharacter
             image.enabled = true;
         }
     }
+
     void Update()
     {
         if (Reference.Instance.IsClear) return;
@@ -251,6 +256,12 @@ public class Player : MonoBehaviour, ICharacter
     {
         var posStage = Reference.Instance.stageRect.anchoredPosition;
 
+        // すでにこの停止位置でイベントを発生させている場合は何もしない
+        if (triggeredStopPositions.Contains(stopPos))
+        {
+            return;
+        }
+
         if (posStage.x < stopPos)
         {
             Reference.Instance.isStopState = true;
@@ -259,6 +270,9 @@ public class Player : MonoBehaviour, ICharacter
             stopPosition = (int)stopPos;
 
             onReached?.Invoke();
+
+            // 一度だけ実行されるように登録
+            triggeredStopPositions.Add(stopPos);
         }
     }
 

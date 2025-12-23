@@ -18,6 +18,11 @@ public class Stage2Event : MonoBehaviour
     {
         // プレイヤーの動きを止める
         Reference.Instance.PlayerStop = true;
+
+        var pos = shisico1.transform.position;
+        pos.x = Reference.Instance.player.transform.position.x + 500;
+        shisico1.transform.position = pos;
+
         yield return new WaitForSeconds(1);
 
         var stageRect = Reference.Instance.stageRect;
@@ -39,6 +44,8 @@ public class Stage2Event : MonoBehaviour
 
         // プレイヤーの動きを再開
         Reference.Instance.PlayerStop = false;
+        Reference.Instance.isStopState = false;
+        Destroy(shisico1.gameObject);
     }
 
     /// <summary>
