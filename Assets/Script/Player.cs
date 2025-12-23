@@ -130,7 +130,15 @@ public class Player : MonoBehaviour, ICharacter
     {
         if (Reference.Instance.IsClear) return;
         if (Reference.Instance.IsGameOver) return;
-        if (Reference.Instance.PlayerStop) return;
+        if (Reference.Instance.PlayerStop)
+        {
+            isSliding = false;
+            slidingWaitTimer = 0;
+            slidingTimer = 0;
+            slidingStopTime = 0;
+            HandleNormalSpriteAnimation();
+            return;
+        }
 
 
         //ポーズ
@@ -201,12 +209,59 @@ public class Player : MonoBehaviour, ICharacter
         }
 
         Move();
+
+        MoveEvent();
+
         var pos = rect.anchoredPosition;
         HandleJump(ref pos);
         rect.anchoredPosition = pos;
         HandleAttack();
         Charge();
     }
+
+    private void MoveEvent()
+    {
+        if (!canScrollStage) return;
+
+
+        if (Reference.Instance.StageNum == 2)
+        {
+            int num = 2;
+            CheckStagePositionAndTriggerEvent(EventMove.Instance.GetPos(num), () =>
+            {
+                EventMove.Instance.Run(num);
+            });
+        }
+        if (Reference.Instance.StageNum == 4)
+        {
+            CheckStagePositionAndTriggerEvent(-288f, () =>
+            {
+                FindFirstObjectByType<Stage4Door>().Close();
+            });
+        }
+
+    }
+
+    /// <summary>
+    /// ステージ位置をチェックし、指定位置に到達したらイベントを発生させる
+    /// </summary>
+    /// <param name="stopPos">停止位置（float）</param>
+    /// <param name="onReached">到達時に実行するAction</param>
+    private void CheckStagePositionAndTriggerEvent(float stopPos, Action onReached)
+    {
+        var posStage = Reference.Instance.stageRect.anchoredPosition;
+
+        if (posStage.x < stopPos)
+        {
+            Reference.Instance.isStopState = true;
+            posStage.x = stopPos;
+            Reference.Instance.stageRect.anchoredPosition = posStage;
+            stopPosition = (int)stopPos;
+
+            onReached?.Invoke();
+        }
+    }
+
     private void Charge()
     {
         if (Reference.Instance.StageNum < 4)
@@ -340,21 +395,6 @@ public class Player : MonoBehaviour, ICharacter
         }
 
 
-        if (Reference.Instance.StageNum == 4 && canScrollStage)
-        {
-            var posStage = Reference.Instance.stageRect.anchoredPosition;
-
-            int stopPos = -288;
-            if (posStage.x < stopPos)
-            {
-                Reference.Instance.isStopState = true;
-                posStage.x = stopPos;
-                Reference.Instance.stageRect.anchoredPosition = posStage;
-                stopPosition = stopPos;
-
-                FindFirstObjectByType<Stage4Door>().Close();
-            }
-        }
     }
 
     int stopPosition = 0;

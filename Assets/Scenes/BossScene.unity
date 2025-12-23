@@ -3750,7 +3750,6 @@ MonoBehaviour:
   StageNum: 1
   IsClear: 0
   uiController: {fileID: 413532004}
-  debugPanel: {fileID: 0}
 --- !u!4 &1795731935
 Transform:
   m_ObjectHideFlags: 0
