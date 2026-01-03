@@ -70,7 +70,7 @@ public class TitleManager : MonoBehaviour
                     SaveDataManager.Hp = 3;
                     SaveDataManager.NoDamage = true;
                     SaveDataManager.Score = 0;
-                    SaveDataManager.Life = 2;
+                    SaveDataManager.Life = SaveDataManager.MaxLife;
                     UnityEngine.SceneManagement.SceneManager.LoadScene("GameScene");
 
                 }

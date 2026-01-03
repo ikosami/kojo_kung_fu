@@ -42,13 +42,15 @@ public class DebugManager : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.H))
             {
                 SaveDataManager.Hp++;
-                Debug.LogError("Hp " + SaveDataManager.Hp);
                 Reference.Instance.UpdateStateView();
             }
 
             if (Input.GetKeyDown(KeyCode.D))
             {
-                debugPanel.gameObject.SetActive(!debugPanel.gameObject.activeSelf);
+                var isDebugActive = !debugPanel.gameObject.activeSelf;
+                debugPanel.gameObject.SetActive(isDebugActive);
+                Debug.LogError("PlayerStop " + isDebugActive);
+                //Reference.Instance.PlayerStop = isDebugActive;
             }
         }
 

@@ -1,10 +1,10 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 /// <summary>
 /// 敵キャラクターの挙動を制御するクラス。
 /// 静止状態でダメージを受け、倒される機能を提供する。
 /// </summary>
-public class Enemy_Obj : Enemy, ICharacter
+public class Enemy_Obj : Enemy
 {
     [SerializeField] RectTransform[] attackRects;
 

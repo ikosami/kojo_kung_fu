@@ -12,8 +12,8 @@ public class Shisico1 : MonoBehaviour
     float spriteChangeTimer = 0;
     bool isNormalSprite = true;
 
-    float moveSpeed = 20f;      // 移動速度（ピクセル/秒）
-    float moveDuration = 1f;     // 移動時間（秒）
+    [SerializeField] float moveSpeed = 20f;      // 移動速度（ピクセル/秒）
+    [SerializeField] float moveDuration = 1f;     // 移動時間（秒）
 
     // Update is called once per frame
     void Update()

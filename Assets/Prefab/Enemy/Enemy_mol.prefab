@@ -316,6 +316,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b187a646d1c8a748820b1d7cc203c8f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  hp: 5
+  maxHP: 5
+  BodyColRect: {fileID: 6192401677413289611}
   rect: {fileID: 2558180912156655907}
   image: {fileID: 4611383683358782082}
   normalSprite1: {fileID: 21300000, guid: 1b923ba6d99d3c3408b3ae989f56843c, type: 3}
@@ -325,11 +328,8 @@ MonoBehaviour:
   damageSprite: {fileID: 21300000, guid: 424053feb959c9d4e89e7c3ee4518b11, type: 3}
   attackRange: {fileID: 4927272755579441632}
   attackRange2: {fileID: 2639239995093559279}
-  bodyRange: {fileID: 6192401677413289611}
   moveSpeed: {x: 132, y: 0, z: 0}
   attackTime: 0
-  hpMax: 5
-  hp: 5
   isJumpEnemy: 0
   maxJumpVelocity: 50
   gravity: 100

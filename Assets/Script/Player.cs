@@ -5,13 +5,11 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class Player : MonoBehaviour, ICharacter
+public class Player : CharacterBase
 {
-    public GameObject GameObject => gameObject;
     [SerializeField] int floorHeight = 10;
     [SerializeField] float maxJumpHeight = 300f;
     [SerializeField] RectTransform rect;
-    public RectTransform Rect => rect;
 
     [SerializeField] Bullet bulletPrefab;
     [SerializeField] Transform bulletPoint;
@@ -24,7 +22,7 @@ public class Player : MonoBehaviour, ICharacter
     [SerializeField] Sprite normalSprite1;
     [SerializeField] Sprite normalSprite2;
     private float spriteChangeTimer = 0f;
-    [SerializeField] private float spriteChangeInterval = 0.5f;
+    [SerializeField] private float spriteChangeInterval = 0.25f;
     private bool isNormalSprite = true;
 
 
@@ -45,12 +43,11 @@ public class Player : MonoBehaviour, ICharacter
     float slidingWaitTimer = 0;
 
 
-    public RectTransform BodyColRect => isSliding ? bodySlidingRange : bodyRange;
+    public RectTransform BodyColRect2 => isSliding ? bodySlidingRange : BodyColRect;
 
     [SerializeField] RectTransform bodySlidingRange;
     [SerializeField] RectTransform attackSlidingRange;
 
-    [SerializeField] RectTransform bodyRange;
     [SerializeField] RectTransform attack1Range;
     [SerializeField] RectTransform attack2Range;
     [SerializeField] RectTransform attackJumpRange;
@@ -104,7 +101,7 @@ public class Player : MonoBehaviour, ICharacter
         get
         {
             //イベント中などはスクロールしない
-            if (Reference.Instance.isStopState) return false;
+            if (Reference.Instance.isScroolStop) return false;
             //ボス戦などはスクロールしない
             if (Reference.Instance.isBoss) return false;
 
@@ -135,6 +132,9 @@ public class Player : MonoBehaviour, ICharacter
     {
         if (Reference.Instance.IsClear) return;
         if (Reference.Instance.IsGameOver) return;
+
+        spriteChangeTimer += Time.deltaTime;
+
         if (Reference.Instance.PlayerStop)
         {
             isSliding = false;
@@ -142,6 +142,10 @@ public class Player : MonoBehaviour, ICharacter
             slidingTimer = 0;
             slidingStopTime = 0;
             HandleNormalSpriteAnimation();
+
+            var pos2 = rect.anchoredPosition;
+            HandleJump(ref pos2);
+            rect.anchoredPosition = pos2;
             return;
         }
 
@@ -226,17 +230,20 @@ public class Player : MonoBehaviour, ICharacter
 
     private void MoveEvent()
     {
+        Debug.LogError($"MoveEvent " + canScrollStage);
         if (!canScrollStage) return;
 
-
-        if (Reference.Instance.StageNum == 2)
+        int num = Reference.Instance.StageNum;
+        var data = EventMove.Instance.GetData(num);
+        if (data != null)
         {
-            int num = 2;
-            CheckStagePositionAndTriggerEvent(EventMove.Instance.GetPos(num), () =>
+            var pos = EventMove.Instance.GetPos(num);
+            CheckStagePositionAndTriggerEvent(pos, () =>
             {
                 EventMove.Instance.Run(num);
             });
         }
+
         if (Reference.Instance.StageNum == 4)
         {
             CheckStagePositionAndTriggerEvent(-288f, () =>
@@ -259,12 +266,14 @@ public class Player : MonoBehaviour, ICharacter
         // すでにこの停止位置でイベントを発生させている場合は何もしない
         if (triggeredStopPositions.Contains(stopPos))
         {
+            Debug.LogError($"すでにこの停止位置でイベントを発生させている場合は何もしない");
             return;
         }
+        Debug.LogError($"{posStage.x} < {stopPos}");
 
         if (posStage.x < stopPos)
         {
-            Reference.Instance.isStopState = true;
+            Reference.Instance.isScroolStop = true;
             posStage.x = stopPos;
             Reference.Instance.stageRect.anchoredPosition = posStage;
             stopPosition = (int)stopPos;
@@ -363,11 +372,11 @@ public class Player : MonoBehaviour, ICharacter
         //右移動
         if (Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.D))
         {
-            var enemyList = Util.GetEnemyList(bodyRange);
+            var enemyList = Util.GetEnemyList(BodyColRect2);
             bool isEnemyRight = false;
             foreach (var enemy in enemyList)
             {
-                if (enemy.GameObject.transform.position.x > gameObject.transform.position.x)
+                if (enemy.gameObject.transform.position.x > gameObject.transform.position.x)
                 {
                     isEnemyRight = true;
                     break;
@@ -392,11 +401,11 @@ public class Player : MonoBehaviour, ICharacter
         if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A))
         {
             //敵が左側にいるかどうか
-            var enemyList = Util.GetEnemyList(bodyRange);
+            var enemyList = Util.GetEnemyList(BodyColRect2);
             bool isEnemyLeft = false;
             foreach (var enemy in enemyList)
             {
-                if (enemy.GameObject.transform.position.x < gameObject.transform.position.x)
+                if (enemy.gameObject.transform.position.x < gameObject.transform.position.x)
                 {
                     isEnemyLeft = true;
                     break;
@@ -517,10 +526,9 @@ public class Player : MonoBehaviour, ICharacter
 
     private void HandleNormalSpriteAnimation()
     {
-        spriteChangeTimer += Time.deltaTime;
         if (spriteChangeTimer >= spriteChangeInterval)
         {
-            spriteChangeTimer -= spriteChangeInterval;
+            spriteChangeTimer = spriteChangeInterval % spriteChangeInterval;
             isNormalSprite = !isNormalSprite;
         }
         image.sprite = isNormalSprite ? normalSprite1 : normalSprite2;

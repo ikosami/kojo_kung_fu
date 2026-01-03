@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class StageManager : MonoBehaviour
 {
+    public const int timing = -144;
 
     [SerializeField] RectTransform stage;
     [SerializeField] AudioSource bgm;
@@ -15,7 +16,6 @@ public class StageManager : MonoBehaviour
     [SerializeField] GameObject[] stageObjBacks;
     [SerializeField] GameObject[] stageObjFronts;
 
-    int timing = -144;
     int index = 0; // 生成するタイミングのインデックス
     int currentStageNum = 0; // 現在のステージ番号
 
@@ -37,15 +37,10 @@ public class StageManager : MonoBehaviour
         var stageData = Reference.Instance.stageDataList.List.Find(x => x.StageNum == num);
         stageDataList = stageData.stageDataList;
 
-        if (!Reference.Instance.isBoss)
-        {
-            index = SaveDataManager.NowArea;
-            float nextSpawnX = timing * (index); // timing の倍数
-            Reference.Instance.stageRect.anchoredPosition = new Vector2(nextSpawnX, Reference.Instance.stageRect.anchoredPosition.y);
-        }
+
         Reference.Instance.SetStage(num);
 
-
+        //ステージ背景の表示
         for (int i = 0; i < stageObjBacks.Length; i++)
         {
             if (stageObjBacks[i] != null)
@@ -57,6 +52,13 @@ public class StageManager : MonoBehaviour
                 stageObjFronts[i].gameObject.SetActive(i == stageIndex);
         }
 
+        if (!Reference.Instance.isBoss)
+        {
+            //セーブデータのエリアの場所に戻る
+            index = SaveDataManager.NowArea;
+            float nextSpawnX = timing * (index); // timing の倍数
+            Reference.Instance.stageRect.anchoredPosition = new Vector2(nextSpawnX, Reference.Instance.stageRect.anchoredPosition.y);
+        }
     }
 
     void Update()
@@ -65,18 +67,22 @@ public class StageManager : MonoBehaviour
         if (currentStageNum == 4)
             return;
 
+        // イベント中（プレイヤー停止中）は敵の出現を停止
+        if (Reference.Instance.PlayerStop)
+            return;
+
         float currentX = stage.anchoredPosition.x;
         float nextSpawnX = timing * (index + 1); // timing の倍数
 
         // `timing * index` を下回ったら敵をスポーン
         if (currentX <= nextSpawnX)
         {
-            SpawnEnemiesAt(nextSpawnX, index);
+            SpawnEnemiesAt(index);
             index++; // 次の倍数に進める
         }
     }
 
-    void SpawnEnemiesAt(float spawnX, int index)
+    void SpawnEnemiesAt(int index)
     {
         if (stageDataList == null || stageDataList.Count == 0) return;
 
@@ -95,6 +101,9 @@ public class StageManager : MonoBehaviour
 
 
         var enemyDataList = Reference.Instance.enemyDataList.enemyDataList;
+
+        Debug.LogError($"敵出現 {index} 出現数:{stageData.popEnemy.Count}");
+
         foreach (var popEnemy in stageData.popEnemy)
         {
             var enemyPopData = enemyDataList[popEnemy.EnemyIndex];
@@ -110,7 +119,7 @@ public class StageManager : MonoBehaviour
     public Enemy SpawnEnemy(Enemy prefab, int spanwOffset)
     {
         Enemy newEnemy = Instantiate(prefab, Reference.Instance.uiController.EnemyParent);
-        
+
         RectTransform enemyRect = newEnemy.Rect;
         if (enemyRect != null)
         {

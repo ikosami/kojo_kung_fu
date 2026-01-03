@@ -131,6 +131,7 @@ MonoBehaviour:
   attackRange: {fileID: 7206019676701521645}
   sprites:
   - {fileID: 21300000, guid: f8a47eb8a52882d4ca9756b06dc5aece, type: 3}
+  isPowerAttack: 1
   damage: 7
   move: {x: 50, y: 0}
   isPenetrating: 1

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 [CreateAssetMenu]
 public class EnemyDataList : ScriptableObject
@@ -25,4 +26,9 @@ public class EnemyData
 {
     public string name;
     public Enemy prefab;
+
+    internal Image GetImage()
+    {
+        return prefab.GetImage();
+    }
 }

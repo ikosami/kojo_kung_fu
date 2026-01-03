@@ -13,9 +13,9 @@ public class EventMove : MonoBehaviour
 
 
     public List<EventMoveData> eventMoves;
-    public void Run(int index)
+    public void Run(int id)
     {
-        var eventData = eventMoves.Find(x => x.ID == index);
+        EventMoveData eventData = GetData(id);
         if (eventData != null)
         {
             eventData.Action.Invoke();
@@ -24,7 +24,12 @@ public class EventMove : MonoBehaviour
 
     internal float GetPos(int id)
     {
-        return eventMoves.Find(x => x.ID == id).Pos;
+        EventMoveData eventData = GetData(id);
+        return eventData != null ? eventData.Pos : 0f;
+    }
+    public EventMoveData GetData(int index)
+    {
+        return eventMoves.Find(x => x.ID == index);
     }
 
     [Serializable]

@@ -7,14 +7,14 @@ using static UnityEngine.GraphicsBuffer;
 
 public class Util : MonoBehaviour
 {
-    public static List<ICharacter> GetEnemyList(RectTransform target)
+    public static List<CharacterBase> GetEnemyList(RectTransform target)
     {
         return GetEnemyList(target, Vector2.zero);
     }
     // 敵に当たっているかどうか 
-    public static List<ICharacter> GetEnemyList(RectTransform target, Vector2 offset)
+    public static List<CharacterBase> GetEnemyList(RectTransform target, Vector2 offset)
     {
-        List<ICharacter> overlappingImages = new List<ICharacter>();
+        List<CharacterBase> overlappingImages = new List<CharacterBase>();
 
         Rect targetRect = GetWorldRect(target);
         targetRect.x += offset.x;
@@ -22,6 +22,7 @@ public class Util : MonoBehaviour
 
         foreach (var enemy in Reference.Instance.enemyList)
         {
+            if (enemy.BodyColRect == null) Debug.LogError($"enemy.BodyColRectがない {enemy.transform.parent.gameObject.name}/{enemy.gameObject.name}");
             Rect imgRect = GetWorldRect(enemy.BodyColRect);
             if (targetRect.Overlaps(imgRect))
             {
@@ -35,16 +36,17 @@ public class Util : MonoBehaviour
     /// プレイヤーと当たっているかどうかを判定する
     internal static bool IsHitPlayer(RectTransform target)
     {
-        List<ICharacter> overlappingImages = new List<ICharacter>();
+        List<CharacterBase> overlappingImages = new List<CharacterBase>();
 
         Rect targetRect = GetWorldRect(target);
-        Rect imgRect = GetWorldRect(Reference.Instance.player.BodyColRect);
+        Rect imgRect = GetWorldRect(Reference.Instance.player.BodyColRect2);
         return (targetRect.Overlaps(imgRect));
     }
 
     private static Rect GetWorldRect(RectTransform rectTransform)
     {
         Vector3[] corners = new Vector3[4];
+        if (rectTransform == null) Debug.LogError($"rectTransformがない");
         rectTransform.GetWorldCorners(corners);
 
         float xMin = Mathf.Min(corners[0].x, corners[2].x);

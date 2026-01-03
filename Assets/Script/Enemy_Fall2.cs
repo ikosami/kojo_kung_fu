@@ -4,7 +4,7 @@
 /// 敵キャラクターの挙動を制御するクラス。
 /// 移動、攻撃、ダメージ処理、アニメーション、死亡処理などを担当する。
 /// </summary>
-public class Enemy_Fall2 : Enemy, ICharacter
+public class Enemy_Fall2 : Enemy
 {
     bool isFall = false;
     bool isFalling = false;
@@ -152,7 +152,7 @@ public class Enemy_Fall2 : Enemy, ICharacter
         }
         else
         {
-            transform.position += dir * Time.deltaTime;
+            transform.position += moveDir * Time.deltaTime;
         }
     }
 }

@@ -1,9 +1,9 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-public class Boss4 : Enemy, ICharacter
+public class Boss4 : Enemy
 {
     [SerializeField] Sprite attackSprite1_1;  // 近接攻撃用
     [SerializeField] Sprite attackSprite1_2;  // 近接攻撃用
@@ -38,7 +38,6 @@ public class Boss4 : Enemy, ICharacter
     [SerializeField] RectTransform deadImageRect;
     float moveTimer = 0;
 
-    new Vector3 dir;
     float attack2Speed = 0;
     bool isAttack2Stop = false;
     bool isDamageHit = false;
@@ -50,8 +49,8 @@ public class Boss4 : Enemy, ICharacter
 
     protected override void Start()
     {
-        hp = hpMax;
-        Reference.Instance.enemyList.Add(this);
+        hp = maxHP;
+        Reference.Instance.AddEnemy(this);
         moveTimer = 0;
         isFirstAttack = true;
         attackPattern = 2;
@@ -323,18 +322,18 @@ public class Boss4 : Enemy, ICharacter
 
             if (player.transform.position.x > transform.position.x)
             {
-                dir = moveSpeed;
+                moveDir = moveSpeed;
                 transform.localScale = new Vector3(1, 1, 1);
             }
             else
             {
-                dir = -moveSpeed;
+                moveDir = -moveSpeed;
                 transform.localScale = new Vector3(-1, 1, 1);
             }
         }
 
         // ボスを移動させる（Boss1、Boss2と同じくtransform.positionを使用）
-        transform.position += dir * Time.deltaTime;
+        transform.position += moveDir * Time.deltaTime;
     }
 
     // 近接攻撃（Boss1のAttack1と同じ）
@@ -389,12 +388,12 @@ public class Boss4 : Enemy, ICharacter
             var player = Reference.Instance.player;
             if (player.transform.position.x > transform.position.x)
             {
-                dir = moveSpeed;
+                moveDir = moveSpeed;
                 transform.localScale = new Vector3(1, 1, 1);
             }
             else
             {
-                dir = -moveSpeed;
+                moveDir = -moveSpeed;
                 transform.localScale = new Vector3(-1, 1, 1);
             }
         }
@@ -428,11 +427,11 @@ public class Boss4 : Enemy, ICharacter
 
                 attack2Speed += Time.deltaTime * 3;
 
-                transform.position += dir * attack2Speed * Time.deltaTime;
+                transform.position += moveDir * attack2Speed * Time.deltaTime;
 
                 var pos = rect.anchoredPosition;
 
-                if (pos.x > 149 && dir.x > 0)
+                if (pos.x > 149 && moveDir.x > 0)
                 {
                     pos.x = 149;
                     rect.anchoredPosition = pos;
@@ -440,7 +439,7 @@ public class Boss4 : Enemy, ICharacter
                     isAttack2Stop = true;
                     SoundManager.Instance.Play("boss_attack_2_2");
                 }
-                if (pos.x < 11 && dir.x < 0)
+                if (pos.x < 11 && moveDir.x < 0)
                 {
                     pos.x = 11;
                     rect.anchoredPosition = pos;
@@ -475,12 +474,12 @@ public class Boss4 : Enemy, ICharacter
             var player = Reference.Instance.player;
             if (player.transform.position.x > transform.position.x)
             {
-                dir = moveSpeed;
+                moveDir = moveSpeed;
                 transform.localScale = new Vector3(1, 1, 1);
             }
             else
             {
-                dir = -moveSpeed;
+                moveDir = -moveSpeed;
                 transform.localScale = new Vector3(-1, 1, 1);
             }
         }
@@ -499,7 +498,7 @@ public class Boss4 : Enemy, ICharacter
 
 
             // ジャンプ: Y方向に上昇、X方向に移動（Boss2と同じ）
-            transform.position += (dir + new Vector3(0, moveSpeed.x, 0)) * Time.deltaTime * 2.5f;
+            transform.position += (moveDir + new Vector3(0, moveSpeed.x, 0)) * Time.deltaTime * 2.5f;
         }
         else if (moveTimer < 2.5f)
         {

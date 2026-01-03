@@ -4,7 +4,7 @@
 /// 敵キャラクターの挙動を制御するクラス。
 /// 移動、攻撃、ダメージ処理、アニメーション、死亡処理などを担当する。
 /// </summary>
-public class Enemy_MolFire : Enemy, ICharacter
+public class Enemy_MolFire : Enemy
 {
     [SerializeField] Sprite attackSprite2;
     float attackSpriteTimer = 0;
@@ -89,7 +89,7 @@ public class Enemy_MolFire : Enemy, ICharacter
         }
         else
         {
-            transform.position += dir * Time.deltaTime;
+            transform.position += moveDir * Time.deltaTime;
         }
     }
 }

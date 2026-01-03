@@ -12,6 +12,7 @@ public class Bullet : MonoBehaviour
     [SerializeField] RectTransform attackRange;
 
     [SerializeField] Sprite[] sprites;
+    [SerializeField] bool isPowerAttack = false;
     int nowSpriteIndex = 0; // 現在のスプライトインデックス
     float spriteChangeTimer = 0f; // スプライト切り替え用タイマー
     [SerializeField] int damage = 1;
@@ -89,8 +90,8 @@ public class Bullet : MonoBehaviour
                         continue;
                     }
 
-                    enemy.TakeDamage(damage, false);
-                    
+                    enemy.TakeDamage(damage, isPowerAttack);
+
                     if (isPenetrating)
                     {
                         // 貫通弾の場合、当たった敵を記録して続行

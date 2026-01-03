@@ -4,7 +4,7 @@
 /// 敵キャラクターの挙動を制御するクラス。
 /// 移動、攻撃、ダメージ処理、アニメーション、死亡処理などを担当する。
 /// </summary>
-public class Enemy_RangeJump : Enemy_Range, ICharacter
+public class Enemy_RangeJump : Enemy_Range
 {
     protected override void Move()
     {
@@ -19,7 +19,7 @@ public class Enemy_RangeJump : Enemy_Range, ICharacter
             float distanceToPlayer = GetPlayerDistance();
             if (distanceToPlayer > attackStartDistance)
             {
-                transform.position += dir * Time.deltaTime;
+                transform.position += moveDir * Time.deltaTime;
             }
             else
             {
@@ -32,7 +32,7 @@ public class Enemy_RangeJump : Enemy_Range, ICharacter
         }
         else
         {
-            transform.position += dir * Time.deltaTime;
+            transform.position += moveDir * Time.deltaTime;
         }
 
     }

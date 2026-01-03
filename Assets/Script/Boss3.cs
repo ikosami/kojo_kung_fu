@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-public class Boss3 : Enemy, ICharacter
+public class Boss3 : Enemy
 {
     [SerializeField] Sprite normalSprite_idle;
     [SerializeField] Sprite normalSprite_fly;
@@ -61,8 +61,8 @@ public class Boss3 : Enemy, ICharacter
 
     protected override void Start()
     {
-        hp = hpMax;
-        Reference.Instance.enemyList.Add(this);
+        hp = maxHP;
+        Reference.Instance.AddEnemy(this);
         preState = 0;
         moveTimer = 0;
     }

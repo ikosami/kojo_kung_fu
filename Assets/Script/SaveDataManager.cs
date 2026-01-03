@@ -109,6 +109,7 @@ public class SaveDataManager : MonoBehaviour
             PlayerPrefs.SetInt(keyLife, value);
         }
     }
+    public static int MaxLife = 2;
 
     const string keyNoDamage = "no_damage";
     public static bool NoDamage

@@ -6,7 +6,7 @@ using UnityEngine.UI;
 /// 敵キャラクターの挙動を制御するクラス。
 /// 移動、攻撃、ダメージ処理、アニメーション、死亡処理などを担当する。
 /// </summary>
-public class Enemy_Range : Enemy, ICharacter
+public class Enemy_Range : Enemy
 {
     [SerializeField] Bullet bulletPrefab;
     [SerializeField] Transform bulletPoint;

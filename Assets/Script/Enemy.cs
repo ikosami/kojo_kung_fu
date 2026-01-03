@@ -7,14 +7,10 @@ using UnityEngine.UI;
 /// 敵キャラクターの挙動を制御するクラス。
 /// 移動、攻撃、ダメージ処理、アニメーション、死亡処理などを担当する。
 /// </summary>
-public class Enemy : MonoBehaviour, ICharacter
+public class Enemy : CharacterBase
 {
-    // ICharacterインターフェース実装：自身のGameObjectを返す
-    public GameObject GameObject => gameObject;
 
     [SerializeField] protected RectTransform rect; // 敵のUI座標
-    // ICharacterインターフェース実装：自身のRectTransformを返す
-    public RectTransform Rect => rect;
 
     [SerializeField] protected Image image; // 敵の画像コンポーネント
     [Space]
@@ -28,12 +24,8 @@ public class Enemy : MonoBehaviour, ICharacter
 
     [SerializeField] protected Sprite damageSprite; // ダメージ時スプライト
 
-    // ICharacterインターフェース実装：当たり判定用のRectTransform
-    public RectTransform BodyColRect => bodyRange;
-
     [SerializeField] protected RectTransform attackRange;   // 攻撃判定範囲
     [SerializeField] protected RectTransform attackRange2;  // ジャンプ攻撃用範囲
-    [SerializeField] protected RectTransform bodyRange;     // 本体当たり判定範囲
 
     [SerializeField] protected Vector3 moveSpeed = new Vector3(0.4f, 0, 0); // 移動速度
 
@@ -41,10 +33,7 @@ public class Enemy : MonoBehaviour, ICharacter
     protected bool isAttack = false;
     [SerializeField] protected float attackTime = 0; // 攻撃経過時間
 
-    [SerializeField] protected int hpMax = 3; // 最大HP
-    [SerializeField] protected int hp = 3;    // 現在HP
-                                              // 死亡判定
-    protected bool isDead { get { return hp <= 0; } }
+
     protected float damageWaitTime = 0; // ダメージ演出中の待機時間
 
     [SerializeField] protected bool isJumpEnemy = false; // ジャンプする敵かどうか
@@ -58,7 +47,9 @@ public class Enemy : MonoBehaviour, ICharacter
     [Header("攻撃発生の距離")]
     [SerializeField] protected float attackStartDistance = 50f;
     [SerializeField] protected float backDistance = -1f;
-    protected Vector3 dir; // 移動方向
+    protected Vector3 moveDir; // 移動方向
+
+
 
     public float BaseHeight = -73;
 
@@ -67,8 +58,8 @@ public class Enemy : MonoBehaviour, ICharacter
     /// </summary>
     protected virtual void Start()
     {
-        hp = hpMax;
-        Reference.Instance.enemyList.Add(this);
+        hp = maxHP;
+        Reference.Instance.AddEnemy(this);
         SetInitPos();
     }
 
@@ -92,6 +83,9 @@ public class Enemy : MonoBehaviour, ICharacter
         if (Reference.Instance.IsClear) return;
         if (Reference.Instance.isPause) return;
         if (Reference.Instance.IsGameOver) { return; }
+
+        // イベント中（プレイヤー停止中）は敵の動きを停止
+        if (Reference.Instance.PlayerStop) return;
 
         // 死亡時は何もしない
         if (isDead) { return; }
@@ -242,12 +236,12 @@ public class Enemy : MonoBehaviour, ICharacter
         if (isBacking)
         {
             // 向きは変えずに後退
-            transform.position -= dir * Time.deltaTime;
+            transform.position -= moveDir * Time.deltaTime;
         }
         else
         {
             // 通常移動
-            transform.position += dir * Time.deltaTime;
+            transform.position += moveDir * Time.deltaTime;
         }
 
         // 後退中(攻撃判定より後ろ)でなければ攻撃判定
@@ -320,12 +314,12 @@ public class Enemy : MonoBehaviour, ICharacter
 
         if (player.transform.position.x > transform.position.x)
         {
-            dir = moveSpeed;
+            moveDir = moveSpeed;
             transform.localScale = new Vector3(1, 1, 1);
         }
         else
         {
-            dir = -moveSpeed;
+            moveDir = -moveSpeed;
             transform.localScale = new Vector3(-1, 1, 1);
         }
     }
@@ -349,7 +343,7 @@ public class Enemy : MonoBehaviour, ICharacter
     /// ダメージを受けた際の処理。HP減少・死亡判定・ダメージ演出。
     /// </summary>
     /// <param name="damage">受けるダメージ量</param>
-    public virtual void TakeDamage(int damage, bool breakAttack, string soundName = "")
+    public override void TakeDamage(int damage, bool breakAttack, string soundName = "")
     {
         if (isDead) { return; }
 
@@ -414,5 +408,16 @@ public class Enemy : MonoBehaviour, ICharacter
         gameObject.SetActive(false); // オブジェクトを非表示にする
 
         OnDestroyed?.Invoke(this);
+    }
+
+    internal Image GetImage()
+    {
+        var img = GetComponent<Image>();
+
+        if (img == null)
+        {
+            img = transform.GetChild(0).GetComponent<Image>();
+        }
+        return img;
     }
 }

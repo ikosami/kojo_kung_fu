@@ -583,6 +583,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b9baf3799378c4444bccce556993fc52, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  hp: 0
+  maxHP: 0
+  BodyColRect: {fileID: 4498021155532351042}
   floorHeight: -73
   maxJumpHeight: -55
   rect: {fileID: 8012917357639025747}

@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class Stage2Event : MonoBehaviour
 {
-    [SerializeField] float moveDistance = -100f;   // カメラを右に動かす = ステージを左に動かす（マイナス方向）
+    [SerializeField] float moveDistance = -50f;   // カメラを右に動かす = ステージを左に動かす（マイナス方向）
     [SerializeField] float moveSpeed = 100f;       // 移動速度（ピクセル/秒）
     [SerializeField] float stopDuration = 1f;      // 移動後に停止する時間（秒）
 
@@ -20,7 +20,7 @@ public class Stage2Event : MonoBehaviour
         Reference.Instance.PlayerStop = true;
 
         var pos = shisico1.transform.position;
-        pos.x = Reference.Instance.player.transform.position.x + 500;
+        pos.x = Reference.Instance.player.transform.position.x + 530;
         shisico1.transform.position = pos;
 
         yield return new WaitForSeconds(1);
@@ -39,12 +39,14 @@ public class Stage2Event : MonoBehaviour
         yield return new WaitForSeconds(stopDuration);
         yield return shisico1.EventMove();
 
+        yield return new WaitForSeconds(1);
+
         // フェーズ3: 元の位置に戻る
         yield return MoveCameraToPosition(stageRect, playerRect, startPos, moveSpeed);
 
         // プレイヤーの動きを再開
         Reference.Instance.PlayerStop = false;
-        Reference.Instance.isStopState = false;
+        Reference.Instance.isScroolStop = false;
         Destroy(shisico1.gameObject);
     }
 

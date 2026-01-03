@@ -3,9 +3,8 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class Boss : MonoBehaviour, ICharacter
+public class Boss : CharacterBase
 {
-    public GameObject GameObject => gameObject;
     [SerializeField] RectTransform rect;
     public RectTransform Rect => rect;
     [SerializeField] Image image;
@@ -31,10 +30,6 @@ public class Boss : MonoBehaviour, ICharacter
     bool isAttack = false;
     [SerializeField] float attackTime = 0;
 
-    [SerializeField] int hpMax = 3;
-    [SerializeField] int hp = 3;
-    bool isDead { get { return hp <= 0; } }
-
     private float currentJumpVelocity = 0f;
     [SerializeField] float maxJumpVelocity = 6f;
     [SerializeField] float gravity = 0.2f;
@@ -48,8 +43,8 @@ public class Boss : MonoBehaviour, ICharacter
 
     void Start()
     {
-        hp = hpMax;
-        Reference.Instance.enemyList.Add(this);
+        hp = maxHP;
+        Reference.Instance.AddEnemy(this);
         RandomAttackKind();
     }
 

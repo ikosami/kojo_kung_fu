@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class Boss2 : Enemy, ICharacter
+public class Boss2 : Enemy
 {
     [SerializeField] Sprite attackSprite2_1;
     [SerializeField] Sprite attackSprite2_2;
@@ -20,8 +20,8 @@ public class Boss2 : Enemy, ICharacter
 
     protected override void Start()
     {
-        hp = hpMax;
-        Reference.Instance.enemyList.Add(this);
+        hp = maxHP;
+        Reference.Instance.AddEnemy(this);
 
         attackState = 1;
         SetAttackKind();
@@ -145,12 +145,12 @@ public class Boss2 : Enemy, ICharacter
             {
                 Vector3 diff = Reference.Instance.player.transform.position - transform.position;
 
-                if (diff.x * dir.x > 0)
+                if (diff.x * moveDir.x > 0)
                 {
                     // 正面
                     attackState = 5;
                 }
-                else if (diff.x * dir.x < 0)
+                else if (diff.x * moveDir.x < 0)
                 {
                     attackState = 6;
                 }
@@ -185,7 +185,7 @@ public class Boss2 : Enemy, ICharacter
             if (image.sprite != attackSprite3_1)
                 image.sprite = attackSprite3_1;
 
-            transform.position += (dir + new Vector3(0, moveSpeed.x, 0)) * Time.deltaTime * 2.5f; // 突進の移動速度を上げる
+            transform.position += (moveDir + new Vector3(0, moveSpeed.x, 0)) * Time.deltaTime * 2.5f; // 突進の移動速度を上げる
 
             attackTime += Time.deltaTime;
         }
@@ -314,18 +314,18 @@ public class Boss2 : Enemy, ICharacter
         {
             if (player.transform.position.x > transform.position.x)
             {
-                dir = moveSpeed;
+                moveDir = moveSpeed;
                 transform.localScale = new Vector3(1, 1, 1);
             }
             else
             {
-                dir = -moveSpeed;
+                moveDir = -moveSpeed;
                 transform.localScale = new Vector3(-1, 1, 1);
             }
         }
 
         // ボスを移動させる
-        transform.position += dir * Time.deltaTime;
+        transform.position += moveDir * Time.deltaTime;
 
         int[] range = new int[] { 0, 100, 999, 300 };
         // プレイヤーが攻撃範囲に入った場合、攻撃を開始する
@@ -352,8 +352,6 @@ public class Boss2 : Enemy, ICharacter
 
     public override void TakeDamage(int damage, bool breakAttack, string soundName)
     {
-        Debug.LogError("Boss2 TakeDamage " + damage + " " + soundName);
-
         if (isDead) { return; }
 
         hp -= damage;

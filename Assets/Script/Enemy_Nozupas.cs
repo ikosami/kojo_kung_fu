@@ -5,7 +5,7 @@ using UnityEngine;
 /// 敵キャラクターの挙動を制御するクラス。
 /// 移動、攻撃、ダメージ処理、アニメーション、死亡処理などを担当する。
 /// </summary>
-public class Enemy_Nozupas : Enemy, ICharacter
+public class Enemy_Nozupas : Enemy
 {
     [SerializeField] RectTransform[] attackRects;
 
@@ -97,7 +97,7 @@ public class Enemy_Nozupas : Enemy, ICharacter
             }
             else if (attackTime < 4.0f - 0.1f)
             {
-                transform.position += dir * Time.deltaTime;
+                transform.position += moveDir * Time.deltaTime;
 
                 chargeAttackTime += Time.deltaTime;
                 if (chargeAttackTime > 0.15f)

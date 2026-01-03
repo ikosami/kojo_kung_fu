@@ -1,10 +1,10 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 /// <summary>
 /// 敵キャラクターの挙動を制御するクラス。
 /// 移動、攻撃、ダメージ処理、アニメーション、死亡処理などを担当する。
 /// </summary>
-public class Enemy_Fall : Enemy, ICharacter
+public class Enemy_Fall : Enemy
 {
     public Sprite FalledSprite;
     public Sprite Climb1Sprite;
@@ -38,7 +38,7 @@ public class Enemy_Fall : Enemy, ICharacter
         else if (attackTime < 1f)
         {
             //斜め下に移動d
-            transform.position += (dir + new Vector3(0, -moveSpeed.x, 0)) * Time.deltaTime * 2;
+            transform.position += (moveDir + new Vector3(0, -moveSpeed.x, 0)) * Time.deltaTime * 2;
             // 攻撃発動
             if (isAttackDamage)
             {

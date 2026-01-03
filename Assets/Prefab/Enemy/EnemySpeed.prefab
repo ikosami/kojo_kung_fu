@@ -17,6 +17,10 @@ PrefabInstance:
       value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 1336981434795988195, guid: 5fb8191b2b3c52a45a9580bcbf70087c, type: 3}
+      propertyPath: maxHP
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 1336981434795988195, guid: 5fb8191b2b3c52a45a9580bcbf70087c, type: 3}
       propertyPath: moveSpeed.x
       value: 180
       objectReference: {fileID: 0}

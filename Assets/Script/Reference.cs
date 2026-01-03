@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -22,6 +22,11 @@ public class Reference : MonoBehaviour
     }
     public RectTransform stageRect => uiController.StageRect;
 
+    /// <summary>
+    /// プレイヤーの動作を停止させるフラグ
+    /// trueの場合、プレイヤーの移動やアクションが停止される
+    /// イベントシーンなどで使用される
+    /// </summary>
     public bool PlayerStop = false;
 
     public bool isPause = false;
@@ -31,11 +36,16 @@ public class Reference : MonoBehaviour
     public bool isGameOverEnd = false;
     public bool isBoss = false;
     public bool isDojo = false;
-    public bool isStopState = false;
+    /// <summary>
+    /// ステージのスクロールを停止させるフラグ
+    /// trueの場合、プレイヤーが特定の位置に到達した際にステージのスクロールが停止される
+    /// イベント発生時などに使用される
+    /// </summary>
+    public bool isScroolStop = false;
     public Player player;
     public const int SizeX = 160;
     public const int SizeY = 120;
-    public List<ICharacter> enemyList = new List<ICharacter>();
+    public List<CharacterBase> enemyList = new List<CharacterBase>();
     public GameObject completePanel;
     public AudioSource bgm;
 
@@ -51,16 +61,23 @@ public class Reference : MonoBehaviour
     public bool IsClear = false;
     public UIController uiController;
 
+    public Action<CharacterBase> OnEnemyPop;
 
     private void Start()
     {
-        if (SaveDataManager.Hp < 0)
+        if (SaveDataManager.Hp <= 0)
             SaveDataManager.Hp = 3;
         if (SaveDataManager.Life < 0)
         {
             SaveDataManager.Life = 0;
         }
         UpdateStateView();
+    }
+
+    public void AddEnemy(CharacterBase enemy)
+    {
+        enemyList.Add(enemy);
+        OnEnemyPop?.Invoke(enemy);
     }
 
     public void SetStage(int stageNum)
